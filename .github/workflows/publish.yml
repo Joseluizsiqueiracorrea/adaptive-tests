@@ -44,6 +44,144 @@ on:
 
 jobs:
   # ==========================================
+  # npm Publishing (JavaScript packages)
+  # ==========================================
+  publish-npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'release' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.registries == 'all' || github.event.inputs.registries == 'npm-only'))
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+
+      - name: Determine Version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+
+          if [ -z "$VERSION" ]; then
+            echo "No release version detected."
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Detect Publishable Packages
+        id: detect
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const root = process.cwd();
+          const candidateRoots = [
+            path.join(root, 'packages'),
+            path.join(root, 'languages', 'javascript', 'plugins')
+          ];
+
+          const publishDirs = [];
+
+          for (const base of candidateRoots) {
+            if (!fs.existsSync(base)) {
+              continue;
+            }
+
+            const entries = fs.readdirSync(base, { withFileTypes: true });
+            for (const entry of entries) {
+              if (!entry.isDirectory()) continue;
+              if (entry.name.startsWith('.')) continue;
+
+              const dir = path.join(base, entry.name);
+              const pkgPath = path.join(dir, 'package.json');
+              if (!fs.existsSync(pkgPath)) continue;
+
+              try {
+                const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+                if (pkg.private) {
+                  continue;
+                }
+                publishDirs.push(dir);
+              } catch (error) {
+                console.error(`Failed to parse ${pkgPath}: ${error.message}`);
+                process.exit(1);
+              }
+            }
+          }
+
+          const outputFile = process.env.GITHUB_OUTPUT;
+          if (!outputFile) {
+            console.error('GITHUB_OUTPUT environment variable not set.');
+            process.exit(1);
+          }
+
+          fs.appendFileSync(outputFile, `paths<<EOF\n${publishDirs.join('\n')}\nEOF\n`);
+          fs.appendFileSync(outputFile, `has_packages=${publishDirs.length > 0 ? 'true' : 'false'}\n`);
+          NODE
+
+      - name: Skip npm publish (no packages detected)
+        if: steps.detect.outputs.has_packages != 'true'
+        run: echo "No publishable npm packages discovered. Skipping npm publish."
+
+      - name: Publish packages to npm
+        if: steps.detect.outputs.has_packages == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          PRERELEASE: ${{ github.event.inputs.prerelease || 'false' }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "NPM_TOKEN secret is not configured."
+            exit 1
+          fi
+
+          if [ -z "${RELEASE_VERSION}" ]; then
+            echo "Release version is empty."
+            exit 1
+          fi
+
+          publish_args=(--access public)
+          if [ "${PRERELEASE}" = "true" ]; then
+            publish_args+=(--tag next)
+          fi
+
+          while IFS= read -r package_dir; do
+            [ -z "$package_dir" ] && continue
+            if [ ! -d "$package_dir" ]; then
+              echo "Skipping missing package directory $package_dir"
+              continue
+            fi
+
+            package_name=$(node -pe "require('$package_dir/package.json').name")
+            echo "::group::Publishing ${package_name}"
+            pushd "$package_dir" > /dev/null
+
+            npm install --ignore-scripts
+            npm version "$RELEASE_VERSION" --no-git-tag-version --allow-same-version
+            npm publish "${publish_args[@]}"
+
+            popd > /dev/null
+            echo "::endgroup::"
+          done <<EOF
+          ${{ steps.detect.outputs.paths }}
+          EOF
+
+  # ==========================================
   # PyPI Publishing (Python package)
   # ==========================================
   publish-pypi:
