@@ -15,12 +15,12 @@
     "declarationDir": "types",
 
     // Type checking options for tests
-    "noImplicitAny": false, // Allow implicit any for tests
-    "types": ["jest", "node"]
+    "noImplicitAny": false // Allow implicit any for tests
   },
   "include": [
-    "src/**/*.js", // Include all JS files in src for declaration generation
-    "tests/**/*.ts" // Include test files for type checking
+    "languages/javascript/src/**/*.js", // Include JavaScript source files
+    "languages/typescript/src/**/*.ts", // Include TypeScript source files
+    "languages/javascript/tests/**/*.ts" // Include JavaScript test files
   ],
   "exclude": [
     "node_modules",
