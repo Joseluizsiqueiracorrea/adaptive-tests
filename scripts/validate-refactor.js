@@ -179,8 +179,16 @@ pythonChecks.forEach(([path, desc]) => {
 
 // Test Python functionality
 if (fs.existsSync('languages/python/pyproject.toml')) {
-  const pythonTest = runCommand('python3 -m pytest tests/ -v', 'languages/python', 'Running Python tests');
-  if (pythonTest.success) pythonPassed++;
+  const pythonInstall = runCommand(
+    'python3 -m pip install --quiet --disable-pip-version-check -e ".[test]"',
+    'languages/python',
+    'Installing Python test dependencies'
+  );
+
+  if (pythonInstall.success) {
+    const pythonTest = runCommand('python3 -m pytest tests/ -v', 'languages/python', 'Running Python tests');
+    if (pythonTest.success) pythonPassed++;
+  }
 }
 
 validationResults.python = pythonPassed;
@@ -288,6 +296,7 @@ ciChecks.forEach(([path, desc]) => {
   if (checkPath(path, desc)) ciPassed++;
 });
 
+validationResults.cicd = ciPassed;
 log('blue', `\\nCI/CD validation: ${ciPassed}/${ciChecks.length} passed\\n`);
 
 // =============================================================================
@@ -314,7 +323,7 @@ log('blue', `🐍 Python: ${validationResults.python}/${pythonChecks.length + 1}
 log('blue', `☕ Java: ${validationResults.java}/${javaChecks.length + 1}`);
 log('blue', `🧪 Experimental: ${validationResults.experimental}/${experimentalChecks.length}`);
 log('blue', `🔧 Tools: ${validationResults.tools}/${toolsChecks.length + 1}`);
-log('blue', `🚀 CI/CD: ${ciPassed}/${ciChecks.length}`);
+log('blue', `🚀 CI/CD: ${validationResults.cicd}/${ciChecks.length}`);
 
 log('blue', '\\n' + '='.repeat(50));
 log('bold', `🎯 TOTAL: ${totalPassed}/${totalChecks} checks passed`);

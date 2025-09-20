@@ -50,7 +50,7 @@ npm run validate
 If you're working on the VS Code extension:
 
 ```bash
-cd extensions/vscode-adaptive-tests
+cd tools/vscode-adaptive-tests
 npm install
 npm run compile
 

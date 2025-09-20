@@ -36,13 +36,15 @@ experience sane for humans and bots alike:
 2. **Do not touch untracked paths without approval.** If `git status` shows
    untracked files or directories (e.g. local prototypes), leave them alone and
    escalate to a human maintainer.
-2. **Stay scoped.** Limit edits to the files relevant to your assigned task. Avoid
+3. **Stay scoped.** Limit edits to the files relevant to your assigned task. Avoid
    opportunistic "drive-by" cleanups that could interfere with parallel efforts.
-3. **Surface conflicts, don't resolve silently.** When you detect contradictory
+4. **Surface conflicts, don't resolve silently.** When you detect contradictory
    modifications, stop and ask for guidance instead of force-merging, deleting, or
    undoing other agents' changes.
-4. **Document assumptions in the final summary** so other agents (and humans)
+5. **Document assumptions in the final summary** so other agents (and humans)
    understand what you touched and what you deliberately left alone.
+6. **Run the guard.** Execute `npm run agent:preflight` before broad edits to catch
+   untracked directories or risky deletes early.
 
 ### Safety Alert — 2025-09-20
 > Codex AI accidentally deleted the untracked directory `src/adaptive/enhanced/`,
@@ -65,6 +67,10 @@ experience sane for humans and bots alike:
 - `npm run demo` / `npm run demo:full` – same as `validate`
 - `npm run compare` – side-by-side traditional vs adaptive output
 
+### Operational Checks
+
+- `npm run agent:preflight` – enforce the multi-agent safety contract before editing
+
 ### Simulator Scripts
 
 - `npm run refactor` / `npm run restore` – move the JS calculator around
@@ -84,9 +90,13 @@ experience sane for humans and bots alike:
 Supporting directories:
 
 - `languages/javascript/examples/` – calculators, services, ESM modules, React/Todo samples
+- `languages/javascript/tests/` – traditional and adaptive discovery fixtures
 - `languages/python/` – Python companion package
+- `languages/java/` – Java companion package and CLI tooling
+- `languages/php/`, `languages/go/`, `languages/rust/`, `languages/ruby/`, `languages/wolfram/` – experimental samples
+- `fixtures/` – shared cross-language signatures and sample projects
+- `tools/shared/` – shared tooling utilities
 - `tools/vscode-adaptive-tests/` – VS Code extension for Discovery Lens and scaffolding
-- `templates/` – Framework templates (Next.js, Vite, CRA, Express) with pre-configured adaptive tests
 - `scripts/demo/` – automation used by the validation script
 
 ## Contribution Checklist
@@ -104,7 +114,7 @@ Supporting directories:
 - Bug reports / feature requests: [GitHub Issues](https://github.com/anon57396/adaptive-tests/issues)
 - Package consumers: npm [`adaptive-tests`](https://www.npmjs.com/package/adaptive-tests) &
   PyPI [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/)
-- VS Code Extension: [Development Alpha](extensions/vscode-adaptive-tests/README.md)
+- VS Code Extension: [Development Alpha](tools/vscode-adaptive-tests/README.md)
 
 ## Integration Notes
 

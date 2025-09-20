@@ -180,12 +180,23 @@ class CandidateEvaluator {
 
     const blockedTokens = security.blockedTokens || [
       'process.exit(',
+      'process.kill(',
       'child_process.exec',
+      'child_process.execSync',
+      'child_process.execFile',
+      'child_process.execFileSync',
       'child_process.spawn',
+      'child_process.spawnSync',
       'child_process.fork',
+      "require('child_process')",
+      'require("child_process")',
+      'import child_process',
       'fs.rmSync',
       'fs.rmdirSync',
       'fs.unlinkSync',
+      'fs.promises.rm',
+      'fs.promises.rmdir',
+      'fs.promises.unlink',
       'rimraf'
     ];
 

@@ -39,6 +39,28 @@ describe('Security and traversal limits', () => {
     await expect(engine.discoverTarget(signature)).rejects.toThrow(/Found candidates but none matched all requirements/);
   });
 
+  test('process control tokens are blocked by default', async () => {
+    const unsafePath = path.join(sandbox, 'KillSwitch.js');
+    fs.writeFileSync(
+      unsafePath,
+      `module.exports = {
+        kill: (pid) => process.kill(pid || 0)
+      };\n`
+    );
+
+    const engine = new DiscoveryEngine(sandbox, {
+      discovery: {
+        cache: { enabled: false },
+        security: {
+          allowUnsafeRequires: false
+        }
+      }
+    });
+
+    const signature = { name: 'KillSwitch', type: 'object' };
+    await expect(engine.discoverTarget(signature)).rejects.toThrow(/Found candidates but none matched all requirements/);
+  });
+
   test('maxDepth prevents deep tree traversal', async () => {
     const deepDir = path.join(sandbox, 'level-one');
     fs.mkdirSync(deepDir, { recursive: true });

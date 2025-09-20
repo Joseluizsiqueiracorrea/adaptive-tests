@@ -21,25 +21,15 @@ npm run validate
 
 ```
 adaptive-tests/
-├── src/                    # Core source code
-│   ├── adaptive/           # Language integrations
-│   ├── cli/                # CLI implementation
-│   └── index.js            # Main entry point
-├── tests/                  # Test suites
-│   ├── unit/               # Unit tests
-│   ├── integration/        # Integration tests
-│   └── fixtures/           # Test fixtures
-├── examples/               # Example projects
-│   ├── javascript/         # JavaScript examples
-│   ├── typescript/         # TypeScript examples
-│   ├── python/             # Python examples
-│   └── ...                 # Other languages
-├── packages/               # Published packages
-│   ├── jest-adaptive/      # Jest preset
-│   ├── vite-plugin/        # Vite plugin
-│   └── webpack-plugin/     # Webpack plugin
-├── extensions/             # IDE extensions
-│   └── vscode/             # VS Code extension
+├── languages/              # Language-specific packages
+│   ├── javascript/         # @adaptive-tests/javascript workspace
+│   ├── typescript/         # @adaptive-tests/typescript workspace
+│   ├── python/             # adaptive-tests-py package
+│   ├── java/               # adaptive-tests-java package
+│   └── ...                 # Other language placeholders
+├── tools/                  # Developer tools
+│   └── vscode-adaptive-tests/ # VS Code extension source
+├── scripts/                # Build and validation scripts
 └── docs/                   # Documentation
 ```
 
