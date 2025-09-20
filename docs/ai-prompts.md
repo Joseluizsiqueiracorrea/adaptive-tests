@@ -1,6 +1,12 @@
-# 🤖 AI Assistant Prompts for Adaptive Tests
+# ai-prompts.md - Quick Copy-Paste Prompts
 
-Copy-paste these prompts into GitHub Copilot, Claude, ChatGPT, or any AI coding assistant.
+**📍 SCOPE: Ready-to-use prompt templates for common scenarios**
+
+| Document | Purpose |
+|----------|---------|
+| [AGENTS.md](../AGENTS.md) | Contributing to adaptive-tests codebase |
+| [PROMPT_GUIDE.md](../PROMPT_GUIDE.md) | Using adaptive-tests in external projects |
+| **ai-prompts.md** (this file) | Copy-paste prompts for quick reference |
 
 ## Core Rescue Prompt
 

@@ -1,6 +1,12 @@
-# AGENTS.md
+# AGENTS.md - Contributing to Adaptive-Tests Repository
 
-Guidance for any AI or automation working inside this repository.
+**📍 SCOPE: For AI agents working on the adaptive-tests framework itself**
+
+| Document | Purpose |
+|----------|---------|
+| **AGENTS.md** (this file) | Contributing to adaptive-tests codebase |
+| [PROMPT_GUIDE.md](./PROMPT_GUIDE.md) | Using adaptive-tests in external projects |
+| [docs/ai-prompts.md](./docs/ai-prompts.md) | Copy-paste prompts for quick reference |
 
 ## Mission-Critical Context
 
@@ -9,6 +15,36 @@ This project is the **AI-ready testing foundation** for the autonomous developme
 **The paradigm shift:** While traditional tests break when AI agents refactor, adaptive tests survive by finding code through structure, not file paths. This eliminates the import maintenance cycles that waste AI capabilities on busywork instead of feature development.
 
 The standards for code quality, documentation, and reliability are exceptionally high. Every contribution must reflect a commitment to perfection and a deep understanding of the project's role in enabling autonomous development workflows. Mediocrity will not be accepted.
+
+## ⚠️ CRITICAL: What This Repository IS and IS NOT
+
+### This Repository IS:
+- **A FRAMEWORK** for creating resilient tests in OTHER projects
+- **A TOOL** that helps developers instrument THEIR codebases
+- **A LIBRARY** published to npm/PyPI for use in external projects
+
+### This Repository IS NOT:
+- **NOT** a project that needs its own scripts tested
+- **NOT** a place to create test files in root directories
+- **NOT** asking for test coverage of utility scripts
+
+### 🚨 COMMON AI AGENT MISTAKES TO AVOID:
+
+1. **DO NOT create test files in root directories** (`__tests__/`, `/jest.config.js`)
+2. **DO NOT test the repository's own utility scripts** (`scripts/validate.js`, etc.)
+3. **DO NOT add Jest or testing dependencies to the root package.json**
+4. **DO NOT create "adaptive tests" for this repository itself**
+5. **DO NOT confuse this framework with a project that needs testing**
+
+The ONLY tests that belong here are:
+- Framework tests in `languages/*/tests/` that test the discovery engine
+- Example tests in `languages/*/examples/*/tests/` that demonstrate usage
+
+If asked to "ensure 100% test coverage", you should:
+1. Check coverage of the FRAMEWORK code in `languages/javascript/src/`
+2. Run `npm test` to see existing coverage
+3. Add tests ONLY in `languages/javascript/tests/adaptive/` if needed
+4. NEVER create new test directories at the root level
 
 ## Core Principles
 
