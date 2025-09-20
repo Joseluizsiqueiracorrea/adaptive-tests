@@ -18,17 +18,19 @@ The standards for code quality, documentation, and reliability are exceptionally
 
 ## ⚠️ CRITICAL: What This Repository IS and IS NOT
 
-### This Repository IS:
+### This Repository IS
+
 - **A FRAMEWORK** for creating resilient tests in OTHER projects
 - **A TOOL** that helps developers instrument THEIR codebases
 - **A LIBRARY** published to npm/PyPI for use in external projects
 
-### This Repository IS NOT:
+### This Repository IS NOT
+
 - **NOT** a project that needs its own scripts tested
 - **NOT** a place to create test files in root directories
 - **NOT** asking for test coverage of utility scripts
 
-### 🚨 COMMON AI AGENT MISTAKES TO AVOID:
+### 🚨 COMMON AI AGENT MISTAKES TO AVOID
 
 1. **DO NOT create test files in root directories** (`__tests__/`, `/jest.config.js`)
 2. **DO NOT test the repository's own utility scripts** (`scripts/validate.js`, etc.)
@@ -37,10 +39,12 @@ The standards for code quality, documentation, and reliability are exceptionally
 5. **DO NOT confuse this framework with a project that needs testing**
 
 The ONLY tests that belong here are:
+
 - Framework tests in `languages/*/tests/` that test the discovery engine
 - Example tests in `languages/*/examples/*/tests/` that demonstrate usage
 
 If asked to "ensure 100% test coverage", you should:
+
 1. Check coverage of the FRAMEWORK code in `languages/javascript/src/`
 2. Run `npm test` to see existing coverage
 3. Add tests ONLY in `languages/javascript/tests/adaptive/` if needed

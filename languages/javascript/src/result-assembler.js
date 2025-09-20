@@ -474,6 +474,11 @@ class ResultAssembler {
     }
 
     try {
+      // Recheck safety before loading from cache
+      if (!this.isPathSafeForLoad(cached.path)) {
+        this.runtimeCache.delete(cacheKey);
+        return null;
+      }
       return this.loadModule(cached, signature);
     } catch (error) {
       this.runtimeCache.delete(cacheKey);
@@ -514,6 +519,11 @@ class ResultAssembler {
     };
 
     try {
+      // Recheck safety before loading from persistent cache
+      if (!this.isPathSafeForLoad(cacheEntry.path)) {
+        delete this.persistentCache[cacheKey];
+        return null;
+      }
       const target = this.loadModule(cacheEntry, signature);
       if (this.runtimeCache) {
         this.runtimeCache.set(cacheKey, cacheEntry);
@@ -539,6 +549,23 @@ class ResultAssembler {
       return stats.mtimeMs;
     } catch (error) {
       return null;
+    }
+  }
+
+  /**
+   * Lightweight safety check for cached module paths.
+   * Reads the file content and reuses CandidateEvaluator safety guard.
+   */
+  isPathSafeForLoad(filePath) {
+    if (!this.candidateEvaluator || !filePath) {
+      return true;
+    }
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const candidate = { path: filePath, content };
+      return this.candidateEvaluator.isCandidateSafe(candidate);
+    } catch (error) {
+      return false;
     }
   }
 }

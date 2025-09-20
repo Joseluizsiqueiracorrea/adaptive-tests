@@ -65,10 +65,10 @@ npm test
 
 This is the critical step to prove resilience.
 
-1.  **Identify a test file** that imports a specific source file (e.g., `tests/UserService.test.js` imports `src/services/UserService.js`).
-2.  **Move the source file** to a new location (e.g., move `src/services/UserService.js` to `src/api/users/UserService.js`).
-3.  **Do NOT update the `require` or `import` statement** in the test file. It is now intentionally broken.
-4.  **Run the test command again** (`npm test`).
+1. **Identify a test file** that imports a specific source file (e.g., `tests/UserService.test.js` imports `src/services/UserService.js`).
+2. **Move the source file** to a new location (e.g., move `src/services/UserService.js` to `src/api/users/UserService.js`).
+3. **Do NOT update the `require` or `import` statement** in the test file. It is now intentionally broken.
+4. **Run the test command again** (`npm test`).
 
 **Expected Outcome:** The test for the moved file **should still pass**. The console output may show a "discovery" message indicating that `adaptive-tests` found the moved file. This proves the setup is working.
 
@@ -148,9 +148,9 @@ If discovery fails, the `suggestedSignature` in the JSON output can be used to a
 
 The `discover<T>(signature: DiscoverySignature)` function accepts a signature object with the following core fields:
 
--   `name: string | RegExp`: The name of the target class, function, or object.
--   `type: 'class' | 'function' | 'object'`: The type of the target.
--   `exports?: string`: The specific named export to select.
--   `methods?: string[]`: An array of public method names to validate.
--   `properties?: string[]`: An array of instance property names to validate.
--   `extends?: string | Function`: The name of a class the target should inherit from.
+- `name: string | RegExp`: The name of the target class, function, or object.
+- `type: 'class' | 'function' | 'object'`: The type of the target.
+- `exports?: string`: The specific named export to select.
+- `methods?: string[]`: An array of public method names to validate.
+- `properties?: string[]`: An array of instance property names to validate.
+- `extends?: string | Function`: The name of a class the target should inherit from.
