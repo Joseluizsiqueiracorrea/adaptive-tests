@@ -113,7 +113,10 @@ const generateMethodBlocks = (signature, methods, options) => {
   }
 
   if (!options.applyAssertions) {
-    return `  describe('methods', () => {${methods.map(method => `    it.todo('TODO: ${method}');`).join('\n')}\n  });\n`;
+    const todoLines = methods
+      .map(method => `    it.todo('TODO: ${method}');`)
+      .join('\n');
+    return "  describe('methods', () => {\n" + todoLines + "\n  });\n";
   }
 
   const blocks = methods.map((method) => {
