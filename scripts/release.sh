@@ -79,13 +79,7 @@ print_step "Updating package versions"
 npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
 print_success "Updated main package.json"
 
-# Update sub-packages
-for pkg in packages/*; do
-    if [ -f "$pkg/package.json" ]; then
-        echo "  Updating $pkg..."
-        (cd "$pkg" && npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version 2>/dev/null || true)
-    fi
-done
+
 
 # Update Python package
 if [ -f "languages/python/setup.py" ]; then

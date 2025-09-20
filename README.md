@@ -525,11 +525,9 @@ You don't need complex test selection for adaptive tests because:
 
 ### Framework Guides
 
-- [React Quick Start](docs/REACT_QUICKSTART.md)
-- [Vue.js Quick Start](docs/VUE_QUICKSTART.md)
-- [Express Quick Start](docs/EXPRESS_QUICKSTART.md)
-- [Java Quick Start](docs/JAVA_QUICKSTART.md)
-- [PHP Quick Start](docs/PHP_QUICKSTART.md)
+- [React Quick Start](languages/javascript/docs/REACT_QUICKSTART.md)
+- [Vue.js Quick Start](languages/javascript/docs/VUE_QUICKSTART.md)
+- [Express Quick Start](languages/javascript/docs/EXPRESS_QUICKSTART.md)
 
 ### Technical Documentation
 

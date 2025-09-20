@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const TARGET_DIRECTORIES = [path.join(ROOT, 'src')];
+const TARGET_DIRECTORIES = [path.join(ROOT, 'languages', 'go')];
 const BINARY_PATTERN = /go-ast-parser(?:\.exe)?$/;
 const violations = [];
 
@@ -27,7 +27,7 @@ function scanDirectory(dir) {
       continue;
     }
 
-    if (fullPath.startsWith(path.join(ROOT, 'src', 'adaptive', 'go')) && (fs.statSync(fullPath).mode & 0o111)) {
+    if ((fs.statSync(fullPath).mode & 0o111)) {
       violations.push(fullPath);
     }
   }
