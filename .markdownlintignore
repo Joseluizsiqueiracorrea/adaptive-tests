@@ -1,6 +1,10 @@
 node_modules/
 coverage/
 dist/
-packages/adaptive-tests-py/dist/
-packages/adaptive-tests-py/src/adaptive_tests_py.egg-info/
+# Python package build artifacts and cache directories
+languages/python/.pytest_cache/
+languages/python/.coverage
+languages/python/src/adaptive_tests_py.egg-info/
+languages/python/build/
+languages/python/dist/
 docs/api/
