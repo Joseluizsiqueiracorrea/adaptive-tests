@@ -11,7 +11,14 @@
   "scripts": {
     "test": "jest --runInBand",
     "lint": "eslint src/**/*.js",
-    "build": "tsc --project tsconfig.json --emitDeclarationOnly"
+    "build": "tsc --project tsconfig.json --emitDeclarationOnly",
+    "restore": "node scripts/restore.js",
+    "refactor": "node scripts/refactor.js",
+    "broken": "node scripts/demo-broken.js",
+    "restore-broken": "node scripts/restore-broken.js",
+    "restore-ts": "node scripts/restore-ts.js",
+    "refactor-ts": "node scripts/refactor-ts.js",
+    "demo-broken-ts": "node scripts/demo-broken-ts.js"
   },
   "dependencies": {
     "@babel/parser": "^7.25.0",

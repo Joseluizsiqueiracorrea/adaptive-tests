@@ -8,4 +8,7 @@ module.exports = {
     !pattern.includes('<rootDir>/languages/javascript/examples/') &&
     !pattern.includes('<rootDir>/languages/typescript/examples/')
   ),
+  moduleNameMapper: {
+    '^@adaptive-tests/javascript$': '<rootDir>/languages/javascript/src/index.js'
+  }
 };

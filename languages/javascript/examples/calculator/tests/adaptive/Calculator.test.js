@@ -1,4 +1,4 @@
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 
 /**
  * Adaptive Tests for Calculator

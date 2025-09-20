@@ -11,6 +11,9 @@ module.exports = {
     // File extensions to scan
     extensions: ['.js', '.cjs', '.mjs', '.ts', '.tsx', '.jsx'],
 
+    // Patterns to ignore
+    ignore: ['**/*.backup'],
+
     // Maximum directory depth
     maxDepth: 10,
 
@@ -21,6 +24,7 @@ module.exports = {
       'coverage',
       'dist',
       'build',
+      'lib',
       'scripts',
       '__tests__',
       '.next',

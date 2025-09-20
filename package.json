@@ -25,8 +25,22 @@
     "restore:broken": "node scripts/demo/restore-broken.js",
     "demo:broken:ts": "node scripts/demo/demo-broken-ts.js",
     "restore:broken:ts": "node scripts/demo/restore-broken-ts.js",
-    "validate": "node scripts/validate-refactor.js",
-    "agent:preflight": "node scripts/check-agent-state.js"
+    "validate": "node scripts/validate.js",
+    "agent:preflight": "node scripts/check-agent-state.js",
+    "demo:js:restore": "npm --prefix languages/javascript run restore",
+    "demo:js:refactor": "npm --prefix languages/javascript run refactor",
+    "demo:js:broken": "npm --prefix languages/javascript run broken",
+    "demo:js:restore-broken": "npm --prefix languages/javascript run restore-broken",
+    "demo:js:restore-ts": "npm --prefix languages/javascript run restore-ts",
+    "demo:js:refactor-ts": "npm --prefix languages/javascript run refactor-ts",
+    "demo:js:broken-ts": "npm --prefix languages/javascript run demo-broken-ts",
+    "demo:ts:restore": "npm --prefix languages/typescript run restore",
+    "demo:ts:refactor": "npm --prefix languages/typescript run refactor",
+    "demo:ts:broken": "npm --prefix languages/typescript run broken",
+    "demo:ts:restore-broken": "npm --prefix languages/typescript run restore-broken",
+    "demo:ts:restore-ts": "npm --prefix languages/typescript run restore-ts",
+    "demo:ts:refactor-ts": "npm --prefix languages/typescript run refactor-ts",
+    "demo:ts:broken-ts": "npm --prefix languages/typescript run demo-broken-ts"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -44,3 +58,4 @@
     "markdownlint-cli": "^0.39.0"
   }
 }
+

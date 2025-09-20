@@ -1,0 +1,58 @@
+{
+  "name": "adaptive-tests",
+  "version": "0.3.0",
+  "description": "Adaptive Tests CLI and runtime meta-package",
+  "main": "index.js",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "bin": {
+    "adaptive-tests": "bin/adaptive-tests.js",
+    "create-adaptive-app": "bin/create-adaptive-app.js"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./typescript": {
+      "require": "./typescript.js",
+      "import": "./typescript.mjs"
+    }
+  },
+  "files": [
+    "bin",
+    "index.js",
+    "index.mjs",
+    "index.d.ts",
+    "typescript.js",
+    "typescript.mjs"
+  ],
+  "keywords": [
+    "adaptive",
+    "testing",
+    "ast",
+    "refactor",
+    "ai",
+    "discovery"
+  ],
+  "author": "Adaptive Tests",
+  "license": "MIT",
+  "dependencies": {
+    "@adaptive-tests/javascript": "file:../../languages/javascript"
+  },
+  "optionalDependencies": {
+    "@adaptive-tests/typescript": "file:../../languages/typescript"
+  },
+  "peerDependencies": {
+    "ts-node": ">=10.0.0",
+    "typescript": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ts-node": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  }
+}

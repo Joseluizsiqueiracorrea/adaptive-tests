@@ -7,7 +7,14 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "restore": "node scripts/restore.js",
+    "refactor": "node scripts/refactor.js",
+    "broken": "node scripts/demo-broken.js",
+    "restore-broken": "node scripts/restore-broken.js",
+    "restore-ts": "node scripts/restore-ts.js",
+    "refactor-ts": "node scripts/refactor-ts.js",
+    "demo-broken-ts": "node scripts/demo-broken-ts.js"
   },
   "keywords": [
     "testing",
