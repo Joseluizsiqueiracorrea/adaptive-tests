@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "types": ["node", "jest"],
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "."
   },
   "include": ["src/**/*", "tests/**/*", "examples/**/*"],
   "exclude": ["node_modules", "lib"]
