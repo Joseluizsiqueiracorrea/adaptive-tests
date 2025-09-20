@@ -298,26 +298,43 @@ def _render_pytest_stub(candidate: SymbolCandidate, signature: Dict[str, Any], d
     ).strip()
 
     if candidate.kind == 'class':
-        assertion_block = textwrap.dedent(
+        method_assertions = ""
+        if candidate.methods:
+            methods_literal = repr(list(candidate.methods))
+            method_assertions_template = """
+                required_methods = {methods_literal}
+                missing_methods = [name for name in required_methods if not hasattr(Target, name)]
+                assert not missing_methods, f"Target is missing methods: {{missing_methods}}"
+                for name in required_methods:
+                    member = getattr(Target, name)
+                    assert callable(member), f"Expected '{{name}}' to be callable on {{Target.__name__}}"
             """
-            assert Target is not None
-            instance = Target()
-            # TODO: add meaningful assertions for Target
-            """
-        ).strip()
+            method_assertions = textwrap.dedent(method_assertions_template).format(methods_literal=methods_literal).strip()
+
+        class_assertions = [
+            "assert Target is not None",
+            "assert isinstance(Target, type)",
+        ]
+        if method_assertions:
+            class_assertions.append(method_assertions)
+        assertion_block = "\n".join(class_assertions)
     else:
         assertion_block = textwrap.dedent(
-            """
+            f"""
             assert callable(Target)
-            # TODO: invoke Target with representative arguments and assert the result
+            assert Target.__name__ == '{candidate.name}'
+            fn_signature = inspect.signature(Target)
+            assert fn_signature is not None
             """
         ).strip()
+
+    inspect_import = "import inspect\n" if candidate.kind != 'class' else ""
 
     body = textwrap.dedent(
         f"""
         from __future__ import annotations
 
-        from pathlib import Path
+        {inspect_import}from pathlib import Path
 
         from adaptive_tests_py import DiscoveryEngine, Signature
 

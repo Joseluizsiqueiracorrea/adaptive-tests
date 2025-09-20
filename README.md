@@ -1,15 +1,15 @@
 # Adaptive Tests: AI-Ready Testing Infrastructure
 
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://anon57396.github.io/adaptive-tests/)
-[![npm version](https://img.shields.io/npm/v/adaptive-tests.svg)](https://www.npmjs.com/package/adaptive-tests)
-[![PyPI version](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
+[![npm](https://img.shields.io/badge/npm-in%20development-yellow)](packages/)
+[![PyPI](https://img.shields.io/badge/PyPI-in%20development-yellow)](languages/python/)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](vscode-adaptive-tests-extension_experimental/README.md)
-[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Available-green?logo=github)](https://github.com/marketplace/actions/adaptive-tests)
+[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-In%20Development-yellow?logo=github)](#ci-cd-integration)
 
 Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.github.io/adaptive-tests/)
 
 > _Language-specific coverage reports live in each package (JavaScript, TypeScript, Python, Java). A consolidated badge will ship once multi-runtime reporting is wired up._
-
+>
 > **Tests that don't break when you move files**
 
 Traditional tests fail when you move or rename files because they use hardcoded file paths. Adaptive Tests finds your code by understanding what it looks like, not where it's located.
@@ -24,7 +24,7 @@ If this project helps you, please consider supporting it via the Sponsor button 
 
 Each language implementation is self-contained with examples, documentation, and framework integrations:
 
-### **Production Ready**
+### **Core Languages** _(in development)_
 
 - **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support
 - **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching
@@ -64,7 +64,9 @@ Each language implementation is self-contained with examples, documentation, and
 ### 📦 JavaScript/Node.js
 
 ```bash
-npm install adaptive-tests
+# Note: Main adaptive-tests package is currently in development
+# Use the JavaScript implementation:
+npm install @adaptive-tests/javascript
 ```
 
 → **[Complete JavaScript Guide](./languages/javascript/README.md)**
@@ -92,7 +94,9 @@ pip install adaptive-tests-py
 ### 📘 TypeScript
 
 ```bash
-npm install adaptive-tests @adaptive-tests/typescript
+# Note: Packages are currently in development and not published to npm
+# For local development:
+npm install @adaptive-tests/javascript @adaptive-tests/typescript
 ```
 
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**
@@ -108,7 +112,9 @@ Run adaptive tests in CI using the official GitHub Action, or use a simple Node.
 ### Option A: Official Action
 
 ```yaml
-- uses: adaptive-tests-action/adaptive-tests@v1
+# Note: Official GitHub Action is currently in development
+# For now, use Option B (Manual Setup) below
+# - uses: adaptive-tests-action/adaptive-tests@v1
 ```
 
 The action typically:
@@ -164,7 +170,7 @@ npm install
 
 ### 🚀 Installation
 
-The extension will be available on the VS Code Marketplace. For now, use the development setup above.
+The extension is currently in development and not yet available on the VS Code Marketplace. For now, use the development setup above.
 
 [Learn more about the VS Code extension →](vscode-adaptive-tests-extension_experimental/README.md)
 
@@ -210,7 +216,9 @@ npm test  # ✅ Tests pass again
 ### Option 1: Zero-Config with jest-adaptive (New!)
 
 ```bash
-npm install --save-dev jest-adaptive @adaptive-tests/javascript
+# Note: This is a local package in development
+# For development use:
+npm install --save-dev ./packages/jest-adaptive @adaptive-tests/javascript
 ```
 
 Add to your `jest.config.js`:
@@ -267,7 +275,7 @@ This automatically fixes broken imports when you move files. No code changes nee
 **For new tests or when you want control:**
 
 ```javascript
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 
 const UserService = await discover('UserService');
 // Just works, no matter where the file is
@@ -289,24 +297,21 @@ const UserService = await discover('UserService');
 
 Jumpstart your adaptive testing with pre-configured templates for popular frameworks:
 
-### Available Templates
+### Available Templates _(in development)_
 
-| Template | Framework | Features |
-|----------|-----------|----------|
-| `nextjs-adaptive` | Next.js 13+ | App Router, TypeScript, React Server Components ready |
-| `vite-adaptive` | Vite + React | Lightning fast HMR, TypeScript, modern tooling |
-| `cra-adaptive` | Create React App | Classic React setup, TypeScript support |
-| `express-adaptive` | Express.js | REST API, middleware testing, async route handlers |
+| Template | Framework | Features | Status |
+|----------|-----------|----------|---------|
+| `nextjs` | Next.js 13+ | App Router, TypeScript, React Server Components ready | Basic structure |
+| `vite` | Vite + React | Lightning fast HMR, TypeScript, modern tooling | Basic structure |
+| `express` | Express.js | REST API, middleware testing, async route handlers | Planned |
 
 ### Quick Setup
 
 ```bash
-# Interactive CLI
-npx create-adaptive-app my-project
-
-# Manual template usage
+# Templates are currently in development
+# Manual template usage (development only):
 git clone https://github.com/anon57396/adaptive-tests.git
-cp -r adaptive-tests/templates/nextjs-adaptive my-project
+cp -r adaptive-tests/languages/javascript/templates/nextjs my-project
 cd my-project
 npm install
 ```
@@ -324,44 +329,17 @@ Each template comes with:
 
 ### Template Details
 
-#### Next.js Template
+#### Available Templates
+
+Templates are currently in early development. Basic structure exists for:
 
 ```bash
-templates/nextjs-adaptive/
-├── src/
-│   └── components/       # Example components with tests
-├── tests/
-│   ├── adaptive/         # Adaptive test suites
-│   └── traditional/      # Traditional test comparison
-├── jest.config.js        # Dual-mode Jest configuration
-└── package.json          # Pre-configured dependencies
+languages/javascript/templates/
+├── nextjs/               # Next.js basic template (in development)
+└── vite/                 # Vite basic template (in development)
 ```
 
-#### Vite Template
-
-```bash
-templates/vite-adaptive/
-├── src/
-│   ├── components/       # React components
-│   └── test/
-│       └── setup.ts      # Vitest/Jest setup
-├── tests/
-│   └── adaptive/         # Adaptive tests
-└── vite.config.ts        # Test configuration
-```
-
-#### Express Template
-
-```bash
-templates/express-adaptive/
-├── src/
-│   ├── routes/           # API routes
-│   ├── middleware/       # Express middleware
-│   └── services/         # Business logic
-├── tests/
-│   └── adaptive/         # API and service tests
-└── package.json          # Node.js dependencies
-```
+Full template features are planned for future releases.
 
 ### Customizing Templates
 
@@ -564,10 +542,10 @@ the contrast immediately.
 
 ## Publishing
 
-Adaptive Tests ships on npm and PyPI:
+Adaptive Tests is currently in development:
 
-- npm: [`adaptive-tests`](https://www.npmjs.com/package/adaptive-tests)
-- PyPI: [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/)
+- npm: Packages not yet published (development versions available locally)
+- PyPI: `adaptive-tests-py` package status to be verified
 
 When you are ready to publish a new release:
 
@@ -588,12 +566,11 @@ When you are ready to publish a new release:
 # Clone and setup
 git clone https://github.com/anon57396/adaptive-tests.git
 cd adaptive-tests
-npm run dev:setup  # Automated developer setup
+npm install        # Install dependencies
 
 # Development commands
 npm test           # Run tests
 npm run validate   # Run validation suite
-npm run dev        # Start development mode
 ```
 
 ### Resources
