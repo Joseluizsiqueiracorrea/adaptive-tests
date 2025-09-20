@@ -3,18 +3,23 @@
 **New to Adaptive Tests?** Pick your language and get started in 2 minutes:
 
 ## 📦 JavaScript/Node.js
+
 ```bash
 npm install adaptive-tests
 ```
+
 → **[Complete JavaScript Guide](../languages/javascript/README.md)**
 
 ## 🐍 Python
+
 ```bash
 pip install adaptive-tests-py
 ```
+
 → **[Complete Python Guide](../languages/python/README.md)**
 
 ## ☕ Java
+
 ```xml
 <dependency>
     <groupId>io.adaptivetests</groupId>
@@ -22,12 +27,15 @@ pip install adaptive-tests-py
     <version>0.1.0</version>
 </dependency>
 ```
+
 → **[Complete Java Guide](../languages/java/README.md)**
 
 ## 📘 TypeScript
+
 ```bash
 npm install adaptive-tests @adaptive-tests/typescript
 ```
+
 → **[Complete TypeScript Guide](../languages/typescript/README.md)**
 
 **Other languages?** Check the [experimental implementations](#experimental) above.

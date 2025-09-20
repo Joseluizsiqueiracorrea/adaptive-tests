@@ -57,11 +57,11 @@ npm run test:typescript
 
 # Prove imports break but adaptive survives
 npm run refactor:ts
-npm run test:traditional:ts  # ❌
-npm run test:adaptive:ts     # ✅
+npx jest --config ../../../jest.config.js tests/traditional          # ❌
+npx jest --config ../../../jest.config.js tests/adaptive             # ✅
 
 # Swap in the broken implementation
 npm run demo:broken:ts
-npm run test:adaptive:ts     # ❌ real failures
+npx jest --config ../../../jest.config.js tests/adaptive             # ❌ real failures
 npm run restore:broken:ts
 ```

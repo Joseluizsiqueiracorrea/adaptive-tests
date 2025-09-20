@@ -24,12 +24,14 @@ If this project helps you, please consider supporting it via the Sponsor button 
 Each language implementation is self-contained with examples, documentation, and framework integrations:
 
 ### **Production Ready**
+
 - **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support
 - **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching
 - **[🐍 Python](./languages/python/)** - Full pytest integration with Django/Flask examples
 - **[☕ Java](./languages/java/)** - Maven/Gradle packages with Spring Boot integration
 
 ### **Experimental**
+
 - **[🐘 PHP](./languages/php/)** - PHPUnit integration, Composer packages *(in development)*
 - **[🐹 Go](./languages/go/)** - Module-aware discovery *(in development)*
 - **[🦀 Rust](./languages/rust/)** - Cargo integration *(in development)*
@@ -37,6 +39,7 @@ Each language implementation is self-contained with examples, documentation, and
 - **[🔬 Wolfram](./languages/wolfram/)** - Symbolic computation patterns *(experimental)*
 
 ### **Developer Tools**
+
 - **[🔧 VS Code Extension](./vscode-adaptive-tests-extension_experimental/)** - IDE integration *(development alpha)*
 
 ---
@@ -58,18 +61,23 @@ Each language implementation is self-contained with examples, documentation, and
 **New to Adaptive Tests?** Pick your language and get started in 2 minutes:
 
 ### 📦 JavaScript/Node.js
+
 ```bash
 npm install adaptive-tests
 ```
+
 → **[Complete JavaScript Guide](./languages/javascript/README.md)**
 
 ### 🐍 Python
+
 ```bash
 pip install adaptive-tests-py
 ```
+
 → **[Complete Python Guide](./languages/python/README.md)**
 
 ### ☕ Java
+
 ```xml
 <dependency>
     <groupId>io.adaptivetests</groupId>
@@ -77,12 +85,15 @@ pip install adaptive-tests-py
     <version>0.1.0</version>
 </dependency>
 ```
+
 → **[Complete Java Guide](./languages/java/README.md)**
 
 ### 📘 TypeScript
+
 ```bash
 npm install adaptive-tests @adaptive-tests/typescript
 ```
+
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**
 
 **Other languages?** Check the [experimental implementations](#experimental) above.
@@ -168,7 +179,6 @@ The extension will be available on the VS Code Marketplace. For now, use the dev
 
 ---
 
-
 ### 🔧 Auto-Fix Import Errors
 
 **Getting import errors after moving files? Fix them automatically:**
@@ -180,11 +190,13 @@ npx adaptive-tests enable-invisible
 This patches your test runner to automatically find moved files instead of breaking. Works with Jest, Vitest, and Mocha.
 
 **Before:**
+
 ```text
 Error: Cannot find module './UserService'
 ```
 
 **After:**
+
 ```bash
 npx adaptive-tests enable-invisible
 npm test  # ✅ Tests pass again
@@ -536,6 +548,7 @@ You don't need complex test selection for adaptive tests because:
 - [Best Practices](docs/BEST_PRACTICES.md)
 - [CI/CD Strategy](docs/CI_STRATEGY.md)
 - Prompt Guide (AIs & automation): PROMPT_GUIDE.md
+- [Positioning Playbook](docs/PITCH.md)
 
 ### Extensions & Tools
 

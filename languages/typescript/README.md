@@ -5,8 +5,8 @@
 ## Installation
 
 ```bash
-# Install the TypeScript package
-npm install @adaptive-tests/typescript
+# Install the meta package + TypeScript companion
+npm install adaptive-tests @adaptive-tests/typescript
 
 # Peer dependencies (if not already installed)
 npm install --save-dev typescript ts-node
@@ -334,11 +334,13 @@ If you have existing adaptive tests in JavaScript, they'll continue working. To 
 ### Example Migration
 
 **Before (JavaScript):**
+
 ```javascript
 const UserService = await discover('UserService');
 ```
 
 **After (TypeScript):**
+
 ```typescript
 const UserService = await discover({
   name: 'UserService',
@@ -355,12 +357,14 @@ const UserService = await discover({
 ### Common Issues
 
 **TypeScript compilation errors**
+
 ```bash
 # Ensure ts-node is installed and configured
 npm install --save-dev ts-node
 ```
 
 **Interface discovery fails**
+
 ```typescript
 // Use more specific signatures
 const IUserService = await discoverInterface({
@@ -371,6 +375,7 @@ const IUserService = await discoverInterface({
 ```
 
 **Generic type issues**
+
 ```typescript
 // Be explicit about generic constraints
 const Repository = await discover({

@@ -79,7 +79,11 @@ print_step "Updating package versions"
 npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
 print_success "Updated main package.json"
 
-
+# Meta CLI package
+if [ -d "packages/adaptive-tests" ]; then
+    npm --prefix packages/adaptive-tests version "$NEW_VERSION" --no-git-tag-version --allow-same-version > /dev/null
+    print_success "Updated packages/adaptive-tests/package.json"
+fi
 
 # Update Python package
 if [ -f "languages/python/setup.py" ]; then

@@ -51,6 +51,7 @@ See the main [API Reference](../../docs/API_REFERENCE.md) for detailed documenta
 ## Examples
 
 Check out the `examples/` directory for working examples:
+
 - Calculator (basic class discovery)
 - API Service (REST API testing)
 - Todo App (CRUD operations)

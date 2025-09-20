@@ -68,7 +68,7 @@ function quote(value) {
   if (process.platform === 'win32') {
     return `"${value.replace(/"/g, '""')}"`;
   }
-  const escaped = value.replace(/(["$`\])/g, '\\$1');
+  const escaped = value.replace(/(["$`\\])/g, '\\$1');
   return `"${escaped}"`;
 }
 
