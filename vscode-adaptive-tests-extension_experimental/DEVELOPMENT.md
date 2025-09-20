@@ -11,7 +11,7 @@
 ### Setup
 
 ```bash
-cd tools/vscode-adaptive-tests
+cd vscode-adaptive-tests-extension_experimental
 npm install
 npm run compile
 ```

@@ -180,6 +180,6 @@ export class DiscoveryCommand {
         }
 
         // Load bundled version
-        return require('adaptive-tests');
+        return require('@adaptive-tests/javascript');
     }
 }

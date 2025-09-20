@@ -1,5 +1,5 @@
 {
-  "name": "vscode-adaptive-tests",
+  "name": "vscode-adaptive-tests-extension_experimental",
   "displayName": "Adaptive Tests",
   "description": "Visual discovery and scaffolding for resilient test suites",
   "version": "0.1.0",
@@ -161,6 +161,6 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "adaptive-tests": "^0.2.2"
+    "@adaptive-tests/javascript": "^0.3.0"
   }
 }

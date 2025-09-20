@@ -298,7 +298,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
         }
 
         // Load bundled version
-        return require('adaptive-tests');
+        return require('@adaptive-tests/javascript');
     }
 
     // ==================== API Implementation ====================
