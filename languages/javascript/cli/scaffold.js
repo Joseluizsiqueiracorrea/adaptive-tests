@@ -189,7 +189,7 @@ async function runScaffold(argv = []) {
           throw new Error(`Unable to find a component named '${targetArg}'.`);
         }
         filePath = resolved.path;
-        log(`🔍 Found component at ${path.relative(root, filePath)}`, 'dim', options);
+        log(`🔍 Found component at ${path.relative(root, filePath)}`, COLORS.dim, options);
       }
       // Handle interactive mode
       if (options.interactive) {

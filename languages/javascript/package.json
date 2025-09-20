@@ -1,6 +1,5 @@
 {
   "name": "@adaptive-tests/javascript",
-  "private": true,
   "version": "0.3.0",
   "description": "JavaScript core implementation of adaptive-tests",
   "main": "src/index.js",
@@ -10,6 +9,17 @@
     "adaptive-tests-doctor": "cli/doctor.js",
     "create-adaptive-app": "cli/create-adaptive-app"
   },
+  "files": [
+    "cli/",
+    "docs/",
+    "examples/",
+    "fixtures/",
+    "scripts/",
+    "src/",
+    "templates/",
+    "index.d.ts",
+    "README.md"
+  ],
   "scripts": {
     "test": "jest --runInBand",
     "lint": "eslint src/**/*.js",
