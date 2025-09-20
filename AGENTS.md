@@ -16,7 +16,7 @@ The standards for code quality, documentation, and reliability are exceptionally
    recommending changes. These commands exercise both traditional and adaptive
    suites.
 2. **Prefer the unified engine** – the source of truth lives in
-   `src/adaptive/discovery-engine.js`. Avoid introducing or using any legacy
+   `languages/javascript/src/discovery-engine.js`. Avoid introducing or using any legacy
    `discovery.js` entry points. If you see `getLegacyEngine` in the public API,
    it is a thin deprecation shim around the v2 engine—prefer `getDiscoveryEngine`.
 3. **Zero-runtime discovery** – the engine parses candidates with
@@ -74,19 +74,18 @@ experience sane for humans and bots alike:
 
 ## Architecture Snapshot
 
-- `src/adaptive/discovery-engine.js` – AST-driven discovery engine (async I/O,
+- `languages/javascript/src/discovery-engine.js` – AST-driven discovery engine (async I/O,
   zero-runtime static analysis)
-- `src/adaptive/scoring-engine.js` – heuristic scoring applied during discovery
-- `src/adaptive/test-base.js` – base class plus helper for Jest-style suites
-- `src/adaptive/typescript/discovery.js` – thin TypeScript façade (same API)
-- `src/index.js` – public entry point, re-exporting the v2 surface
+- `languages/javascript/src/scoring-engine.js` – heuristic scoring applied during discovery
+- `languages/javascript/src/test-base.js` – base class plus helper for Jest-style suites
+- `languages/typescript/src/discovery.js` – TypeScript façade extending JavaScript engine
+- `languages/javascript/src/index.js` – public entry point for JavaScript package
 
 Supporting directories:
 
 - `languages/javascript/examples/` – calculators, services, ESM modules, React/Todo samples
-  adaptive)
 - `languages/python/` – Python companion package
-- `extensions/vscode-adaptive-tests/` – VS Code extension for Discovery Lens and scaffolding
+- `tools/vscode-adaptive-tests/` – VS Code extension for Discovery Lens and scaffolding
 - `templates/` – Framework templates (Next.js, Vite, CRA, Express) with pre-configured adaptive tests
 - `scripts/demo/` – automation used by the validation script
 

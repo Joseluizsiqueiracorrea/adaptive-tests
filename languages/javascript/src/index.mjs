@@ -3,9 +3,7 @@ import adaptiveExports from './index.js';
 const {
   DiscoveryEngine,
   AdaptiveTest,
-  TypeScriptDiscoveryEngine,
   getDiscoveryEngine,
-  getTypeScriptDiscoveryEngine,
   adaptiveTest,
   discover,
   ConfigLoader,
@@ -17,9 +15,7 @@ const {
 export {
   DiscoveryEngine,
   AdaptiveTest,
-  TypeScriptDiscoveryEngine,
   getDiscoveryEngine,
-  getTypeScriptDiscoveryEngine,
   adaptiveTest,
   discover,
   ConfigLoader,
@@ -30,9 +26,7 @@ export {
 export default {
   DiscoveryEngine,
   AdaptiveTest,
-  TypeScriptDiscoveryEngine,
   getDiscoveryEngine,
-  getTypeScriptDiscoveryEngine,
   adaptiveTest,
   discover,
   ConfigLoader,

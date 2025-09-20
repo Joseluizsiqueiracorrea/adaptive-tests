@@ -37,21 +37,13 @@ function discoverSync(signature) {
   }
 
   try {
-    // Try to discover synchronously
-    const candidates = discoveryEngine.collectCandidatesSync(signature);
-
-    if (candidates.length === 0) {
-      throw new Error(`No candidates found for ${signature.name}`);
-    }
-
-    // Take best match
-    const bestMatch = candidates[0];
-    const discovered = require(bestMatch.absolutePath);
-
-    // Cache for next time
-    syncCache.set(cacheKey, discovered);
-
-    return discovered;
+    // Sync discovery is not supported - the engine only has async methods
+    // This is a fundamental limitation of the current architecture
+    throw new Error(
+      `Synchronous discovery is not supported. ` +
+      `The discovery engine requires async operation for file scanning and AST parsing. ` +
+      `Use 'await discover()' instead of 'discoverSync()'.`
+    );
   } catch (error) {
     // Cache failures too (don't retry repeatedly)
     syncCache.set(cacheKey, null);

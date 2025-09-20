@@ -792,7 +792,9 @@ class DiscoveryEngine {
 const engineCache = new Map();
 
 function getDiscoveryEngine(rootPath = process.cwd(), config = {}) {
-  const key = rootPath;
+  // Include config in cache key to handle different configurations
+  const configHash = JSON.stringify(config, Object.keys(config).sort());
+  const key = `${rootPath}:${configHash}`;
 
   if (!engineCache.has(key)) {
     engineCache.set(key, new DiscoveryEngine(rootPath, config));
