@@ -104,7 +104,8 @@ function resolvePythonInterpreter() {
     addCandidate('py -3');
     addCandidate('py');
     addCandidate('python');
-  } else {
+  }
+  else {
     addCandidate('python3');
     addCandidate('python');
   }
