@@ -1,5 +1,6 @@
 # Adaptive Tests: AI-Ready Testing Infrastructure
 
+[![Multi-Language CI](https://github.com/anon57396/adaptive-tests/actions/workflows/multi-language-ci.yml/badge.svg)](https://github.com/anon57396/adaptive-tests/actions/workflows/multi-language-ci.yml)
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://anon57396.github.io/adaptive-tests/)
 [![npm](https://img.shields.io/badge/npm-in%20development-yellow)](packages/)
 [![PyPI](https://img.shields.io/badge/PyPI-in%20development-yellow)](languages/python/)
