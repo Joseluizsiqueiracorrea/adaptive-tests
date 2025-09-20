@@ -36,11 +36,11 @@ test('finds my service automatically', async () => {
 
 ### Framework Guides
 
-- [React Quick Start](REACT_QUICKSTART.md)
-- [Vue.js Quick Start](VUE_QUICKSTART.md)
-- [Express Quick Start](EXPRESS_QUICKSTART.md)
-- [Java Quick Start](JAVA_QUICKSTART.md)
-- [PHP Quick Start](PHP_QUICKSTART.md)
+- [React Quick Start](../languages/javascript/docs/REACT_QUICKSTART.md)
+- [Vue.js Quick Start](../languages/javascript/docs/VUE_QUICKSTART.md)
+- [Express Quick Start](../languages/javascript/docs/EXPRESS_QUICKSTART.md)
+- [Java Quick Start](../languages/java/README.md)
+- [PHP Quick Start](../languages/php/README.md)
 
 ### Reference
 
