@@ -6,7 +6,7 @@
   "publisher": "adaptive-tests",
   "icon": "media/icon.png",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Testing",
@@ -20,11 +20,6 @@
     "resilient"
   ],
   "activationEvents": [
-    "onCommand:adaptive-tests.showDiscoveryLens",
-    "onCommand:adaptive-tests.scaffoldFile",
-    "onCommand:adaptive-tests.scaffoldBatch",
-    "onCommand:adaptive-tests.openTest",
-    "onCommand:adaptive-tests.runDiscovery",
     "onLanguage:javascript",
     "onLanguage:typescript",
     "onLanguage:php",
@@ -117,6 +112,7 @@
         {
           "id": "adaptive-tests.discoveryView",
           "name": "Discovery Results",
+          "icon": "$(search)",
           "type": "tree"
         }
       ]
@@ -156,7 +152,7 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/vscode": "^1.74.0",
+    "@types/vscode": "^1.75.0",
     "@types/node": "^18.x",
     "@vscode/test-electron": "^2.3.0",
     "typescript": "^5.0.0",
