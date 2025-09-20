@@ -26,6 +26,8 @@
     "demo:broken:ts": "npm run demo:ts:broken",
     "restore:broken:ts": "npm run demo:ts:restore-broken",
     "validate": "node scripts/validate.js",
+    "doctor": "node scripts/doctor.js",
+    "playground": "node scripts/playground.js",
     "agent:preflight": "node scripts/check-agent-state.js",
     "release:prep": "node scripts/prepare-publish.js 1.0.0",
     "release:restore": "node scripts/restore-dev.js",

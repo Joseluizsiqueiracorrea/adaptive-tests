@@ -4,6 +4,7 @@
   "version": "0.3.0",
   "description": "JavaScript core implementation of adaptive-tests",
   "main": "src/index.js",
+  "types": "index.d.ts",
   "bin": {
     "adaptive-tests": "cli/init.js",
     "create-adaptive-app": "cli/create-adaptive-app"
