@@ -55,8 +55,7 @@
   "license": "MIT",
   "devDependencies": {
     "linkinator": "^4.0.0",
-    "markdownlint": "^0.33.0",
-    "markdownlint-cli": "^0.39.0"
+    "markdownlint": "^0.38.0",
+    "markdownlint-cli": "^0.45.0"
   }
 }
-

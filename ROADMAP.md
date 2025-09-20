@@ -168,6 +168,6 @@ We'll track progress using practical indicators:
 
 ---
 
-*This roadmap is a living document. We adjust based on community feedback and needs. Your input shapes our direction!*
+_This roadmap is a living document. We adjust based on community feedback and needs. Your input shapes our direction!_
 
 Last Updated: September 19, 2025
