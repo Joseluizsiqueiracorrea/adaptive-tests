@@ -22,6 +22,8 @@
   "activationEvents": [
     "onCommand:adaptive-tests.showDiscoveryLens",
     "onCommand:adaptive-tests.scaffoldFile",
+    "onCommand:adaptive-tests.scaffoldBatch",
+    "onCommand:adaptive-tests.openTest",
     "onCommand:adaptive-tests.runDiscovery",
     "onLanguage:javascript",
     "onLanguage:typescript",
