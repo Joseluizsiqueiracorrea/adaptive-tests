@@ -32,8 +32,7 @@ const args = [
   '--disable', 'MD037',
   '--disable', 'MD040',
   '--disable', 'MD046',
-  '--disable', 'MD047',
-  '--disable', 'MD051'
+  '--disable', 'MD047'
 ];
 
 const result = spawnSync(cli, args, { stdio: 'inherit' });

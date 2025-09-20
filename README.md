@@ -49,11 +49,11 @@ Each language implementation is self-contained with examples, documentation, and
 
 - [🚀 Choose Your Language](#-choose-your-language)
 - [⚡ Quick Start Guide](#-quick-start-guide)
-- [🤖 Why AI-Powered Teams Choose Adaptive Tests](#-why-ai-powered-teams-choose-adaptive-tests)
-- [🔧 Developer Tools](#-developer-tools)
-- [📚 Documentation & Resources](#-documentation--resources)
-- [🚀 CI/CD Integration](#-cicd-integration)
-- [🤝 Contributing](#-contributing)
+- [🤖 Why AI-Powered Teams Choose Adaptive Tests](#why-teams-choose-adaptive-tests)
+- [🔧 Developer Tools](#for-developers)
+- [📚 Documentation & Resources](#documentation--examples)
+- [🚀 CI/CD Integration](#ci-cd-integration)
+- [🤝 Contributing](#contributing--support)
 
 ---
 
