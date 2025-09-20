@@ -22,12 +22,20 @@ const pickBestExport = (exports, fallbackName) => {
   const priority = (entry) => {
     const info = entry.info || {};
     let score = 0;
-    if (info.kind === 'class' || info.kind === 'struct' || info.kind === 'module') score += 5;
-    if (info.kind === 'function') score += 2;
+    // Kind preference
+    if (info.kind === 'class' || info.kind === 'struct') score += 8;
+    if (info.kind === 'module') score += 4;
+    if (info.kind === 'function') score += 3;
+    // Default export slight boost
     if (entry.access && entry.access.type === 'default') score += 1;
-    if (entry.exportedName && entry.exportedName === fallbackName) score += 3;
-    if (entry.exportedName && fallbackName && entry.exportedName.toLowerCase() === fallbackName.toLowerCase()) score += 2;
-    if (info.methods && info.methods.length > 0) score += Math.min(info.methods.length, 3);
+    // Name proximity to filename
+    if (entry.exportedName && entry.exportedName === fallbackName) score += 4;
+    if (entry.exportedName && fallbackName && entry.exportedName.toLowerCase() === fallbackName.toLowerCase()) score += 3;
+    // Domain signals
+    const name = (entry.exportedName || info.name || '').toString();
+    if (/Service$|Controller$|Provider$|Repository$|Client$|Manager$|Store$|Gateway$|Adapter$/i.test(name)) score += 4;
+    // Method richness
+    if (info.methods && info.methods.length > 0) score += Math.min(info.methods.length, 4);
     return score;
   };
   return [...exports].sort((a, b) => priority(b) - priority(a))[0];
@@ -43,13 +51,9 @@ const buildSignature = (exportEntry) => {
     signature.exports = exportEntry.access.name;
   }
   const methods = toArray(info.methods).filter(Boolean);
-  if (methods.length > 0) {
-    signature.methods = methods;
-  }
+  if (methods.length > 0) signature.methods = methods;
   const properties = toArray(info.properties).filter(Boolean);
-  if (!signature.methods && properties.length > 0) {
-    signature.properties = properties;
-  }
+  if (properties.length > 0) signature.properties = properties;
   if (info.extends) signature.extends = info.extends;
   return signature;
 };
@@ -79,19 +83,22 @@ const formatSignatureLines = (signature, indent = '    ') => {
 
 const inferAssertions = (method) => {
   const assertions = [];
-  if (method.match(/^(get|fetch|load)/i)) {
+  if (/^(get|fetch|load|find|query)/i.test(method)) {
     assertions.push('expect(result).toBeDefined();');
-    assertions.push("// expect(result).toHaveProperty('id');");
-  } else if (method.match(/^(is|has|can)/i)) {
+    assertions.push("// If this returns a collection: expect(Array.isArray(result)).toBe(true);");
+  } else if (/^(list|all)/i.test(method)) {
+    assertions.push('expect(Array.isArray(result)).toBe(true);');
+    assertions.push('// expect(result.length).toBeGreaterThan(0);');
+  } else if (/^(is|has|can|should)/i.test(method)) {
     assertions.push('expect(typeof result).toBe(\'boolean\');');
     assertions.push('// expect(result).toBe(true);');
-  } else if (method.match(/create|add|insert/i)) {
+  } else if (/(create|add|insert|save)/i.test(method)) {
     assertions.push('expect(result).toBeDefined();');
     assertions.push("expect(result).toHaveProperty('id');");
-  } else if (method.match(/delete|remove/i)) {
+  } else if (/(delete|remove)/i.test(method)) {
     assertions.push('expect(result).toBeDefined();');
     assertions.push('// expect(result).toBe(true);');
-  } else if (method.match(/count|size|length/i)) {
+  } else if (/(count|size|length|total)/i.test(method)) {
     assertions.push('expect(typeof result).toBe(\'number\');');
   } else {
     assertions.push('expect(result).toBeDefined();');
@@ -111,14 +118,15 @@ const generateMethodBlocks = (signature, methods, options) => {
 
   const blocks = methods.map((method) => {
     const assertions = inferAssertions(method);
+    const asyncCall = options.asyncHint && /(get|fetch|load|find|list|query|create|add|insert|save|update|patch|delete|remove|login|authenticate|signin)/i.test(method);
     const invokeTarget = signature.type === 'class'
-      ? `const instance = createInstance();\n      const result = ${options.asyncHint && method.match(/get|fetch|load|create|update|delete/i) ? 'await ' : ''}instance.${method}();`
-      : `const result = ${options.asyncHint && method.match(/get|fetch|load|create|update|delete/i) ? 'await ' : ''}${signature.name}.${method}();`;
+      ? `const instance = createInstance();\n      const result = ${asyncCall ? 'await ' : ''}instance.${method}();`
+      : `const result = ${asyncCall ? 'await ' : ''}${signature.name}.${method}();`;
     const awaitNeeded = /await /.test(invokeTarget);
     return `  describe('${method}', () => {
     it('should handle ${method}', ${awaitNeeded ? 'async ' : ''}() => {
       // Arrange
-      const createInstance = () => new ${signature.name || 'Target'}(/* TODO: dependencies */);
+      const createInstance = () => new ${signature.name || 'Target'}(/* TODO: deps e.g. { config, repo, client, options } */);
       // Act
       ${invokeTarget}
       // Assert
