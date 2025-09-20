@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Adaptive Tests Documentation | Adaptive Tests</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Adaptive Tests Documentation" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Tests that find your code, not your folders" />
+<meta property="og:description" content="Tests that find your code, not your folders" />
+<meta property="og:site_name" content="Adaptive Tests" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Adaptive Tests Documentation" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","description":"Tests that find your code, not your folders","headline":"Adaptive Tests Documentation","name":"Adaptive Tests","url":"/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <a id="skip-to-content" href="#content">Skip to the content.</a>
+
+    <header class="page-header" role="banner">
+      <h1 class="project-name">Adaptive Tests Documentation</h1>
+      <h2 class="project-tagline">Tests that find your code, not your folders</h2>
+      
+      
+        <a href="" class="btn">Download .zip</a>
+        <a href="" class="btn">Download .tar.gz</a>
+      
+    </header>
+
+    <main id="content" class="main-content" role="main">
+      <blockquote>
+  <p>Tests that find your code, not your folders.</p>
+</blockquote>
+
+<h2 id="-quick-start">🚀 Quick Start</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> adaptive-tests
+</code></pre></div></div>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span> <span class="nx">discover</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">adaptive-tests</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">finds my service automatically</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">UserService</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">discover</span><span class="p">({</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">UserService</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">class</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">methods</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">create</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">update</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">delete</span><span class="dl">'</span><span class="p">]</span>
+  <span class="p">});</span>
+
+  <span class="kd">const</span> <span class="nx">service</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">UserService</span><span class="p">();</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Ada</span><span class="dl">'</span> <span class="p">})).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h2 id="-documentation">📖 Documentation</h2>
+
+<h3 id="getting-started">Getting Started</h3>
+
+<ul>
+  <li><a href="HOW_IT_WORKS.md">How It Works</a></li>
+  <li><a href="MIGRATION_GUIDE.md">Migration Guide</a></li>
+  <li><a href="BEST_PRACTICES.md">Best Practices</a></li>
+</ul>
+
+<h3 id="framework-guides">Framework Guides</h3>
+
+<ul>
+  <li><a href="../languages/javascript/docs/REACT_QUICKSTART.md">React Quick Start</a></li>
+  <li><a href="../languages/javascript/docs/VUE_QUICKSTART.md">Vue.js Quick Start</a></li>
+  <li><a href="../languages/javascript/docs/EXPRESS_QUICKSTART.md">Express Quick Start</a></li>
+  <li><a href="../languages/java/README.md">Java Quick Start</a></li>
+  <li><a href="../languages/php/README.md">PHP Quick Start</a></li>
+</ul>
+
+<h3 id="reference">Reference</h3>
+
+<ul>
+  <li><a href="API_REFERENCE.md">API Reference</a></li>
+  <li><a href="CI_STRATEGY.md">CI/CD Strategy</a></li>
+  <li><a href="TROUBLESHOOTING.md">Troubleshooting</a></li>
+  <li><a href="COMMON_ISSUES.md">Common Issues</a></li>
+</ul>
+
+<h3 id="github-integration">GitHub Integration</h3>
+
+<ul>
+  <li><a href="GITHUB_ACTION.md">GitHub Action</a></li>
+  <li><a href="AUTOMATED_PUBLISHING.md">Automated Publishing</a></li>
+</ul>
+
+<h2 id="-why-adaptive-tests">🎯 Why Adaptive Tests?</h2>
+
+<h3 id="the-problem">The Problem</h3>
+
+<p>Traditional tests break when you refactor:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// This breaks when you move Calculator.js</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Calculator</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../src/utils/Calculator</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="the-solution">The Solution</h3>
+
+<p>Adaptive tests find your code automatically:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// This works no matter where Calculator lives</span>
+<span class="kd">const</span> <span class="nx">Calculator</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">discover</span><span class="p">({</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Calculator</span><span class="dl">'</span> <span class="p">});</span>
+</code></pre></div></div>
+
+<h2 id="-features">✨ Features</h2>
+
+<ul>
+  <li><strong>🔍 Smart Discovery</strong> - Finds classes, functions, and modules by structure</li>
+  <li><strong>🚀 Zero Configuration</strong> - Works out of the box with Jest</li>
+  <li><strong>🌍 Multi-language</strong> - Core JS/TS; others beta/experimental</li>
+  <li><strong>⚡ Fast</strong> - AST-based parsing with intelligent caching</li>
+  <li><strong>🛠️ VS Code Extension</strong> - Visual discovery tools and scaffolding</li>
+  <li><strong>🔄 CI/CD Ready</strong> - GitHub Actions integration</li>
+</ul>
+
+<h2 id="-community">💬 Community</h2>
+
+<ul>
+  <li><a href="https://github.com/anon57396/adaptive-tests/discussions">GitHub Discussions</a> - Ask questions, share ideas</li>
+  <li><a href="https://github.com/anon57396/adaptive-tests/issues">Issue Tracker</a> - Report bugs, request features</li>
+  <li><a href="https://github.com/anon57396/adaptive-tests/tree/main/languages/javascript/examples">Examples</a> - See it in action</li>
+</ul>
+
+<h2 id="-language-support">📊 Language Support</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Language</th>
+      <th>AST Parser</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>JavaScript</td>
+      <td>Babel</td>
+      <td>✅ Stable</td>
+    </tr>
+    <tr>
+      <td>TypeScript</td>
+      <td>TypeScript Compiler</td>
+      <td>✅ Stable</td>
+    </tr>
+    <tr>
+      <td>Python</td>
+      <td>Native ast module</td>
+      <td>🟡 Beta</td>
+    </tr>
+    <tr>
+      <td>Java</td>
+      <td>JavaParser</td>
+      <td>🟡 Beta</td>
+    </tr>
+    <tr>
+      <td>PHP</td>
+      <td>token_get_all / nikic/php-parser</td>
+      <td>🟡 Beta</td>
+    </tr>
+    <tr>
+      <td>Ruby</td>
+      <td>Ripper</td>
+      <td>🧪 Experimental</td>
+    </tr>
+    <tr>
+      <td>Go</td>
+      <td>go/parser (via tree‑sitter bindings)</td>
+      <td>🧪 Experimental</td>
+    </tr>
+    <tr>
+      <td>Rust</td>
+      <td>Lezer (rust)</td>
+      <td>🧪 Experimental</td>
+    </tr>
+    <tr>
+      <td>Wolfram</td>
+      <td>CodeParse</td>
+      <td>🧪 Experimental</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Status legend: Stable = production‑ready; Beta = broadly usable with caveats; Experimental = early support, subject to change.</p>
+
+<h2 id="-contributing">🤝 Contributing</h2>
+
+<p>We welcome contributions! See our <a href="https://github.com/anon57396/adaptive-tests/blob/main/CONTRIBUTING.md">Contributing Guide</a>.</p>
+
+<h2 id="-license">📄 License</h2>
+
+<p>MIT - See <a href="https://github.com/anon57396/adaptive-tests/blob/main/LICENSE">LICENSE</a> for details.</p>
+
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+  </body>
+</html>
