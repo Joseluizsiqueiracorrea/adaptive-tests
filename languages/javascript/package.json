@@ -5,7 +5,8 @@
   "description": "JavaScript core implementation of adaptive-tests",
   "main": "src/index.js",
   "bin": {
-    "adaptive-tests": "cli/init.js"
+    "adaptive-tests": "cli/init.js",
+    "create-adaptive-app": "cli/create-adaptive-app"
   },
   "scripts": {
     "test": "jest --runInBand",

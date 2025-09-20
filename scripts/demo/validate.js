@@ -173,7 +173,7 @@ function runPythonScenario() {
 
     runCommand(`${quotedPythonExec} -m pip install --upgrade pip`, false, { cwd: PYTHON_EXAMPLE_DIR });
     try {
-      runCommand(`${quotedPythonExec} -m pip install -r requirements.txt`, false, { cwd: PYTHON_EXAMPLE_DIR });
+      runCommand(`${quotedPythonExec} -m pip install --no-warn-script-location -r requirements.txt`, false, { cwd: PYTHON_EXAMPLE_DIR });
     } catch (error) {
       console.warn('  ⚠️  Skipping Python scenario: unable to install dependencies (likely offline).');
       return { status: 'skipped', reason: 'Python dependencies unavailable (offline?)' };

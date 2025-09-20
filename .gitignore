@@ -93,3 +93,8 @@ temp/
 .adaptive-backup-*
 .adaptive-undo.js
 .adaptive-tests/
+
+# Personal IDE Settings
+.claude/
+adaptive-tests.code-workspace
+*.code-workspace

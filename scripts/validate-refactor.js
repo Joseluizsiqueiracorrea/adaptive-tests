@@ -180,7 +180,7 @@ pythonChecks.forEach(([path, desc]) => {
 // Test Python functionality
 if (fs.existsSync('languages/python/pyproject.toml')) {
   const pythonInstall = runCommand(
-    'python3 -m pip install --quiet --disable-pip-version-check -e ".[test]"',
+    'python3 -m pip install --quiet --disable-pip-version-check --no-warn-script-location -e ".[test]"',
     'languages/python',
     'Installing Python test dependencies'
   );

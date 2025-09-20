@@ -28,7 +28,7 @@ updates:
 
   # Python dependencies
   - package-ecosystem: "pip"
-    directory: "/packages/adaptive-tests-py"
+    directory: "/languages/python"
     schedule:
       interval: "weekly"
     labels:
@@ -50,7 +50,7 @@ updates:
 
   # VS Code Extension
   - package-ecosystem: "npm"
-    directory: "/extensions/vscode-adaptive-tests"
+    directory: "/tools/vscode-adaptive-tests"
     schedule:
       interval: "weekly"
     labels:

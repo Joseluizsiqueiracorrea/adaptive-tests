@@ -10,7 +10,7 @@
     "test:adaptive": "npm --prefix languages/javascript run test -- tests/adaptive",
     "test:typescript": "npm --prefix languages/typescript run test",
     "test:ts": "npm run test:typescript",
-    "test:python": "python3 -m pip install --quiet --disable-pip-version-check -e \"languages/python[test]\" && cd languages/python && python3 -m pytest -v",
+    "test:python": "python3 -m pip install --quiet --disable-pip-version-check --no-warn-script-location -e \"languages/python[test]\" && cd languages/python && python3 -m pytest -v",
     "test:java": "mvn -f languages/java/pom.xml test",
     "demo": "node scripts/demo/validate.js",
     "demo:full": "node scripts/demo/auto-demo.js",

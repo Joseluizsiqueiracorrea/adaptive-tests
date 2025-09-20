@@ -1,0 +1,155 @@
+#!/usr/bin/env node
+
+/**
+ * Create Adaptive App
+ * Scaffolds a new project with adaptive testing pre-configured
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+const templates = {
+  'express-js': 'Express.js API with JavaScript',
+  'nextjs': 'Next.js with React',
+  'cra': 'Create React App',
+  'vite-react': 'Vite + React',
+  'vite-react-ts': 'Vite + React + TypeScript',
+  'flask-python': 'Flask API with Python',
+  'spring-boot-java': 'Spring Boot with Java',
+  'node-ts': 'Node.js with TypeScript'
+};
+
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  green: '\x1b[32m',
+  cyan: '\x1b[36m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m'
+};
+
+function log(message, color = 'reset') {
+  console.log(`${colors[color]}${message}${colors.reset}`);
+}
+
+function copyRecursiveSync(src, dest) {
+  const exists = fs.existsSync(src);
+  const stats = exists && fs.statSync(src);
+  const isDirectory = exists && stats.isDirectory();
+
+  if (isDirectory) {
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
+    fs.readdirSync(src).forEach(childItemName => {
+      copyRecursiveSync(
+        path.join(src, childItemName),
+        path.join(dest, childItemName)
+      );
+    });
+  } else {
+    fs.copyFileSync(src, dest);
+  }
+}
+
+function question(prompt) {
+  return new Promise(resolve => {
+    rl.question(prompt, resolve);
+  });
+}
+
+const ALLOWED_COMMANDS = new Set(['npm']);
+
+function runCommand(command, args = [], options = {}) {
+  if (!ALLOWED_COMMANDS.has(command)) {
+    throw new Error(`Command ${command} is not permitted.`);
+  }
+
+  const result = spawnSync(command, args, { shell: false, stdio: 'inherit', ...options });
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    throw new Error(`${command} ${args.join(' ')} exited with code ${result.status}`);
+  }
+}
+
+async function main() {
+  log('🚀 Create Adaptive App', 'bright');
+  log('Set up a new project with adaptive testing\n', 'cyan');
+
+  // Get project name
+  const projectName = process.argv[2] || await question('Project name: ');
+
+  if (!projectName) {
+    log('❌ Project name is required', 'red');
+    process.exit(1);
+  }
+
+  // Check if directory exists
+  const projectPath = path.join(process.cwd(), projectName);
+  if (fs.existsSync(projectPath)) {
+    log(`❌ Directory ${projectName} already exists`, 'red');
+    process.exit(1);
+  }
+
+  // Select template
+  log('\nAvailable templates:', 'cyan');
+  Object.entries(templates).forEach(([key, desc], index) => {
+    log(`  ${index + 1}. ${key} - ${desc}`);
+  });
+
+  const templateChoice = await question('\nSelect template (number or name): ');
+
+  let selectedTemplate;
+  const templateKeys = Object.keys(templates);
+
+  if (/^\d+$/.test(templateChoice)) {
+    const index = parseInt(templateChoice) - 1;
+    selectedTemplate = templateKeys[index];
+  } else {
+    selectedTemplate = templateChoice;
+  }
+
+  if (!templates[selectedTemplate]) {
+    log('❌ Invalid template selection', 'red');
+    process.exit(1);
+  }
+
+  log(`\n📦 Creating ${projectName} with ${templates[selectedTemplate]}...`, 'green');
+
+  // Create project directory
+  fs.mkdirSync(projectPath, { recursive: true });
+
+  // Copy template files
+  const templatePath = path.join(__dirname, '..', 'languages', 'javascript', 'templates', selectedTemplate);
+
+  if (!fs.existsSync(templatePath)) {
+    // Create basic template structure if doesn't exist
+    createBasicTemplate(projectPath, selectedTemplate);
+  } else {
+    copyRecursiveSync(templatePath, projectPath);
+  }
+
+  // Update package.json with project name
+  const packageJsonPath = path.join(projectPath, 'package.json');
+  if (fs.existsSync(packageJsonPath)) {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    packageJson.name = projectName;
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  }
+
+  log('\n📦 Installing dependencies...', 'cyan');
+
+  try {
+    runCommand('npm', ['install'], { cwd: projectPath });
+  } catch (error) {
+    log(`⚠️  Failed to install dependencies automatically (${error.message})`, 'yellow');
+    log('   Please run 

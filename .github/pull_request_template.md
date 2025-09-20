@@ -39,7 +39,7 @@ Please check all that apply:
 #### VS Code Extension (if applicable)
 - [ ] I have tested the extension in VS Code
 - [ ] I have updated the extension's README.md
-- [ ] I have incremented the version in `extensions/vscode-adaptive-tests/package.json`
+- [ ] I have incremented the version in `tools/vscode-adaptive-tests/package.json`
 - [ ] I have tested both light and dark themes
 
 #### Dependencies
