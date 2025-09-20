@@ -2,6 +2,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const readline = require('readline');
 const { DiscoveryEngine } = require('../src/discovery-engine');
 const { processSingleFile, runBatch } = require('../src/scaffolding');
 
@@ -30,7 +31,8 @@ const parseArgs = (argv) => {
     json: false,
     applyAssertions: false,
     outputDir: null,
-    targetArg: null
+    targetArg: null,
+    interactive: false
   };
 
   const args = [...argv];
@@ -52,6 +54,8 @@ const parseArgs = (argv) => {
       options.applyAssertions = true;
     } else if (arg === '--json') {
       options.json = true;
+    } else if (arg === '--interactive' || arg === '-i') {
+      options.interactive = true;
     } else if (arg.startsWith('--export=')) {
       options.exportName = arg.split('=')[1];
     } else if (arg === '--export') {
@@ -79,6 +83,68 @@ const resolveSourceByName = async (engine, name) => {
   candidates.sort((a, b) => b.score - a.score || a.path.localeCompare(b.path));
   return candidates[0];
 };
+
+async function interactiveSelectExport(filePath, exports, options) {
+  if (!exports || exports.length === 0) {
+    return null;
+  }
+
+  if (exports.length === 1) {
+    return exports[0];
+  }
+
+  console.log(`\n${COLORS.cyan}Found ${exports.length} exports in ${path.basename(filePath)}:${COLORS.reset}\n`);
+
+  exports.forEach((exp, index) => {
+    const info = exp.info || {};
+    const name = exp.exportedName || info.name || 'unnamed';
+    const type = info.kind || 'unknown';
+    const methods = info.methods?.length || 0;
+    const staticMethods = info.staticMethods?.length || 0;
+
+    console.log(`${COLORS.bright}${index + 1}.${COLORS.reset} ${COLORS.green}${name}${COLORS.reset} (${type})`);
+
+    if (methods > 0) {
+      console.log(`   Methods: ${info.methods.slice(0, 3).join(', ')}${methods > 3 ? '...' : ''}`);
+    }
+    if (staticMethods > 0) {
+      console.log(`   Static: ${info.staticMethods.slice(0, 3).join(', ')}${staticMethods > 3 ? '...' : ''}`);
+    }
+    if (info.extends) {
+      console.log(`   Extends: ${info.extends}`);
+    }
+    console.log();
+  });
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    const ask = () => {
+      rl.question(`${COLORS.cyan}Select an export (1-${exports.length}) or 'a' for all: ${COLORS.reset}`, (answer) => {
+        const trimmed = answer.trim().toLowerCase();
+
+        if (trimmed === 'a') {
+          rl.close();
+          resolve('all');
+          return;
+        }
+
+        const num = parseInt(trimmed);
+        if (num >= 1 && num <= exports.length) {
+          rl.close();
+          resolve(exports[num - 1]);
+        } else {
+          console.log(`${COLORS.red}Please enter a number between 1 and ${exports.length}, or 'a' for all${COLORS.reset}`);
+          ask();
+        }
+      });
+    };
+    ask();
+  });
+}
 
 async function runScaffold(argv = []) {
   let options;
@@ -125,6 +191,41 @@ async function runScaffold(argv = []) {
         filePath = resolved.path;
         log(`🔍 Found component at ${path.relative(root, filePath)}`, 'dim', options);
       }
+      // Handle interactive mode
+      if (options.interactive) {
+        const { analyzeSourceFile } = require('../src/scaffolding');
+        const exports = analyzeSourceFile(discoveryEngine, filePath);
+
+        if (!exports || exports.length === 0) {
+          throw new Error(`No exports found in ${path.basename(filePath)}`);
+        }
+
+        if (exports.length > 1) {
+          const selected = await interactiveSelectExport(filePath, exports, options);
+
+          if (selected === 'all') {
+            options.allExports = true;
+          } else {
+            options.exportName = selected.exportedName || selected.info?.name;
+          }
+
+          // Ask about assertions
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const applyAssertions = await new Promise((resolve) => {
+            rl.question(`${COLORS.cyan}Generate method-level assertions? (y/n): ${COLORS.reset}`, (answer) => {
+              rl.close();
+              resolve(answer.trim().toLowerCase() === 'y');
+            });
+          });
+
+          options.applyAssertions = applyAssertions;
+        }
+      }
+
       await processSingleFile(discoveryEngine, filePath, options, results);
     }
   } catch (error) {

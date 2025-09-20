@@ -60,6 +60,7 @@ function normalizeExportInfo(info) {
     kind: info.kind || 'unknown',
     name: info.name || null,
     methods: toArray(info.methods),
+    staticMethods: toArray(info.staticMethods),
     properties: toArray(info.properties),
     extends: info.extends || null
   };
@@ -104,6 +105,7 @@ function resolveExpressionName(node) {
 function extractClassInfo(node, fallbackName) {
   const name = (node.id && node.id.name) || fallbackName || null;
   const methods = new Set();
+  const staticMethods = new Set();
   const properties = new Set();
   let extendsName = null;
   const line = node.loc ? node.loc.start.line : null;
@@ -115,10 +117,14 @@ function extractClassInfo(node, fallbackName) {
   const bodyElements = node.body && node.body.body ? node.body.body : [];
   for (const element of bodyElements) {
     if (element.type === 'ClassMethod') {
-      if (element.kind === 'method' && !element.static) {
+      if (element.kind === 'method') {
         const methodName = getMemberName(element.key);
         if (methodName) {
-          methods.add(methodName);
+          if (element.static) {
+            staticMethods.add(methodName);
+          } else {
+            methods.add(methodName);
+          }
         }
       }
       if (element.kind === 'constructor' && element.body && element.body.body) {
@@ -145,8 +151,9 @@ function extractClassInfo(node, fallbackName) {
   return {
     kind: 'class',
     name,
-    methods,
-    properties,
+    methods: toArray(methods),
+    staticMethods: toArray(staticMethods),
+    properties: toArray(properties),
     extends: extendsName,
     line
   };

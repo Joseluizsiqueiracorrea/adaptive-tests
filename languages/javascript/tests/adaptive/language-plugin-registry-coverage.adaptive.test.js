@@ -2,7 +2,8 @@ const { AdaptiveTest, adaptiveTest } = require('../../src/index');
 
 class RegistryCoverage extends AdaptiveTest {
   getTargetSignature() {
-    return { name: 'LanguagePluginRegistry', type: 'class', exports: 'LanguagePluginRegistry', methods: ['getStats','isPluginDisabled','registerPlugin'] };
+    // Only include instance methods in signature, not static methods like getInstance/resetInstance
+    return { name: 'LanguagePluginRegistry', type: 'class', exports: 'LanguagePluginRegistry', methods: ['initialize','registerPlugin','isPluginDisabled','getStats'] };
   }
   async runTests(LanguagePluginRegistry) {
     LanguagePluginRegistry.resetInstance();

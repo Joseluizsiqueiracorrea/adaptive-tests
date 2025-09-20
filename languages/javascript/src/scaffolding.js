@@ -390,4 +390,4 @@ async function runBatch(engine, entryPath, options, results) {
     }
 }
 
-module.exports = { processSingleFile, runBatch, gatherSourceFiles };
+module.exports = { processSingleFile, runBatch, gatherSourceFiles, analyzeSourceFile };

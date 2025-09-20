@@ -7,6 +7,7 @@
   "types": "index.d.ts",
   "bin": {
     "adaptive-tests": "cli/init.js",
+    "adaptive-tests-doctor": "cli/doctor.js",
     "create-adaptive-app": "cli/create-adaptive-app"
   },
   "scripts": {
