@@ -3,8 +3,19 @@ import { getTypeScriptDiscoveryEngine } from '@adaptive-tests/typescript';
 
 describe('TypeScript Calculator - Adaptive Tests', () => {
   const engine = getTypeScriptDiscoveryEngine(path.resolve(__dirname, '../..'));
-  let Calculator: typeof import('../../src/Calculator').Calculator;
-  let calc: import('../../src/Calculator').Calculator;
+  type CalculatorInstance = {
+    add(a: number, b: number): number;
+    subtract(a: number, b: number): number;
+    multiply(a: number, b: number): number;
+    divide(a: number, b: number): number;
+    power(a: number, b: number): number;
+    sqrt(value: number): number;
+    getHistory(): string[];
+    clearHistory(): void;
+  };
+
+  let Calculator: new () => CalculatorInstance;
+  let calc: CalculatorInstance;
 
   beforeAll(async () => {
     Calculator = await engine.discoverTarget({

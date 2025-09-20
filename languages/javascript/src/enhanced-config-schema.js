@@ -381,7 +381,7 @@ const ENHANCED_CONFIG_SCHEMA = {
       enabled: true,
       autoDiscovery: true,
       disabled: [], // List of disabled language plugins
-      enabled: [], // If specified, only these plugins are enabled
+      allowList: [], // If specified, only these plugins are enabled
 
       // Plugin-specific configuration
       configuration: {

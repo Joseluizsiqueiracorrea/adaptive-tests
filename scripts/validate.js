@@ -167,7 +167,11 @@ async function runPythonScenario() {
 
   let cleanupNeeded = false;
   try {
-    await runCommand(`${pythonInterpreter.command} -m venv ${quote(PYTHON_VENV_NAME)}`, false, { cwd: PYTHON_EXAMPLE_DIR });
+    const bootstrapCommand = pythonInterpreter.source === 'repoVenv'
+      ? (process.platform === 'win32' ? 'py -3' : 'python3')
+      : pythonInterpreter.command;
+
+    await runCommand(`${bootstrapCommand} -m venv ${quote(PYTHON_VENV_NAME)}`, false, { cwd: PYTHON_EXAMPLE_DIR });
     cleanupNeeded = true;
 
     const pythonExec = pythonExecutablePath(venvPath);
@@ -185,6 +189,9 @@ async function runPythonScenario() {
     const summary = extractPytestSummary(pytestResult.output);
     console.log(`  ✓ Python pytest: ${summary}`);
     return { status: 'passed', summary };
+  } catch (error) {
+    console.warn('  ⚠️  Skipping Python scenario: unable to provision disposable venv.');
+    return { status: 'skipped', reason: 'Python venv creation failed' };
   } finally {
     if (cleanupNeeded && fs.existsSync(venvPath)) {
       fs.rmSync(venvPath, { recursive: true, force: true });

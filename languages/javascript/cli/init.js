@@ -70,7 +70,7 @@ function detectPackageManager() {
 
 function runPackageCommand(commandString, packageName) {
   const sanitized = packageName.trim();
-  if (!sanitized || /[^@\w\-\/]/.test(sanitized)) {
+  if (!sanitized || /[^@\w\-/]/.test(sanitized)) {
     throw new Error(`Invalid package name: ${packageName}`);
   }
 

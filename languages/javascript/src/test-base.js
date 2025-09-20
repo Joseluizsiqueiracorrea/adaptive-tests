@@ -41,7 +41,7 @@ class AdaptiveTest {
    * @param {any} target - The discovered target module or export.
    * @returns {Promise<void> | void}
    */
-  async runTests(target) {
+  async runTests() {
     throw new Error('runTests() must be implemented by test class');
   }
 
@@ -80,7 +80,7 @@ class AdaptiveTest {
     // Handle different export styles
     if (module[name]) return module[name];
     if (module.default) return module.default;
-    if (typeof module === 'function' || typeof module === 'class') return module;
+    if (typeof module === 'function') return module;
 
     // Try to find by checking all exports
     const exports = Object.keys(module);

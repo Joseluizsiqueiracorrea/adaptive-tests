@@ -68,7 +68,7 @@ class AsyncOperationManager {
   /**
    * Wrap operation with timeout
    */
-  async withTimeout(operation, timeoutMs, context = {}) {
+  async withTimeout(operation, timeoutMs) {
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         reject(new Error(`Operation timed out after ${timeoutMs}ms`));
@@ -213,6 +213,7 @@ class AsyncOperationManager {
   throttle(fn, limitMs = 1000) {
     let lastExecuted = 0;
     let timeoutId = null;
+    // eslint-disable-next-line no-unused-vars
     let pendingPromise = null;
 
     return (...args) => {
@@ -320,6 +321,7 @@ class AsyncFileOperations {
    * Check if file exists (async)
    */
   async exists(filePath, options = {}) {
+    // eslint-disable-next-line no-unused-vars
     const context = { filePath, operation: 'exists' };
 
     try {

@@ -7,8 +7,9 @@
  */
 
 const { spawnSync } = require('child_process');
-const path = require('path');
+// const path = require('path'); // Removed unused import
 
+// eslint-disable-next-line no-control-regex
 const CONTROL_CHARS_REGEX = /[\u0000-\u001F\u007F]/;
 
 function ensureStringArray(args = []) {

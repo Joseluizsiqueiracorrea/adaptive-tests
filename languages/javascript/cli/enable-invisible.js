@@ -179,7 +179,7 @@ function findSetupFiles(candidates) {
  * Choose best installation strategy based on detection
  */
 function chooseInstallationStrategy(detection) {
-  const { framework, configFiles, setupFiles, packageConfig } = detection;
+  const { framework, configFiles, setupFiles } = detection;
 
   if (framework === 'Jest') {
     // Strategy 1: Patch existing jest.config.js
@@ -261,7 +261,7 @@ function chooseInstallationStrategy(detection) {
 /**
  * Apply a single change
  */
-async function applyChange(change, detection) {
+async function applyChange(change) {
   const filePath = path.join(process.cwd(), change.file);
 
   if (change.backup && fs.existsSync(filePath)) {

@@ -40,6 +40,7 @@ class ErrorHandler {
   logError(error, context = {}) {
     if (!this.isDebugMode) return;
 
+    // eslint-disable-next-line no-unused-vars
     const timestamp = new Date().toISOString();
     const prefix = `[${this.component}]`;
     const contextStr = Object.keys(context).length > 0 ?

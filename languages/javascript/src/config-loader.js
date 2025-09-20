@@ -211,7 +211,7 @@ class ConfigLoader {
 
     const cloned = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         cloned[key] = this.deepClone(obj[key]);
       }
     }
@@ -227,7 +227,7 @@ class ConfigLoader {
     const result = this.deepClone(target);
 
     for (const key in source) {
-      if (source.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
         if (source[key] === null || source[key] === undefined) {
           continue;
         }
@@ -404,7 +404,7 @@ class ConfigLoader {
 
     // Ensure language configurations are properly initialized
     if (config.discovery.languages) {
-      for (const [language, langConfig] of Object.entries(config.discovery.languages)) {
+      for (const [, langConfig] of Object.entries(config.discovery.languages)) {
         if (langConfig.enabled === undefined) {
           langConfig.enabled = true;
         }
@@ -415,7 +415,7 @@ class ConfigLoader {
     if (config.discovery.languages) {
       const languageExtensions = new Set(config.discovery.extensions);
 
-      for (const [language, langConfig] of Object.entries(config.discovery.languages)) {
+      for (const [, langConfig] of Object.entries(config.discovery.languages)) {
         if (langConfig.enabled && langConfig.extensions) {
           langConfig.extensions.forEach(ext => languageExtensions.add(ext));
         }

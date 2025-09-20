@@ -234,6 +234,7 @@ function walkAST(node, analysis, depth = 0) {
  * Generate adaptive test from analysis
  */
 function generateAdaptiveTest(analysis, originalPath) {
+  // eslint-disable-next-line no-unused-vars
   const isTypeScript = originalPath.endsWith('.ts') || originalPath.endsWith('.tsx');
   const importStyle = analysis.isESModule ? 'import' : 'require';
   
@@ -311,7 +312,7 @@ function generateAdaptiveTest(analysis, originalPath) {
 /**
  * Find test files in the project
  */
-function findTestFiles(directory, pattern) {
+function findTestFiles(directory) {
   const patterns = [
     `${directory}/**/*.test.js`,
     `${directory}/**/*.test.ts`,

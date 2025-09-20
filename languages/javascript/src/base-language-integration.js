@@ -6,7 +6,7 @@
  * language-specific methods while leveraging shared scoring algorithms.
  */
 
-const { ErrorHandler, ErrorCodes } = require('./error-handler');
+const { ErrorHandler } = require('./error-handler');
 const { LanguageIntegrationAsync } = require('./async-utils');
 
 class BaseLanguageIntegration {
@@ -169,7 +169,7 @@ class BaseLanguageIntegration {
    * Get candidate methods for scoring
    * Default implementation - can be overridden by language-specific integrations
    */
-  getCandidateMethods(candidate, metadata) {
+  getCandidateMethods(candidate) {
     const methods = new Set();
 
     // Add methods directly on candidate
@@ -214,7 +214,7 @@ class BaseLanguageIntegration {
    * Language-specific scoring extensions
    * Override in subclasses to add language-specific scoring logic
    */
-  scoreLanguageSpecific(candidate, signature, metadata) {
+  scoreLanguageSpecific(/* candidate, signature */) {
     return 0; // Default: no language-specific scoring
   }
 
@@ -236,7 +236,7 @@ class BaseLanguageIntegration {
    * Check if candidate type is compatible with signature type
    * Override in subclasses for language-specific type compatibility rules
    */
-  isCompatibleType(candidateType, signatureType) {
+  isCompatibleType(/* candidateType, signatureType */) {
     return false; // Default: no compatibility beyond exact match
   }
 
@@ -297,7 +297,7 @@ class BaseLanguageIntegration {
    * Extract candidates from metadata
    * Must be implemented by subclasses to return language-specific candidates
    */
-  extractCandidates(metadata) {
+  extractCandidates() {
     throw new Error(`extractCandidates() must be implemented by ${this.constructor.name}`);
   }
 
@@ -305,7 +305,7 @@ class BaseLanguageIntegration {
    * Parse a file and extract metadata
    * Must be implemented by subclasses
    */
-  async parseFile(filePath) {
+  async parseFile() {
     throw new Error(`parseFile() must be implemented by ${this.constructor.name}`);
   }
 
@@ -313,7 +313,7 @@ class BaseLanguageIntegration {
    * Generate test content for a target
    * Must be implemented by subclasses
    */
-  generateTestContent(target, options = {}) {
+  generateTestContent(/* target */) {
     throw new Error(`generateTestContent() must be implemented by ${this.constructor.name}`);
   }
 

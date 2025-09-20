@@ -328,7 +328,7 @@ class CandidateEvaluator {
     }
   }
 
-  resolveTargetFromModule(moduleExports, signature, candidate) {
+  resolveTargetFromModule(moduleExports, signature) {
     const results = [];
 
     if (moduleExports && moduleExports.default) {

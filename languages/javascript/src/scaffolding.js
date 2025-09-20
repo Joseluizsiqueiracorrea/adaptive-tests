@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { getDiscoveryEngine } = require('./discovery-engine');
+// const { getDiscoveryEngine } = require('./discovery-engine'); // Removed unused import
 const { LanguagePluginRegistry } = require('./language-plugin-registry');
 
 const ensureDirSync = (dirPath) => {
@@ -131,6 +131,7 @@ const generateMethodBlocks = (signature, methods, options) => {
   return blocks + '\n';
 };
 
+// eslint-disable-next-line no-unused-vars
 const slugify = (value) => {
   return (value || '')
     .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
