@@ -47,6 +47,7 @@ experience sane for humans and bots alike:
    untracked directories or risky deletes early.
 
 ### Safety Alert — 2025-09-20
+>
 > Codex AI accidentally deleted the untracked directory `src/adaptive/enhanced/`,
 > causing a loss of work for another contributor. Do not remove or rename
 > untracked files. When in doubt, stop and ask.

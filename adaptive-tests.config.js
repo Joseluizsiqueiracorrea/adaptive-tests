@@ -3,6 +3,7 @@
  *
  * This configuration showcases all available options.
  * Copy this file to your project root and customize as needed.
+ * For advanced language-specific overrides, see docs/advanced-patterns.md.
  */
 
 module.exports = {
