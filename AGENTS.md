@@ -106,7 +106,7 @@ Supporting directories:
 3. Update documentation and CHANGELOG when behaviour changes user-facing
    features.
 4. When editing discovery logic, add or update fixtures in
-   `tests/fixtures/` + adaptive suites under `tests/adaptive/` to prove the new
+   `fixtures/` + adaptive suites under `languages/javascript/tests/adaptive/` to prove the new
    behaviour.
 
 ## Support Channels
