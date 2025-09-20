@@ -318,8 +318,8 @@ class BaseLanguageIntegration {
   }
 
   /**
-   * Safe wrapper for file parsing operations (legacy - use standardized async methods)
-   * @deprecated Use evaluateCandidateAsync or parseFileAsync instead
+   * Safe wrapper for file parsing operations
+   * Use evaluateCandidateAsync or parseFileAsync for standardized async operations
    */
   async safeParseFile(filePath, parseOperation) {
     return await this.errorHandler.safeAsync(

@@ -7,8 +7,6 @@
  */
 
 const { performance } = require('perf_hooks');
-// const path = require('path'); // Unused import - keeping for future use
-// const { getDiscoveryEngine } = require('../languages/javascript/src'); // Unused import - keeping for future use
 
 async function measureDiscovery(name) {
   const { discover } = require('../languages/javascript/src');

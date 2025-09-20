@@ -1,13 +1,14 @@
 # Adaptive Tests: AI-Ready Testing Infrastructure
 
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://anon57396.github.io/adaptive-tests/)
-[![Coverage](https://img.shields.io/codecov/c/github/anon57396/adaptive-tests?label=coverage)](https://codecov.io/gh/anon57396/adaptive-tests)
-[![npm version](https://img.shields.io/npm/v/@adaptive-tests/javascript.svg)](https://www.npmjs.com/package/@adaptive-tests/javascript)
+[![npm version](https://img.shields.io/npm/v/adaptive-tests.svg)](https://www.npmjs.com/package/adaptive-tests)
 [![PyPI version](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](vscode-adaptive-tests-extension_experimental/README.md)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Available-green?logo=github)](https://github.com/marketplace/actions/adaptive-tests)
 
 Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.github.io/adaptive-tests/)
+
+> _Language-specific coverage reports live in each package (JavaScript, TypeScript, Python, Java). A consolidated badge will ship once multi-runtime reporting is wired up._
 
 > **Tests that don't break when you move files**
 
@@ -32,15 +33,15 @@ Each language implementation is self-contained with examples, documentation, and
 
 ### **Experimental**
 
-- **[🐘 PHP](./languages/php/)** - PHPUnit integration, Composer packages *(in development)*
-- **[🐹 Go](./languages/go/)** - Module-aware discovery *(in development)*
-- **[🦀 Rust](./languages/rust/)** - Cargo integration *(in development)*
-- **[💎 Ruby](./languages/ruby/)** - RSpec/Rails support *(in development)*
-- **[🔬 Wolfram](./languages/wolfram/)** - Symbolic computation patterns *(experimental)*
+- **[🐘 PHP](./languages/php/)** - PHPUnit integration, Composer packages _(in development)_
+- **[🐹 Go](./languages/go/)** - Module-aware discovery _(in development)_
+- **[🦀 Rust](./languages/rust/)** - Cargo integration _(in development)_
+- **[💎 Ruby](./languages/ruby/)** - RSpec/Rails support _(in development)_
+- **[🔬 Wolfram](./languages/wolfram/)** - Symbolic computation patterns _(experimental)_
 
 ### **Developer Tools**
 
-- **[🔧 VS Code Extension](./vscode-adaptive-tests-extension_experimental/)** - IDE integration *(development alpha)*
+- **[🔧 VS Code Extension](./vscode-adaptive-tests-extension_experimental/)** - IDE integration _(development alpha)_
 
 ---
 

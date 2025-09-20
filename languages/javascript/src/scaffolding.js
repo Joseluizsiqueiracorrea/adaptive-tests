@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-// const { getDiscoveryEngine } = require('./discovery-engine'); // Removed unused import
 const { LanguagePluginRegistry } = require('./language-plugin-registry');
 
 const ensureDirSync = (dirPath) => {
