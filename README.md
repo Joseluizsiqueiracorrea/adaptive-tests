@@ -520,6 +520,12 @@ You don't need complex test selection for adaptive tests because:
 - [Vue.js Quick Start](languages/javascript/docs/VUE_QUICKSTART.md)
 - [Express Quick Start](languages/javascript/docs/EXPRESS_QUICKSTART.md)
 
+### Debugging Discovery
+
+- Why a target was selected (or not):
+  - `npx adaptive-tests why '{"name":"Calculator","type":"class"}'`
+  - Add `--json` to see machine-readable scoring details.
+
 ### Technical Documentation
 
 - [How It Works](docs/HOW_IT_WORKS.md)

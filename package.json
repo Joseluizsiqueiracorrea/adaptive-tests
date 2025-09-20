@@ -27,6 +27,8 @@
     "restore:broken:ts": "npm run demo:ts:restore-broken",
     "validate": "node scripts/validate.js",
     "agent:preflight": "node scripts/check-agent-state.js",
+    "release:prep": "node scripts/prepare-publish.js 1.0.0",
+    "release:restore": "node scripts/restore-dev.js",
     "demo:js:restore": "node languages/javascript/scripts/restore.js",
     "demo:js:refactor": "node languages/javascript/scripts/refactor.js",
     "demo:js:broken": "node languages/javascript/scripts/demo-broken.js",
