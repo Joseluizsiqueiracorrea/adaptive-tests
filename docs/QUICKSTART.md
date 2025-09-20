@@ -38,7 +38,7 @@ npm install adaptive-tests @adaptive-tests/typescript
 
 → **[Complete TypeScript Guide](../languages/typescript/README.md)**
 
-**Other languages?** Check the [experimental implementations](#experimental) above.
+**Other languages?** Check the [experimental implementations](../README.md#experimental) in the main README.
 
 ## Three Ways to Use Adaptive Tests
 
