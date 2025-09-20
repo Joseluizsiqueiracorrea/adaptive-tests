@@ -97,8 +97,8 @@ Supporting directories:
 - `languages/php/`, `languages/go/`, `languages/rust/`, `languages/ruby/`, `languages/wolfram/` – experimental samples
 - `fixtures/` – shared cross-language signatures and sample projects
 - `tools/shared/` – shared tooling utilities
-- `tools/vscode-adaptive-tests/` – VS Code extension for Discovery Lens and scaffolding
-- `scripts/demo/` – automation used by the validation script
+- `vscode-adaptive-tests-extension_experimental/` – VS Code extension for Discovery Lens and scaffolding
+- `languages/javascript/scripts/` & `languages/typescript/scripts/` – demo automation invoked by `npm run demo:*`
 
 ## Contribution Checklist
 
@@ -115,7 +115,7 @@ Supporting directories:
 - Bug reports / feature requests: [GitHub Issues](https://github.com/anon57396/adaptive-tests/issues)
 - Package consumers: npm [`adaptive-tests`](https://www.npmjs.com/package/adaptive-tests) &
   PyPI [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/)
-- VS Code Extension: [Development Alpha](tools/vscode-adaptive-tests/README.md)
+- VS Code Extension: [Development Alpha](vscode-adaptive-tests-extension_experimental/README.md)
 
 ## Integration Notes
 

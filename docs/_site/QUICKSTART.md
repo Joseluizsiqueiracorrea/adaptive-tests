@@ -4,7 +4,7 @@
 
 ## 📦 JavaScript/Node.js
 ```bash
-npm install @adaptive-tests/javascript
+npm install adaptive-tests
 ```
 → **[Complete JavaScript Guide](../languages/javascript/README.md)**
 
@@ -26,7 +26,7 @@ pip install adaptive-tests-py
 
 ## 📘 TypeScript
 ```bash
-npm install @adaptive-tests/typescript
+npm install adaptive-tests @adaptive-tests/typescript
 ```
 → **[Complete TypeScript Guide](../languages/typescript/README.md)**
 
@@ -67,7 +67,7 @@ const UserService = await discover('UserService');
 
 ## CLI Helper
 
-> **Note:** The `adaptive-tests` CLI is available via the `@adaptive-tests/javascript` package.
+> **Note:** The `adaptive-tests` CLI ships with the `adaptive-tests` meta package (and remains available via `@adaptive-tests/javascript`).
 
 ```bash
 npx adaptive-tests init                                      # Interactive setup wizard

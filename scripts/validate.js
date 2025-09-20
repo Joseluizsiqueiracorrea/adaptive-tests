@@ -391,7 +391,7 @@ async function main() {
   const adaptResults3 = extractTestResults(adapt3.output);
 
   console.log(`\n  Traditional: ${trad3.success ? '✅' : '❌'} ${tradResults3.failed} test failures${tradResults3.hasTestFailure ? ' (Actual bugs!)' : ''}`);
-  console.log(`  Adaptive:    ${adapt3.success ? '✅' : '❌'} ${adaptResults3.failed} test failures${adapt3.hasTestFailure ? ' (Actual bugs!)' : ''}`);
+  console.log(`  Adaptive:    ${adapt3.success ? '✅' : '❌'} ${adaptResults3.failed} test failures${adaptResults3.hasTestFailure ? ' (Actual bugs!)' : ''}`);
 
   if (!trad3.success && !adapt3.success && tradResults3.hasTestFailure && adaptResults3.hasTestFailure) {
     console.log('\n  ✓ Both fail with actual test assertions');
@@ -411,11 +411,11 @@ async function main() {
   await runCommand('npm run demo:ts:restore-broken-ts', false);
 
   console.log('Running TypeScript traditional tests...');
-  const tsTrad1 = await runCommand('npm run test:traditional:ts 2>&1');
+  const tsTrad1 = await runCommand('npx jest --config languages/typescript/jest.config.js languages/typescript/examples/typescript/tests/traditional --runInBand 2>&1');
   const tsTradResults1 = extractTestResults(tsTrad1.output);
 
   console.log('Running TypeScript adaptive tests...');
-  const tsAdapt1 = await runCommand('npm run test:adaptive:ts 2>&1');
+  const tsAdapt1 = await runCommand('npx jest --config languages/typescript/jest.config.js languages/typescript/examples/typescript/tests/adaptive --runInBand 2>&1');
   const tsAdaptResults1 = extractTestResults(tsAdapt1.output);
 
   console.log(`\n  TS Traditional: ${tsTrad1.success ? '✅' : '❌'} ${tsTradResults1.passed} passed, ${tsTradResults1.failed} failed`);
@@ -427,9 +427,9 @@ async function main() {
   console.log('\nRefactoring TypeScript calculator...');
   await runCommand('npm run demo:ts:refactor-ts', false);
 
-  const tsTradRefactor = await runCommand('npm run test:traditional:ts 2>&1', true);
+  const tsTradRefactor = await runCommand('npx jest --config languages/typescript/jest.config.js languages/typescript/examples/typescript/tests/traditional --runInBand 2>&1', true);
   const tsTradRefactorResults = extractTestResults(tsTradRefactor.output);
-  const tsAdaptRefactor = await runCommand('npm run test:adaptive:ts 2>&1');
+  const tsAdaptRefactor = await runCommand('npx jest --config languages/typescript/jest.config.js languages/typescript/examples/typescript/tests/adaptive --runInBand 2>&1');
   const tsAdaptRefactorResults = extractTestResults(tsAdaptRefactor.output);
 
   console.log(`\n  TS Traditional (after move): ${tsTradRefactor.success ? '✅' : '❌'} ${tsTradRefactorResults.hasImportError ? '(Import Error!)' : ''}`);
@@ -443,9 +443,9 @@ async function main() {
   console.log('\nBreaking TypeScript implementation...');
   await runCommand('npm run demo:ts:broken-ts', false);
 
-  const tsTradBroken = await runCommand('npm run test:traditional:ts 2>&1', true);
+  const tsTradBroken = await runCommand('npx jest --config languages/typescript/jest.config.js languages/typescript/examples/typescript/tests/traditional --runInBand 2>&1', true);
   const tsTradBrokenResults = extractTestResults(tsTradBroken.output);
-  const tsAdaptBroken = await runCommand('npm run test:adaptive:ts 2>&1', true);
+  const tsAdaptBroken = await runCommand('npx jest --config languages/typescript/jest.config.js languages/typescript/examples/typescript/tests/adaptive --runInBand 2>&1', true);
   const tsAdaptBrokenResults = extractTestResults(tsAdaptBroken.output);
 
   console.log(`\n  TS Traditional (broken): ${tsTradBroken.success ? '✅' : '❌'} ${tsTradBrokenResults.failed} failures${tsTradBrokenResults.hasTestFailure ? ' (Actual bugs!)' : ''}`);

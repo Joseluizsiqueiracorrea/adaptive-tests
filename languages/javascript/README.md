@@ -5,11 +5,13 @@
 ## Quick Start
 
 ```bash
-# Install
-npm install @adaptive-tests/javascript
+# Install (meta package bundles the JS engine)
+npm install adaptive-tests
+# Or install just the JavaScript package
+# npm install @adaptive-tests/javascript
 
 # Use in your tests
-const { discover } = require('@adaptive-tests/javascript');
+const { discover } = require('adaptive-tests');
 
 describe('My Tests', () => {
   let MyClass;

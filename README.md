@@ -4,7 +4,7 @@
 [![Coverage](https://img.shields.io/codecov/c/github/anon57396/adaptive-tests?label=coverage)](https://codecov.io/gh/anon57396/adaptive-tests)
 [![npm version](https://img.shields.io/npm/v/@adaptive-tests/javascript.svg)](https://www.npmjs.com/package/@adaptive-tests/javascript)
 [![PyPI version](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
-[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](tools/vscode-adaptive-tests/README.md)
+[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](vscode-adaptive-tests-extension_experimental/README.md)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Available-green?logo=github)](https://github.com/marketplace/actions/adaptive-tests)
 
 Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.github.io/adaptive-tests/)
@@ -37,7 +37,7 @@ Each language implementation is self-contained with examples, documentation, and
 - **[🔬 Wolfram](./languages/wolfram/)** - Symbolic computation patterns *(experimental)*
 
 ### **Developer Tools**
-- **[🔧 VS Code Extension](./tools/vscode-adaptive-tests/)** - IDE integration *(development alpha)*
+- **[🔧 VS Code Extension](./vscode-adaptive-tests-extension_experimental/)** - IDE integration *(development alpha)*
 
 ---
 
@@ -59,7 +59,7 @@ Each language implementation is self-contained with examples, documentation, and
 
 ### 📦 JavaScript/Node.js
 ```bash
-npm install @adaptive-tests/javascript
+npm install adaptive-tests
 ```
 → **[Complete JavaScript Guide](./languages/javascript/README.md)**
 
@@ -81,7 +81,7 @@ pip install adaptive-tests-py
 
 ### 📘 TypeScript
 ```bash
-npm install @adaptive-tests/typescript
+npm install adaptive-tests @adaptive-tests/typescript
 ```
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**
 
@@ -145,7 +145,7 @@ Experience the power of adaptive testing with our VS Code extension currently in
 To test the extension during development:
 
 ```bash
-cd tools/vscode-adaptive-tests
+cd vscode-adaptive-tests-extension_experimental
 npm install
 # Open in VS Code and press F5 to launch Extension Development Host
 ```
@@ -154,7 +154,7 @@ npm install
 
 The extension will be available on the VS Code Marketplace. For now, use the development setup above.
 
-[Learn more about the VS Code extension →](tools/vscode-adaptive-tests/README.md)
+[Learn more about the VS Code extension →](vscode-adaptive-tests-extension_experimental/README.md)
 
 ---
 
@@ -539,7 +539,7 @@ You don't need complex test selection for adaptive tests because:
 
 ### Extensions & Tools
 
-- [VS Code Extension](tools/vscode-adaptive-tests/README.md)
+- [VS Code Extension](vscode-adaptive-tests-extension_experimental/README.md)
 - [Proof & Demo Scripts](PROOF.md)
 - **Examples**: JavaScript (`languages/javascript/examples/`), TypeScript (`languages/typescript/examples/`), Python (`languages/python/examples/`), Java (`languages/java/examples/`)
 
