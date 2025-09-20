@@ -7,8 +7,6 @@
     "lint:markdown": "node scripts/lint-markdown.js",
     "lint:links": "node scripts/lint-links.js",
     "test": "npm run test:traditional && npm run test:adaptive && npm run test:typescript && npm run test:python && npm run test:java",
-    "test:main": "jest --coverage",
-    "test:main:watch": "jest --watch",
     "test:js": "npm --prefix languages/javascript run test",
     "test:traditional": "npm --prefix languages/javascript run test -- tests/traditional",
     "test:adaptive": "npm --prefix languages/javascript run test -- tests/adaptive",
@@ -60,8 +58,6 @@
   "author": "Jason Kempf <jasonkempf@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "jest": "^30.1.3",
     "linkinator": "^4.0.0",
     "markdownlint": "^0.38.0",
     "markdownlint-cli": "^0.45.0"
