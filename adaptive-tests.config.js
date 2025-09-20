@@ -25,7 +25,6 @@ module.exports = {
       'dist',
       'build',
       'lib',
-      'scripts',
       '__tests__',
       '.next',
       '.nuxt'
@@ -57,6 +56,7 @@ module.exports = {
           '/core/': 8,
           '/components/': 5,
           '/modules/': 10,
+          '/scripts/': 25,
           '/fixtures/temp/': 200,
           '/tests/fixtures/inheritance/': 150,
 

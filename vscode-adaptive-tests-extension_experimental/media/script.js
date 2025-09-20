@@ -187,6 +187,8 @@
     /** @type {Object|null} Navigation module for keyboard navigation */
     let navigationModule = null;
     /** @type {Object|null} Errors module for error handling and display */
+    /** @type {Object|null} Filters module for result filtering and sorting */
+    let filtersModule = null;
     let errorsModule = null;
 
     /**
@@ -341,6 +343,19 @@
             errorsModule = await import('./modules/errors.js');
         }
         return errorsModule;
+    /**
+     * Loads the filters module for result filtering and sorting.
+     *
+     * @async
+     * @function loadFiltersModule
+     * @returns {Promise<Object>} The filters module
+     */
+    async function loadFiltersModule() {
+        if (!filtersModule) {
+            filtersModule = await import('./modules/filters.js');
+        }
+        return filtersModule;
+    }
     }
 
     /**
@@ -607,6 +622,106 @@
      * @function displayResults
      * @param {Object} data - Results data from discovery
      */
+    /**
+     * Displays discovery results using the results module with filtering support.
+     * Updates state and delegates to results module for rendering with filter integration.
+     *
+     * @async
+     * @function displayResults
+     * @param {Object} data - Results data from discovery
+     */
+    async function displayResults(data) {
+        const module = await loadResultsModule();
+        const filters = await loadFiltersModule();
+        lastResults = data.results;
+
+        // Extract available languages for filter dropdown
+        const availableLanguages = [...new Set(data.results.map(r => r.language).filter(Boolean))];
+
+        // Create filters UI if not already created
+        if (!filters.filtersContainer) {
+            filters.createFiltersUI(resultsSection, handleFiltersChange, availableLanguages);
+        }
+
+        // Set available languages in filters
+        filters.setAvailableLanguages(availableLanguages);
+
+        // Display results with current filter state
+        const currentFilters = filters.getCurrentFilters();
+        const filteredResults = filtersModule.filterAndSort(data.results, currentFilters);
+
+        module.displayResults(
+            {
+                ...data,
+                results: filteredResults
+            },
+            resultsSection,
+            resultsContainer,
+            resultsSummary,
+            announceToScreenReader,
+            manageFocus,
+            saveState,
+            setupResultNavigation
+        );
+
+        // Update filter stats
+        filters.updateStats(data.results, filteredResults);
+
+        // Announce results to screen readers
+        const count = filteredResults.length;
+        const total = data.results.length;
+        if (count === total) {
+            announceToScreenReader(`Found ${count} results`);
+        } else {
+            announceToScreenReader(`Showing ${count} of ${total} filtered results`);
+        }
+    }
+
+    /**
+     * Handles filter changes and updates the results display.
+     * Applies new filters and refreshes the results view.
+     *
+     * @async
+     * @function handleFiltersChange
+     * @param {Object} newFilters - New filter configuration
+     */
+    async function handleFiltersChange(newFilters) {
+        if (!lastResults || lastResults.length === 0) return;
+
+        const module = await loadResultsModule();
+        const filters = await loadFiltersModule();
+
+        // Apply filters to current results
+        const filteredResults = filtersModule.filterAndSort(lastResults, newFilters);
+
+        // Update results display
+        module.displayResults(
+            {
+                results: filteredResults,
+                signature: lastSignature,
+                totalCandidates: lastResults.length
+            },
+            resultsSection,
+            resultsContainer,
+            resultsSummary,
+            announceToScreenReader,
+            manageFocus,
+            saveState,
+            setupResultNavigation
+        );
+
+        // Update filter stats
+        filters.updateStats(lastResults, filteredResults);
+
+        // Announce filter change to screen readers
+        const count = filteredResults.length;
+        const total = lastResults.length;
+        if (count === total) {
+            announceToScreenReader(`Filter updated, showing all ${count} results`);
+        } else {
+            announceToScreenReader(`Filter updated, showing ${count} of ${total} results`);
+        }
+    }
     async function displayResults(data) {
         const module = await loadResultsModule();
         lastResults = data.results;

@@ -695,4 +695,362 @@ label {
 
 .empty-state-text {
     font-size: 16px;
+/* ========================================
+   ADVANCED FILTERS STYLES
+   ======================================== */
+
+.filters-section {
+    background: var(--vscode-editorWidget-background);
+    border: 1px solid var(--vscode-widget-border);
+    border-radius: var(--border-radius);
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--vscode-toolbar-background, var(--vscode-editorWidget-background));
+    border-bottom: 1px solid var(--vscode-widget-border);
+}
+
+.filters-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.filters-toggle {
+    background: none;
+    border: none;
+    color: var(--vscode-foreground);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.filters-toggle:hover,
+.filters-toggle:focus {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.filters-toggle:focus {
+    outline: 2px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
+}
+
+.filters-icon {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.filters-toggle[aria-expanded="true"] .filters-icon {
+    transform: rotate(90deg);
+}
+
+.filters-clear {
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 1px solid var(--vscode-button-border);
+    border-radius: var(--border-radius);
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filters-clear:hover,
+.filters-clear:focus {
+    background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.filters-clear:focus {
+    outline: 2px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
+}
+
+.filters-content {
+    padding: 20px;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--vscode-foreground);
+}
+
+.filter-group input[type="text"],
+.filter-group input[type="range"],
+.filter-group select {
+    padding: 8px 12px;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: var(--border-radius);
+    font-size: 13px;
+    transition: var(--transition);
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+    box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}
+
+.filter-group select[multiple] {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.range-value {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    align-self: flex-end;
+    margin-top: -20px;
+    padding: 2px 6px;
+    background: var(--vscode-badge-background);
+    border-radius: 8px;
+}
+
+.filter-help {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.filter-stats {
+    padding: 12px;
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border);
+    border-radius: var(--border-radius);
+    margin-top: 15px;
+}
+
+.stats-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.stats-count {
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.stats-details {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--vscode-badge-background);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Filter animations */
+.filters-content {
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.filters-content[aria-hidden="false"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive design for filters */
+@media (max-width: 768px) {
+    .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .filters-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .filters-title {
+        text-align: center;
+    }
+
+    .stats-summary {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+}
+
+/* Enhanced focus indicators for filter controls */
+.filter-group input:focus,
+.filter-group select:focus {
+    box-shadow: 0 0 0 2px var(--vscode-focusBorder);
+}
+
+/* Loading state for filter updates */
+.filter-group.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.filter-group.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid var(--vscode-progressBar-background);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+/* Filter presets for quick access */
+.filters-presets {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-preset {
+    padding: 4px 12px;
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 1px solid var(--vscode-button-border);
+    border-radius: var(--border-radius);
+    font-size: 11px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filter-preset:hover,
+.filter-preset:focus {
+    background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.filter-preset.active {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border-color: var(--vscode-button-background);
+}
+
+/* Advanced filter options */
+.filters-advanced {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--vscode-widget-border);
+}
+
+.filters-advanced-toggle {
+    background: none;
+    border: none;
+    color: var(--vscode-textLink-foreground);
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: underline;
+    padding: 4px 0;
+}
+
+.filters-advanced-toggle:hover {
+    color: var(--vscode-textLink-activeForeground);
+}
+
+.filters-advanced-content {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--vscode-editor-background);
+    border-radius: var(--border-radius);
+}
+
+.filters-advanced-content.visible {
+    display: block;
+}
+
+/* Filter validation states */
+.filter-group.invalid input,
+.filter-group.invalid select {
+    border-color: var(--vscode-inputValidation-errorBorder);
+    background: var(--vscode-inputValidation-errorBackground);
+}
+
+.filter-group.invalid .filter-help {
+    color: var(--vscode-errorForeground);
+}
+
+.filter-group.valid input,
+.filter-group.valid select {
+    border-color: var(--vscode-inputValidation-infoBorder);
+}
+
+.filter-group.valid .filter-help {
+    color: var(--vscode-inputValidation-infoForeground);
+}
+
+/* Export and import filter configurations */
+.filters-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--vscode-widget-border);
+}
+
+.filters-export,
+.filters-import {
+    padding: 6px 12px;
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 1px solid var(--vscode-button-border);
+    border-radius: var(--border-radius);
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filters-export:hover,
+.filters-import:hover,
+.filters-export:focus,
+.filters-import:focus {
+    background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.filters-export:focus,
+.filters-import:focus {
+    outline: 2px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
+}
 }

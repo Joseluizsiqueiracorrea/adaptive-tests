@@ -40,18 +40,23 @@ class CandidateEvaluator {
       return null;
     }
 
+    let stats;
+    try {
+      stats = await fsPromises.stat(filePath);
+    } catch (error) {
+      return null;
+    }
+
+    const maxFileSize = this.getMaxFileSizeLimit(path.extname(filePath));
+    if (Number.isFinite(maxFileSize) && maxFileSize > 0 && stats.size > maxFileSize) {
+      return null;
+    }
+
     let content;
     try {
       content = await fsPromises.readFile(filePath, 'utf8');
     } catch (error) {
       return null;
-    }
-
-    let stats = null;
-    try {
-      stats = await fsPromises.stat(filePath);
-    } catch (error) {
-      stats = null;
     }
 
     const candidate = {
@@ -123,6 +128,29 @@ class CandidateEvaluator {
 
     candidate.score = score;
     return candidate;
+  }
+
+  getMaxFileSizeLimit(extension) {
+    const languagesConfig = this.config.discovery?.languages || {};
+
+    for (const langConfig of Object.values(languagesConfig)) {
+      if (!langConfig || langConfig.enabled === false) {
+        continue;
+      }
+      if (Array.isArray(langConfig.extensions) && langConfig.extensions.includes(extension)) {
+        const limit = langConfig.parser?.maxFileSize;
+        if (Number.isFinite(limit) && limit > 0) {
+          return limit;
+        }
+      }
+    }
+
+    const fallback = this.config.discovery?.parser?.maxFileSize;
+    if (Number.isFinite(fallback) && fallback > 0) {
+      return fallback;
+    }
+
+    return 1024 * 1024; // 1MB default safeguard
   }
 
   quickNameCheck(fileName, signature) {

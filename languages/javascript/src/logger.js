@@ -4,6 +4,9 @@
  */
 
 const LEVELS = ['error', 'warn', 'info', 'debug', 'trace'];
+const ENV_LOG_LEVEL = (process.env.ADAPTIVE_LOG_LEVEL || '').toLowerCase();
+const DEFAULT_LEVEL = LEVELS.includes(ENV_LOG_LEVEL) ? ENV_LOG_LEVEL : 'warn';
+const THRESHOLD_INDEX = LEVELS.indexOf(DEFAULT_LEVEL);
 
 const bindConsoleMethod = (method) => {
   if (typeof console === 'undefined') {
@@ -17,10 +20,28 @@ const bindConsoleMethod = (method) => {
   return fallback;
 };
 
-const createDefaultLogger = () => LEVELS.reduce((logger, level) => {
-  logger[level] = bindConsoleMethod(level === 'trace' ? 'debug' : level);
-  return logger;
-}, {});
+const applyLogLevelGate = (logger) => {
+  const gated = {};
+  LEVELS.forEach((level) => {
+    const method = typeof logger[level] === 'function'
+      ? logger[level]
+      : bindConsoleMethod(level === 'trace' ? 'debug' : level);
+
+    gated[level] = (...args) => {
+      if (LEVELS.indexOf(level) <= THRESHOLD_INDEX) {
+        method(...args);
+      }
+    };
+  });
+  return gated;
+};
+
+const createDefaultLogger = () => applyLogLevelGate(
+  LEVELS.reduce((logger, level) => {
+    logger[level] = bindConsoleMethod(level === 'trace' ? 'debug' : level);
+    return logger;
+  }, {})
+);
 
 let currentLogger = createDefaultLogger();
 
@@ -38,7 +59,7 @@ const normaliseLogger = (candidate) => {
       logger[level] = bindConsoleMethod(level === 'trace' ? 'debug' : level);
     }
   }
-  return logger;
+  return applyLogLevelGate(logger);
 };
 
 function setLogger(logger) {

@@ -33,9 +33,11 @@ class FileSystemScanner {
     this.evaluateCandidate = evaluateCandidate;
     this.shouldSkipDirectory = shouldSkipDirectory;
     this.logger = logger;
+    this.visitedDirectories = new Set();
   }
 
   async collect({ dir, signature, depth = 0, candidates = [] }) {
+    this.visitedDirectories.clear();
     await this.scanDirectory(dir, signature, depth, candidates);
     return candidates;
   }
@@ -44,6 +46,18 @@ class FileSystemScanner {
     if (depth > this.maxDepth) {
       return candidates;
     }
+
+    let resolvedDir = dir;
+    try {
+      resolvedDir = await fsPromises.realpath(dir);
+    } catch (error) {
+      // ignore missing realpath (e.g., permissions); fall back to original path
+    }
+
+    if (this.visitedDirectories.has(resolvedDir)) {
+      return candidates;
+    }
+    this.visitedDirectories.add(resolvedDir);
 
     let entries;
     try {
@@ -58,6 +72,11 @@ class FileSystemScanner {
 
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
+
+      if (entry.isSymbolicLink()) {
+        this.logDebug('Skipping symbolic link', { path: fullPath });
+        continue;
+      }
 
       if (entry.isDirectory()) {
         if (this.shouldSkipDirectory && this.shouldSkipDirectory(entry.name)) {

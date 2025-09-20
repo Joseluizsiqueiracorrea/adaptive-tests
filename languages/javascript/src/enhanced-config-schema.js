@@ -143,7 +143,7 @@ const ENHANCED_CONFIG_SCHEMA = {
       custom: []
     },
     security: {
-      allowUnsafeRequires: true,
+      allowUnsafeRequires: false,
       blockedTokens: [
         'process.exit(',
         'child_process.exec',

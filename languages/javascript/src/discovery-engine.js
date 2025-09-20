@@ -36,8 +36,6 @@ const { ResultAssembler } = require('./result-assembler');
  */
 
 // Cache for module requirements with size limit
-const MAX_MODULE_CACHE_SIZE = 100;
-
 class LRUCache {
   constructor(maxSize) {
     this.maxSize = maxSize;
@@ -99,8 +97,6 @@ class LRUCache {
     this.cache.forEach(callback, thisArg);
   }
 }
-
-const moduleCache = new LRUCache(MAX_MODULE_CACHE_SIZE);
 
 function toArray(value) {
   if (!value) return [];
@@ -297,36 +293,37 @@ class DiscoveryEngine {
     // Process each score group in order, but candidates within a group in parallel
     for (const score of scores) {
       const candidatesAtScore = candidatesByScore.get(score);
+      if (!Array.isArray(candidatesAtScore) || candidatesAtScore.length === 0) {
+        continue;
+      }
 
-      // Process candidates at this score level in parallel (max 5 concurrent)
-      const batchSize = Math.min(5, candidatesAtScore.length);
-      const resolvePromises = candidatesAtScore.slice(0, batchSize).map(candidate =>
-        this.tryResolveCandidate(candidate, normalizedSig)
-          .then(resolved => resolved ? { candidate, resolved } : null)
-          .catch(() => null) // Don't let one failure stop others
-      );
+      const queue = [...candidatesAtScore];
+      const maxBatchSize = Math.max(1, Math.min(5, Number.isFinite(this.maxConcurrency) ? this.maxConcurrency : 5));
 
-      const results = await Promise.all(resolvePromises);
+      while (queue.length > 0) {
+        const batch = queue.splice(0, maxBatchSize);
+        const results = await Promise.all(batch.map(candidate =>
+          this.tryResolveCandidate(candidate, normalizedSig)
+            .then(resolved => (resolved ? { candidate, resolved } : null))
+            .catch(() => null)
+        ));
 
-      // Find first successful resolution
-      const successfulResult = results.find(result => result !== null);
+        const successfulResult = results.find(result => result !== null);
+        if (successfulResult) {
+          const { candidate, resolved } = successfulResult;
 
-      if (successfulResult) {
-        const { candidate, resolved } = successfulResult;
+          await this.resultAssembler.storeResolution(cacheKey, candidate, resolved);
 
-        await this.resultAssembler.storeResolution(cacheKey, candidate, resolved);
+          if (this.experimentalFeatures?.feedbackCollector) {
+            this.experimentalFeatures.feedbackCollector
+              .recordDiscovery(normalizedSig, candidate, candidates)
+              .catch(error => {
+                console.debug('[Pattern Learning] Failed to record discovery:', error.message);
+              });
+          }
 
-        // EXPERIMENTAL: Record discovery for pattern learning
-        if (this.experimentalFeatures?.feedbackCollector) {
-          // Fire and forget - don't block discovery
-          this.experimentalFeatures.feedbackCollector
-            .recordDiscovery(normalizedSig, candidate, candidates)
-            .catch(error => {
-              console.debug('[Pattern Learning] Failed to record discovery:', error.message);
-            });
+          return resolved.target;
         }
-
-        return resolved.target;
       }
     }
 
@@ -670,7 +667,7 @@ class DiscoveryEngine {
       '4. Clear cache if you just created the file: await engine.clearCache()',
       '5. Check your adaptive-tests.config.js for custom path scoring',
       '',
-      'See ../../docs/COMMON_ISSUES.md for more help.'
+      'See https://anon57396.github.io/adaptive-tests/common_issues for more help.'
     );
 
     return new Error(errorLines.join('\n'));
@@ -736,7 +733,6 @@ class DiscoveryEngine {
       this.discoveryCache.clear();
     }
 
-    moduleCache.clear();
     this.cachedModules.forEach(modulePath => {
       delete require.cache[modulePath];
     });
@@ -791,13 +787,55 @@ class DiscoveryEngine {
  */
 const engineCache = new Map();
 
+function configContainsFunction(value) {
+  if (typeof value === 'function') {
+    return true;
+  }
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return value.some(configContainsFunction);
+  }
+  return Object.values(value).some(configContainsFunction);
+}
+
+function serializeConfigForCache(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+  if (typeof value === 'function') {
+    return { __type: 'Function', name: value.name || 'anonymous' };
+  }
+  if (value instanceof RegExp) {
+    return { __type: 'RegExp', source: value.source, flags: value.flags };
+  }
+  if (Array.isArray(value)) {
+    return value.map(serializeConfigForCache);
+  }
+  if (typeof value === 'object') {
+    const keys = Object.keys(value).sort();
+    const normalized = {};
+    for (const key of keys) {
+      normalized[key] = serializeConfigForCache(value[key]);
+    }
+    return normalized;
+  }
+  return value;
+}
+
 function getDiscoveryEngine(rootPath = process.cwd(), config = {}) {
-  // Include config in cache key to handle different configurations
-  const configHash = JSON.stringify(config, Object.keys(config).sort());
-  const key = `${rootPath}:${configHash}`;
+  const resolvedRoot = path.resolve(rootPath);
+
+  if (configContainsFunction(config)) {
+    return new DiscoveryEngine(resolvedRoot, config);
+  }
+
+  const configHash = JSON.stringify(serializeConfigForCache(config));
+  const key = `${resolvedRoot}:${configHash}`;
 
   if (!engineCache.has(key)) {
-    engineCache.set(key, new DiscoveryEngine(rootPath, config));
+    engineCache.set(key, new DiscoveryEngine(resolvedRoot, config));
   }
 
   return engineCache.get(key);

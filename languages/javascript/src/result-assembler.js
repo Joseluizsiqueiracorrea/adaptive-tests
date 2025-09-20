@@ -50,6 +50,12 @@ class ResultAssembler {
 
     this.cacheLoaded = !this.cacheConfig.enabled;
     this.cacheLoadPromise = null;
+    this.cacheFlushDelayMs = Number.isFinite(cacheConfig?.flushDebounceMs) && cacheConfig.flushDebounceMs >= 0
+      ? cacheConfig.flushDebounceMs
+      : 200;
+    this.pendingCacheTimer = null;
+    this.flushHookRegistered = false;
+    this.lastCachePersistTs = 0;
   }
 
   /**
@@ -161,8 +167,79 @@ class ResultAssembler {
         mtimeMs: cacheEntry.mtimeMs
       };
 
-      await this.saveCacheToDisk();
+      await this.persistCacheToDisk();
     }
+  }
+
+  async persistCacheToDisk() {
+    if (!this.cacheConfig.enabled) {
+      return;
+    }
+
+    const now = Date.now();
+    if ((now - this.lastCachePersistTs) >= this.cacheFlushDelayMs) {
+      await this.saveCacheToDisk();
+      this.lastCachePersistTs = Date.now();
+      this.cancelScheduledCachePersist();
+      return;
+    }
+
+    this.scheduleCachePersist();
+  }
+
+  scheduleCachePersist() {
+    if (!this.cacheConfig.enabled) {
+      return;
+    }
+
+    this.ensureFlushHook();
+
+    if (this.pendingCacheTimer) {
+      clearTimeout(this.pendingCacheTimer);
+    }
+
+    this.pendingCacheTimer = setTimeout(() => {
+      this.pendingCacheTimer = null;
+      this.saveCacheToDisk()
+        .then(() => {
+          this.lastCachePersistTs = Date.now();
+        })
+        .catch(error => {
+          this.logCacheWarning('Failed to persist discovery cache', error);
+        });
+    }, this.cacheFlushDelayMs);
+
+    if (typeof this.pendingCacheTimer?.unref === 'function') {
+      this.pendingCacheTimer.unref();
+    }
+  }
+
+  cancelScheduledCachePersist() {
+    if (this.pendingCacheTimer) {
+      clearTimeout(this.pendingCacheTimer);
+      this.pendingCacheTimer = null;
+    }
+  }
+
+  ensureFlushHook() {
+    if (this.flushHookRegistered || !this.cacheConfig.enabled) {
+      return;
+    }
+
+    process.once('beforeExit', async () => {
+      if (this.pendingCacheTimer) {
+        clearTimeout(this.pendingCacheTimer);
+        this.pendingCacheTimer = null;
+      }
+
+      try {
+        await this.saveCacheToDisk();
+      } catch (error) {
+        this.logCacheWarning('Failed to persist discovery cache before exit', error);
+      }
+    });
+
+    this.flushHookRegistered = true;
   }
 
   /**
@@ -229,6 +306,7 @@ class ResultAssembler {
     this.cacheLoaded = !this.cacheConfig.enabled;
     this.cacheLoadPromise = null;
 
+    this.cancelScheduledCachePersist();
     await this.saveCacheToDisk();
   }
 
@@ -343,6 +421,7 @@ class ResultAssembler {
 
     try {
       await fsPromises.writeFile(cacheFile, JSON.stringify(this.persistentCache, null, 2), 'utf8');
+      this.lastCachePersistTs = Date.now();
     } catch (error) {
       this.logCacheWarning(`Failed to persist discovery cache to ${cacheFile}`, error);
     }

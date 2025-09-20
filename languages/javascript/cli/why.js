@@ -1,8 +1,14 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const { getDiscoveryEngine } = require('../adaptive/discovery-engine');
-const { explainPythonSignature } = require('../adaptive/python/python-why');
+const { getDiscoveryEngine } = require('../src/discovery-engine');
+
+let explainPythonSignature = null;
+try {
+  ({ explainPythonSignature } = require('../adaptive/python/python-why'));
+} catch (error) {
+  explainPythonSignature = null;
+}
 
 const COLORS = {
   reset: '\x1b[0m',
@@ -304,10 +310,12 @@ async function runWhy(args = []) {
     ? deriveSuggestedSignature(engine, { ...topCandidate, metadata: topCandidate.metadata }, normalizedSignature)
     : null;
 
-  const pythonCandidates = explainPythonSignature(options.signatureInput, {
-    root: options.root,
-    limit: 5
-  });
+  const pythonCandidates = typeof explainPythonSignature === 'function'
+    ? explainPythonSignature(options.signatureInput, {
+      root: options.root,
+      limit: 5
+    })
+    : [];
 
   const candidateGroups = [];
   if (enrichedCandidates.length > 0) {
