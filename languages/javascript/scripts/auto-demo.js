@@ -118,7 +118,7 @@ async function main() {
 
   log('\n❌ Running TRADITIONAL tests after refactor:', c.yellow);
   await sleep(500);
-  const trad2 = run('npm run test:traditional 2>&1', false);
+  run('npm run test:traditional 2>&1', false);
 
   log('\n  FAIL ✗ Cannot find module', c.red + c.bright);
   log('  Error: Module ../src/Calculator not found!', c.red);
@@ -140,7 +140,7 @@ async function main() {
   log('  Found at: src/core/math/utils/Calculator.js!', c.green + c.bright);
   await sleep(1000);
 
-  const adapt2 = run('npm run test:adaptive 2>&1', false);
+  run('npm run test:adaptive 2>&1', false);
   log('\n  PASS ✓ All tests passed', c.green + c.bright);
   log('  No import changes needed!', c.green);
   await sleep(2500);

@@ -12,7 +12,7 @@
 
 const { spawnSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
+// const path = require('path'); // Unused import - keeping for future use
 
 const COLORS = {
   reset: '\x1b[0m',

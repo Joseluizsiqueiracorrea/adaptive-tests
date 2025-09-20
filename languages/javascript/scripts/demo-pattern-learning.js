@@ -40,7 +40,7 @@ async function runPatternLearningDemo() {
   for (const signature of testTargets) {
     try {
       const start = Date.now();
-      const Target = await engine.discoverTarget(signature);
+      await engine.discoverTarget(signature);
       const time = Date.now() - start;
 
       console.log(`  ✓ Found ${signature.name} in ${time}ms`);

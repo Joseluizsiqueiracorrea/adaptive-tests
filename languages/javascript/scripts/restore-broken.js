@@ -5,7 +5,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
+// const path = require('path'); // Unused import - keeping for future use
 
 console.log('🔧 Restoring good Calculator implementation...\n');
 

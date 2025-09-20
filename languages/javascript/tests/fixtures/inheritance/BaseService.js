@@ -18,7 +18,8 @@ class BaseService {
     this.logger.log(`[${this.constructor.name}] ${message}`);
   }
 
-  async execute(action, params) {
+  // eslint-disable-next-line no-unused-vars
+  async execute(_action, _params) {
     throw new Error('execute() must be implemented by subclass');
   }
 
