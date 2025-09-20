@@ -4,6 +4,8 @@
   "version": "0.3.0",
   "description": "AI-ready testing infrastructure - language-specific packages",
   "scripts": {
+    "lint:markdown": "node scripts/lint-markdown.js",
+    "lint:links": "node scripts/lint-links.js",
     "test": "npm run test:traditional && npm run test:adaptive && npm run test:typescript && npm run test:python && npm run test:java",
     "test:js": "npm --prefix languages/javascript run test",
     "test:traditional": "npm --prefix languages/javascript run test -- tests/traditional",
@@ -35,5 +37,10 @@
     "url": "git+https://github.com/anon57396/adaptive-tests.git"
   },
   "author": "Jason Kempf <jasonkempf@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "linkinator": "^4.0.0",
+    "markdownlint": "^0.33.0",
+    "markdownlint-cli": "^0.39.0"
+  }
 }

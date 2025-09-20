@@ -34,6 +34,9 @@ module.exports = {
   DiscoveryEngine,
   AdaptiveTest,
 
+  // Scaffolding
+  ...require('./scaffolding'),
+
   // Convenience functions
   getDiscoveryEngine,
   adaptiveTest,

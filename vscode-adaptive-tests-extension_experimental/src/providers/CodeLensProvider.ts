@@ -2,69 +2,97 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
+// Use a dynamic import for the engine to avoid making it a hard dependency.
+let DiscoveryEngine: any;
+
 export class AdaptiveTestsCodeLensProvider implements vscode.CodeLensProvider {
     private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
     public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
+    private engine: any;
 
     constructor() {
         vscode.workspace.onDidChangeConfiguration((_) => {
             this._onDidChangeCodeLenses.fire();
         });
+        this.loadEngine();
     }
 
-    public provideCodeLenses(
+    private async loadEngine() {
+        if (!DiscoveryEngine) {
+            try {
+                // Dynamically import the engine from the workspace's version
+                const adaptiveTests = require('@adaptive-tests/javascript');
+                DiscoveryEngine = adaptiveTests.DiscoveryEngine;
+            } catch (e) {
+                console.error("Failed to load '@adaptive-tests/javascript'. CodeLens will be disabled.", e);
+                return;
+            }
+        }
+        if (DiscoveryEngine && !this.engine) {
+            this.engine = new DiscoveryEngine();
+        }
+    }
+
+    public async provideCodeLenses(
         document: vscode.TextDocument,
         token: vscode.CancellationToken
-    ): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-        const codeLenses: vscode.CodeLens[] = [];
+    ): Promise<vscode.CodeLens[]> {
+        await this.loadEngine();
+        if (!this.engine) {
+            return [];
+        }
 
-        // Only provide lenses for supported file types
+        const codeLenses: vscode.CodeLens[] = [];
+        const supportedExtensions = ['.js', '.ts', '.jsx', '.tsx'];
         const ext = path.extname(document.fileName);
-        const supportedExtensions = ['.js', '.ts', '.jsx', '.tsx', '.java', '.go', '.php', '.py', '.rs'];
 
         if (!supportedExtensions.includes(ext)) {
-            return codeLenses;
+            return [];
         }
 
         const text = document.getText();
+        const fileName = path.basename(document.fileName);
+        const metadata = this.engine.analyzeModuleExports(text, fileName);
 
-        // Language-specific class detection
-        const patterns = this.getLanguagePatterns(ext);
+        if (token.isCancellationRequested) {
+            return [];
+        }
 
-        for (const pattern of patterns) {
-            let match;
-            while ((match = pattern.regex.exec(text)) !== null) {
-                const className = match[1];
-                const line = document.positionAt(match.index).line;
-                const range = new vscode.Range(line, 0, line, 0);
+        if (metadata && metadata.exports) {
+            for (const exp of metadata.exports) {
+                const info = exp.info;
+                if (info && info.line && info.name) {
+                    const line = info.line - 1; // Convert to 0-based index
+                    if (line < 0 || line >= document.lineCount) continue;
 
-                // Check if test exists
-                const testExists = this.checkTestExists(document, className);
+                    const range = new vscode.Range(line, 0, line, document.lineAt(line).text.length);
+                    const testExists = await this.checkTestExists(document, info.name);
 
-                if (testExists) {
-                    codeLenses.push(
-                        new vscode.CodeLens(range, {
-                            title: '✓ Adaptive test exists',
-                            tooltip: 'An adaptive test already exists for this class',
-                            command: 'adaptive-tests.openTest',
-                            arguments: [document.uri, className]
-                        })
-                    );
-                } else {
-                    codeLenses.push(
-                        new vscode.CodeLens(range, {
-                            title: '$(add) Generate adaptive test',
-                            tooltip: 'Generate an adaptive test for this class',
-                            command: 'adaptive-tests.scaffoldFile',
-                            arguments: [document.uri]
-                        })
-                    );
+                    if (testExists) {
+                        codeLenses.push(
+                            new vscode.CodeLens(range, {
+                                title: '✓ Adaptive test exists',
+                                tooltip: 'An adaptive test already exists for this item',
+                                command: 'adaptive-tests.openTest',
+                                arguments: [document.uri, info.name]
+                            })
+                        );
+                    } else {
+                        codeLenses.push(
+                            new vscode.CodeLens(range, {
+                                title: '$(add) Generate adaptive test',
+                                tooltip: 'Generate an adaptive test for this item',
+                                command: 'adaptive-tests.scaffoldFile',
+                                arguments: [document.uri]
+                            })
+                        );
+                    }
                 }
             }
         }
 
-        // Add general discovery lens at the beginning of the file if we found any patterns
-        if (codeLenses.length === 0 && patterns.length > 0) {
+        // Add general discovery lens at the beginning of the file if any exports were found
+        if (metadata && metadata.exports && metadata.exports.length > 0 && codeLenses.length === 0) {
             const range = new vscode.Range(0, 0, 0, 0);
             codeLenses.push(
                 new vscode.CodeLens(range, {
@@ -86,61 +114,7 @@ export class AdaptiveTestsCodeLensProvider implements vscode.CodeLensProvider {
         return codeLens;
     }
 
-    private getLanguagePatterns(ext: string): Array<{ regex: RegExp; type: string }> {
-        switch (ext) {
-            case '.js':
-            case '.ts':
-            case '.jsx':
-            case '.tsx':
-                return [
-                    { regex: /export\s+(?:default\s+)?class\s+(\w+)/g, type: 'class' },
-                    { regex: /export\s+(?:default\s+)?function\s+(\w+)/g, type: 'function' }
-                ];
-
-            case '.java':
-                return [
-                    { regex: /(?:public\s+)?class\s+(\w+)/g, type: 'class' },
-                    { regex: /(?:public\s+)?interface\s+(\w+)/g, type: 'interface' },
-                    { regex: /(?:public\s+)?enum\s+(\w+)/g, type: 'enum' }
-                ];
-
-            case '.go':
-                return [
-                    { regex: /type\s+(\w+)\s+struct/g, type: 'struct' },
-                    { regex: /type\s+(\w+)\s+interface/g, type: 'interface' },
-                    { regex: /func\s+(\w+)\s*\(/g, type: 'function' }
-                ];
-
-            case '.php':
-                return [
-                    { regex: /class\s+(\w+)/g, type: 'class' },
-                    { regex: /interface\s+(\w+)/g, type: 'interface' },
-                    { regex: /trait\s+(\w+)/g, type: 'trait' },
-                    { regex: /function\s+(\w+)/g, type: 'function' }
-                ];
-
-            case '.py':
-                return [
-                    { regex: /^class\s+(\w+)/gm, type: 'class' },
-                    { regex: /^def\s+(\w+)/gm, type: 'function' }
-                ];
-
-            case '.rs':
-                return [
-                    { regex: /(?:pub\s+)?struct\s+(\w+)/g, type: 'struct' },
-                    { regex: /(?:pub\s+)?enum\s+(\w+)/g, type: 'enum' },
-                    { regex: /(?:pub\s+)?trait\s+(\w+)/g, type: 'trait' },
-                    { regex: /(?:pub\s+)?fn\s+(\w+)/g, type: 'function' },
-                    { regex: /impl(?:\s+\w+\s+for)?\s+(\w+)/g, type: 'impl' }
-                ];
-
-            default:
-                return [];
-        }
-    }
-
-    private checkTestExists(document: vscode.TextDocument, className: string): boolean {
-        // Check if corresponding test file exists
+    private async checkTestExists(document: vscode.TextDocument, name: string): Promise<boolean> {
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
         if (!workspaceFolder) {
             return false;
@@ -149,25 +123,22 @@ export class AdaptiveTestsCodeLensProvider implements vscode.CodeLensProvider {
         const config = vscode.workspace.getConfiguration('adaptive-tests');
         const testDir = config.get<string>('scaffold.outputDirectory', 'tests/adaptive');
 
-        // Common test file patterns
         const testPatterns = [
-            path.join(workspaceFolder.uri.fsPath, testDir, `${className}.test.js`),
-            path.join(workspaceFolder.uri.fsPath, testDir, `${className}.test.ts`),
-            path.join(workspaceFolder.uri.fsPath, testDir, `${className}.spec.js`),
-            path.join(workspaceFolder.uri.fsPath, testDir, `${className}.spec.ts`),
-            path.join(workspaceFolder.uri.fsPath, 'tests', `${className}.test.js`),
-            path.join(workspaceFolder.uri.fsPath, 'tests', `${className}.test.ts`),
-            path.join(workspaceFolder.uri.fsPath, '__tests__', `${className}.test.js`),
-            path.join(workspaceFolder.uri.fsPath, '__tests__', `${className}.test.ts`)
+            path.join(workspaceFolder.uri.fsPath, testDir, `${name}.test.js`),
+            path.join(workspaceFolder.uri.fsPath, testDir, `${name}.test.ts`),
+            path.join(workspaceFolder.uri.fsPath, testDir, `${name}.spec.js`),
+            path.join(workspaceFolder.uri.fsPath, testDir, `${name}.spec.ts`),
         ];
 
-        // Check if any test file exists
-        return testPatterns.some(pattern => {
+        for (const pattern of testPatterns) {
             try {
-                return fs.existsSync(pattern);
+                await vscode.workspace.fs.stat(vscode.Uri.file(pattern));
+                return true; // File exists
             } catch {
-                return false;
+                // File does not exist, continue checking
             }
-        });
+        }
+
+        return false;
     }
 }

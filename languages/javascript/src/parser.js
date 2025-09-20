@@ -106,6 +106,7 @@ function extractClassInfo(node, fallbackName) {
   const methods = new Set();
   const properties = new Set();
   let extendsName = null;
+  const line = node.loc ? node.loc.start.line : null;
 
   if (node.superClass) {
     extendsName = resolveExpressionName(node.superClass);
@@ -146,18 +147,21 @@ function extractClassInfo(node, fallbackName) {
     name,
     methods,
     properties,
-    extends: extendsName
+    extends: extendsName,
+    line
   };
 }
 
 function extractFunctionInfo(node, fallbackName) {
   const name = (node.id && node.id.name) || fallbackName || null;
+  const line = node.loc ? node.loc.start.line : null;
   return {
     kind: 'function',
     name,
     methods: new Set(),
     properties: new Set(),
-    extends: null
+    extends: null,
+    line
   };
 }
 
