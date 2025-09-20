@@ -16,7 +16,7 @@ plugins:
 # Navigation
 nav:
   - title: Quick Start
-    url: /QUICK_START
+    url: /QUICKSTART
   - title: API Reference
     url: /API_REFERENCE
   - title: Examples
