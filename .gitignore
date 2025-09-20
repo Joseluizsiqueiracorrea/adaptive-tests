@@ -99,3 +99,7 @@ temp/
 .claude/
 adaptive-tests.code-workspace
 *.code-workspace
+
+# Local artifacts not tracked
+languages/javascript/index.d.ts
+languages/javascript/src/performance-monitor.js
