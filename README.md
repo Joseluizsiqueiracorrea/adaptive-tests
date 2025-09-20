@@ -9,11 +9,11 @@
 
 Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.github.io/adaptive-tests/)
 
-> **The only testing framework built for AI-driven development**
+> **Tests that don't break when you move files**
 
-When AI agents rapidly reshape your codebase, traditional tests break constantly. Adaptive Tests uses **zero-runtime discovery** powered by AST analysis to find code by structure, not file paths. Your tests adapt as AI builds.
+Traditional tests fail when you move or rename files because they use hardcoded file paths. Adaptive Tests finds your code by understanding what it looks like, not where it's located.
 
-**Stop wasting AI cycles on import maintenance.** Move files, rename directories, refactor into new layers—adaptive suites still find the code they care about, while traditional suites keep failing with import errors.
+**Move files around? Tests still pass.** No more fixing broken imports after refactoring.
 
 If this project helps you, please consider supporting it via the Sponsor button (GitHub Sponsors) or your preferred tip link. Thank you!
 
@@ -158,44 +158,39 @@ The extension will be available on the VS Code Marketplace. For now, use the dev
 
 ---
 
-## Why AI-Powered Teams Choose Adaptive Tests
+## Why Teams Choose Adaptive Tests
 
-- **AI-velocity resilience** – When AI agents refactor aggressively, tests survive automatically without import fixing cycles
-- **Zero-runtime discovery** – candidate modules are inspected with `@babel/parser` instead of `require()`, eliminating side effects and making discovery completely deterministic
-- **Autonomous development ready** – Built for the era where AI reshapes codebases faster than humans can maintain test imports
-- **Deep structural signatures** – classes, functions, inheritance chains, methods, and instance properties are validated from the AST before a module is ever loaded
-- **Async-first scanning** – the engine walks large repositories with `fs.promises`, keeping Jest/Node responsive during rapid AI-driven changes
-- **Drop-in tooling** – CLI, factory helpers, and an abstract Jest base class mean you can adopt a single file at a time or migrate whole suites
+- **Tests don't break when you move files** – No more fixing import errors after refactoring
+- **Works with any code structure** – Finds classes, functions, and modules by understanding what they look like
+- **Fast and reliable** – Analyzes your code structure without running it, so it's quick and safe
+- **Easy to adopt** – Start with one test file or convert your whole test suite
+- **Works with your tools** – Integrates with Jest, Mocha, Vitest, and more
 
 ---
 
 
-### 🎭 Invisible Mode (Experimental, JS/TS only)
+### 🔧 Auto-Fix Import Errors
 
-**Broken import? One command fixes it:**
+**Getting import errors after moving files? Fix them automatically:**
 
 ```bash
 npx adaptive-tests enable-invisible
 ```
 
-Your existing tests can automatically adapt when imports break during refactoring. No code changes. Opt‑in only. JS/TS test runners.
+This patches your test runner to automatically find moved files instead of breaking. Works with Jest, Vitest, and Mocha.
 
-**When you see:**
-
+**Before:**
 ```text
 Error: Cannot find module './UserService'
 ```
 
-**Just run:**
-
+**After:**
 ```bash
 npx adaptive-tests enable-invisible
-npm test  # Tests now pass
+npm test  # ✅ Tests pass again
 ```
 
-Invisible mode auto-detects your test framework (Jest/Vitest/Mocha) and patches it to use adaptive discovery when `require()` fails. It’s experimental and intended as a convenience; prefer the explicit `discover()` API for new tests.
-
-[📖 Full invisible mode guide →](docs/getting-started-invisible.md)
+[📖 How to fix import errors →](docs/getting-started-invisible.md)
 
 ---
 
@@ -242,35 +237,38 @@ const { getDiscoveryEngine } = require('@adaptive-tests/javascript');
 const engine = getDiscoveryEngine(process.cwd());
 ```
 
-## Progressive Learning Path
+## Three Ways to Use Adaptive Tests
 
-Adaptive Tests provides three layers of functionality to match your needs:
+### Option 1: Auto-Fix Existing Tests
 
-### 🎭 Layer 1: Invisible Mode (Experimental)
-
-**Perfect for:** Quick triage on existing suites (JS/TS). Prefer `discover()` for new tests.
+**For existing test suites with import errors:**
 
 ```bash
 npx adaptive-tests enable-invisible
-# Your tests now auto-adapt when imports break
 ```
 
-### 📚 Layer 2: Standard API (Simple & Direct)
+This automatically fixes broken imports when you move files. No code changes needed.
 
-**Perfect for:** 90% of use cases, new tests, direct control
+### Option 2: Simple Discovery (Most Common)
+
+**For new tests or when you want control:**
 
 ```javascript
+const { discover } = require('adaptive-tests');
+
 const UserService = await discover('UserService');
-// Clean, simple, no ceremony
+// Just works, no matter where the file is
 ```
 
-### 🔧 Layer 3: Advanced API (Structured & Powerful)
+### Option 3: Advanced Features
 
-**Perfect for:** Tooling, complex scenarios, cross-language teams
+**For complex projects or tooling:**
 
-For advanced patterns like automated scaffolding, complex lifecycle hooks, and cross-language consistency, see:
+- Custom search paths and scoring rules
+- Batch test generation
+- Integration with build tools
 
-**[📖 Advanced Patterns Guide →](docs/advanced-patterns.md)**
+**[📖 Advanced features →](docs/advanced-patterns.md)**
 
 ---
 

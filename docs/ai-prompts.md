@@ -57,7 +57,7 @@ Strategies:
 - hybrid: Mix of invisible + explicit discovery
 - explicit: Convert all requires to discover()
 
-Always start with invisible mode for easiest adoption.
+Always start with Invisible Mode for easiest adoption.
 ```
 
 ## Refactoring Prompt

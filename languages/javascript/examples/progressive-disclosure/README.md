@@ -1,12 +1,12 @@
-# Progressive Disclosure Example
+# Simple Adaptive Tests Example
 
-This example demonstrates how to progressively adopt Adaptive Tests features, starting simple and advancing to more powerful patterns as needed.
+This shows different ways to use Adaptive Tests, from quick fixes to full control.
 
-## The Journey: From Zero to Hero
+## Three Ways to Use It
 
-### Layer 1: 🎭 Invisible Mode (Zero Learning)
+### Option 1: Auto-Fix Existing Tests
 
-**Scenario:** You have existing tests that break when files move.
+**Problem:** Your tests break when you move files.
 
 **Before (Broken after refactoring):**
 
@@ -120,14 +120,14 @@ class UserServiceAdaptiveTest extends AdaptiveTest {
 new UserServiceAdaptiveTest();
 ```
 
-## When to Use Each Layer
+## When to Use Each Approach
 
-### Start with Invisible Mode When
+### Use Auto-Fix When
 
-- ✅ You have existing tests
-- ✅ You want zero learning curve
-- ✅ You're "vibe coding" and want safety net
-- ✅ You're prototyping or exploring
+- ✅ You have existing tests with import errors
+- ✅ You want to fix broken tests quickly
+- ✅ You don't want to change your test code
+- ✅ You're just trying it out
 
 ### Upgrade to Standard API When
 
@@ -149,7 +149,7 @@ new UserServiceAdaptiveTest();
 
 ```javascript
 // You can mix approaches in the same test file
-const UserService = require('../UserService');  // Still works via invisible mode
+const UserService = require('../UserService');  // Still works via Invisible Mode
 
 test('mixed approach', async () => {
   // But new tests can use explicit discovery
@@ -199,7 +199,7 @@ cd adaptive-tests/examples/progressive-disclosure
 # Install dependencies
 npm install
 
-# Try invisible mode
+# Try Invisible Mode
 npm run test:invisible
 
 # Try standard API
