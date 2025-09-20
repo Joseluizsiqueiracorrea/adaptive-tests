@@ -131,12 +131,12 @@ function handleDiscoveryFailure(originalPath, suggestion, error) {
     const normalized = relative.split(path.sep).join('/');
     console.warn(
       `⚠️ Adaptive Tests invisible mode could not resolve "${originalPath}". A helper scaffold was created at ${normalized}. ` +
-        `You can import it with "require('./${normalized}')()" or run "npx adaptive-tests convert" for a full migration. See docs/getting-started-invisible.md.`
+        `You can import it with "require('./${normalized}')()" or run "npx adaptive-tests convert" for a full migration. See ../../docs/getting-started-invisible.md.`
     );
   } else {
     console.warn(
       `⚠️ Adaptive Tests invisible mode could not resolve "${originalPath}" using inferred signature "${suggestion}". ` +
-        'Run "npx adaptive-tests convert" or see docs/getting-started-invisible.md for guidance.'
+        'Run "npx adaptive-tests convert" or see ../../docs/getting-started-invisible.md for guidance.'
     );
   }
 }
