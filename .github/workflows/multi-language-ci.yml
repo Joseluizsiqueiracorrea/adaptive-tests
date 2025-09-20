@@ -287,37 +287,6 @@ jobs:
             bash scripts/demo/validate-java.sh || true
           fi
 
-  # Performance Benchmarking
-  performance-tests:
-    name: Performance Benchmarks
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run performance benchmarks
-        run: |
-          echo "⚡ Running performance benchmarks..."
-          npm run benchmark || true
-
-      - name: Store benchmark results
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          tool: 'customBiggerIsBetter'
-          output-file-path: benchmark-results.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: false
-
   # Summary Status
   ci-complete:
     name: CI Complete
