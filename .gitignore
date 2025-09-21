@@ -9,7 +9,7 @@ coverage-main/
 *.backup
 .coverage
 adaptive-tests.code-workspace
-/Users/jasonkempf/Documents/GitHub/adaptive-tests/MARKDOWN_REVIEW_INDEX.md
+MARKDOWN_REVIEW_INDEX.md
 
 # Python
 .venv/
