@@ -95,8 +95,8 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: |
         if [ ! -f "node_modules/adaptive-tests/package.json" ]; then
-          echo "📥 Installing adaptive-tests@^0.3.0..."
-          npm install adaptive-tests@^0.3.0 --save-dev
+          echo "📥 Installing adaptive-tests@0.3.0..."
+          npm install adaptive-tests@0.3.0 --save-dev
         else
           echo "✅ adaptive-tests already installed"
         fi

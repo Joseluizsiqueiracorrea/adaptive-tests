@@ -46,6 +46,7 @@
     "demo:ts:restore-ts": "node languages/typescript/scripts/restore-ts.js",
     "demo:ts:refactor-ts": "node languages/typescript/scripts/refactor-ts.js",
     "demo:ts:broken-ts": "node languages/typescript/scripts/demo-broken-ts.js",
+    "build:plugins": "node scripts/build-plugins.js",
     "publish:javascript": "cd languages/javascript && npm_package_private= npm publish",
     "publish:typescript": "cd languages/typescript && npm_package_private= npm publish",
     "publish:meta": "cd packages/adaptive-tests && npm_package_private= npm publish",

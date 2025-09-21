@@ -43,7 +43,7 @@
     "test-automation",
     "dynamic-discovery"
   ],
-  "author": "Jason Kempf <jasonkempf@gmail.com>",
+  "author": "Adaptive Tests Team",
   "license": "MIT",
   "peerDependencies": {
     "typescript": ">=4.0.0",
