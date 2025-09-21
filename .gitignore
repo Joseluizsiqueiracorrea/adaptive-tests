@@ -58,6 +58,11 @@ composer.lock
 
 # VS Code Extension
 extensions/vscode-adaptive-tests/out/
+vscode-adaptive-tests-extension_experimental/out/
+vscode-adaptive-tests-extension_experimental/*.js
+vscode-adaptive-tests-extension_experimental/*.js.map
+vscode-adaptive-tests-extension_experimental/tests/*.js
+vscode-adaptive-tests-extension_experimental/tests/*.js.map
 extensions/vscode-adaptive-tests/package-lock.json
 extensions/vscode-adaptive-tests/*.js
 extensions/vscode-adaptive-tests/*.js.map

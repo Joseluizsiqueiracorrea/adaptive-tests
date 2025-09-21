@@ -21,15 +21,28 @@ const { setLogger, getLogger } = require('./logger');
  * A convenience function to quickly discover a target without creating an engine instance directly.
  * @template T
  * @param {string | DiscoverySignature} signature - The signature (or name) of the target to discover.
- * @param {string} [rootPath=process.cwd()] - The root directory to scan from.
+ * @param {string | DiscoveryOptions} [rootPathOrOptions=process.cwd()] - The root directory to scan from or options object with searchDirectory.
  * @returns {Promise<T>} A promise that resolves with the discovered target.
  */
-async function discover(signature, rootPath = process.cwd()) {
+async function discover(signature, rootPathOrOptions = process.cwd()) {
   const normalizedSignature = typeof signature === 'string'
     ? { name: signature }
     : signature;
 
-  const engine = getDiscoveryEngine(rootPath);
+  // Handle both string path and options object
+  let rootPath, config;
+  if (typeof rootPathOrOptions === 'string') {
+    rootPath = rootPathOrOptions;
+    config = {};
+  } else if (rootPathOrOptions && typeof rootPathOrOptions === 'object') {
+    rootPath = rootPathOrOptions.searchDirectory || rootPathOrOptions.rootPath || process.cwd();
+    config = rootPathOrOptions;
+  } else {
+    rootPath = process.cwd();
+    config = {};
+  }
+
+  const engine = getDiscoveryEngine(rootPath, config);
   return await engine.discoverTarget(normalizedSignature);
 }
 
