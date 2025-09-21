@@ -24,6 +24,7 @@
 #### When to Choose Adaptive Tests Over Jest
 
 ✅ **Choose Adaptive Tests when:**
+
 - Your codebase undergoes frequent restructuring
 - Multiple teams work on the same codebase
 - You're migrating to microservices
@@ -31,6 +32,7 @@
 - Refactoring is part of your culture
 
 ❌ **Stick with Jest when:**
+
 - Your file structure is stable and rarely changes
 - Performance is critical (sub-millisecond tests)
 - You need the full Jest ecosystem immediately
@@ -39,6 +41,7 @@
 #### Code Example: The Key Difference
 
 **Jest (Traditional)**
+
 ```javascript
 // user.test.js - Breaks when UserService.js moves
 import UserService from '../src/services/UserService';
@@ -53,6 +56,7 @@ describe('UserService', () => {
 ```
 
 **Adaptive Tests (with Jest runner)**
+
 ```javascript
 // user.adaptive.test.js - Works regardless of file location
 const { discover } = require('@adaptive-tests/javascript');
@@ -73,6 +77,7 @@ describe('UserService', () => {
 ```
 
 #### Migration Path
+
 ```bash
 # You can use both simultaneously
 npm install --save-dev jest @adaptive-tests/javascript
@@ -134,12 +139,14 @@ describe('API Tests', function() {
 Both Adaptive Tests and Vitest represent modern approaches to testing, but with different focuses:
 
 **Vitest Strengths:**
+
 - ⚡ Lightning-fast with Vite integration
 - 🔥 Hot Module Replacement for tests
 - 📦 ESM-first design
 - 🎯 Jest-compatible API
 
 **Adaptive Tests Strengths:**
+
 - 🔄 Survives any refactoring
 - 🤖 AI-tool friendly
 - 🌐 Multi-language support
@@ -188,6 +195,7 @@ test('finds components automatically', async () => {
 #### Python Example
 
 **Traditional Pytest:**
+
 ```python
 # test_user.py - Breaks if models/user.py moves
 from src.models.user import User
@@ -200,6 +208,7 @@ def test_user_authentication():
 ```
 
 **With Adaptive Tests:**
+
 ```python
 # test_user_adaptive.py - Survives refactoring
 import pytest
@@ -243,6 +252,7 @@ async def test_user_authentication(user_class, auth_service):
 #### Java Example
 
 **Traditional JUnit:**
+
 ```java
 // UserServiceTest.java - Import breaks on package refactoring
 import com.example.services.UserService;
@@ -261,6 +271,7 @@ class UserServiceTest {
 ```
 
 **With Adaptive Tests:**
+
 ```java
 // UserServiceAdaptiveTest.java - Survives package refactoring
 import io.adaptivetests.Discovery;
@@ -341,6 +352,7 @@ class UserServiceAdaptiveTest {
 ### Should You Use Adaptive Tests?
 
 Score yourself (1 point each):
+
 - [ ] We refactor code regularly
 - [ ] Multiple teams work on our codebase
 - [ ] We're migrating architecture (monolith → services)
@@ -353,6 +365,7 @@ Score yourself (1 point each):
 - [ ] Test maintenance is a pain point
 
 **Score Interpretation:**
+
 - **8-10 points:** Adaptive Tests will transform your workflow
 - **5-7 points:** Strong candidate, try it on new features
 - **3-4 points:** Consider for specific problem areas
@@ -363,30 +376,35 @@ Score yourself (1 point each):
 ## Migration Strategy by Framework
 
 ### From Jest
+
 1. Install: `npm install @adaptive-tests/javascript`
 2. Keep Jest as runner, add discovery to new tests
 3. Migrate high-churn tests first
 4. Use `jest-adaptive` preset for new projects
 
 ### From Mocha
+
 1. Install: `npm install @adaptive-tests/javascript`
 2. Add discovery to `before` hooks
 3. Keep Mocha configuration unchanged
 4. Gradually convert test by test
 
 ### From Vitest
+
 1. Install: `npm install vite-plugin-adaptive` *(preview)*
 2. Add plugin to `vitest.config.js`
 3. Use discovery in new test files
 4. Leverage HMR for instant feedback
 
 ### From Pytest
+
 1. Install: `pip install adaptive-tests-py`
 2. Create discovery fixtures
 3. Use alongside existing fixtures
 4. Migrate tests with most import issues
 
 ### From JUnit
+
 1. Add Maven/Gradle dependency
 2. Create `@BeforeAll` discovery methods
 3. Use reflection for discovered classes

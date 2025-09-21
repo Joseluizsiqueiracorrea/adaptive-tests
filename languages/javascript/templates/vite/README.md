@@ -42,6 +42,7 @@ my-vite-app/
 ## Adaptive Test Examples
 
 The template includes adaptive tests for:
+
 - Component discovery and testing
 - Custom hooks validation
 - Utility function testing
