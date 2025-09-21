@@ -104,6 +104,8 @@ test('discovers and tests class component', async () => {
 ### Custom Hooks
 
 ```javascript
+import { renderHook, act } from '@testing-library/react';
+
 test('discovers and tests custom hook', async () => {
   const useCounter = await discover({
     name: 'useCounter',

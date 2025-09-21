@@ -450,12 +450,14 @@ def test_calculator_division(a, b):
 This package includes complete examples:
 
 ### Calculator Example
+
 ```bash
 cd languages/javascript/examples/calculator
 pytest tests/
 ```
 
 ### FastAPI Service Example
+
 ```bash
 cd languages/python/examples/fastapi-service
 pip install -r requirements.txt
@@ -463,12 +465,14 @@ pytest tests/
 ```
 
 ### Django Project Example
+
 ```bash
 cd languages/python/examples/django-blog
 python manage.py test
 ```
 
 ### Data Science Pipeline
+
 ```bash
 cd languages/python/examples/data-pipeline
 pytest tests/
@@ -491,7 +495,7 @@ adaptive-tests discover --name "Calculator" --type "class" --methods "add,subtra
 adaptive-tests discover "PaymentGateway" --root "./src/payments"
 
 # JSON output for tooling
-adaptive-tests discover "UserService" --json
+adaptive-tests-py discover "UserService" --json
 ```
 
 ### Generate Tests
@@ -511,7 +515,7 @@ adaptive-tests generate-test src/calculator.py --framework pytest
 
 ```bash
 # Debug why a signature matched (or didn't)
-adaptive-tests why --name "Calculator" --methods "add,subtract"
+adaptive-tests-py why --name "Calculator" --methods "add,subtract"
 
 # Verbose debugging
 adaptive-tests why "UserService" --verbose
@@ -556,6 +560,7 @@ OrderService = discover("OrderService")
 ### Common Issues
 
 **Import errors after refactoring**
+
 ```python
 # Use discovery instead of direct imports
 # Old:
@@ -567,12 +572,14 @@ UserService = discover("UserService")
 ```
 
 **Discovery fails to find class**
+
 ```bash
 # Debug with CLI
 adaptive-tests why "UserService" --verbose
 ```
 
 **Performance issues**
+
 ```python
 # Optimize search patterns
 engine = DiscoveryEngine(
@@ -586,6 +593,7 @@ engine = DiscoveryEngine(
 ```
 
 **Type hints not recognized**
+
 ```python
 # Enable type hint parsing
 engine = DiscoveryEngine(

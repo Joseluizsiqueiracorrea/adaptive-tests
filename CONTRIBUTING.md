@@ -138,7 +138,6 @@ This ensures:
 - Tests pass with working code
 - Tests survive refactoring
 - Tests fail on actual bugs
-- No platform-specific Go binaries are accidentally committed
 
 ## Publishing
 
@@ -153,3 +152,4 @@ This sequentially publishes `@adaptive-tests/javascript`, `@adaptive-tests/types
 ## License
 
 By contributing, you agree that your contributions will be licensed under MIT.
+ibutions will be licensed under MIT.

@@ -67,7 +67,7 @@ All notable changes to this project are documented here. Dates are omitted when 
 - Introduced markdownlint configuration and CI enforcement
 - Bumped npm package metadata in preparation for publish
 - Added the Discovery Lens CLI (`npx adaptive-tests why`) for deep-dive scoring diagnostics
-- Aligned Python companion package version (adaptive-tests-py 0.1.1) and cleaned packaging metadata (SPDX license expression)
+- Aligned Python companion package version (adaptive-tests-py 0.2.5) and cleaned packaging metadata (SPDX license expression)
 - Enhanced Java/PHP quickstart docs with complete adaptive test examples
 - Updated VS Code extension status from "Coming Soon" to "Development Alpha" with setup instructions
 

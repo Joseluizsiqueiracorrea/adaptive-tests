@@ -284,23 +284,10 @@ npm install --save-dev ts-node
 
 ```typescript
 // Use more specific signatures
-const IUserService = await discoverInterface({
+const IUserService = await discover({
   name: 'IUserService',
-  methods: ['findById'],
-  location: './src/interfaces'  // Narrow the search
+  methods: ['findById']
 });
-```
-
-**Generic type issues**
-
-```typescript
-// Be explicit about generic constraints
-const Repository = await discover({
-  name: 'Repository',
-  generics: ['T extends BaseEntity'],
-  methods: ['save', 'find']
-});
-```
 
 ---
 
@@ -335,3 +322,15 @@ npm install adaptive-tests adaptive-tests-typescript
 ```
 
 Start with the [Quick Start](#quick-start) guide above!
+ details.
+
+---
+
+**Ready to make your TypeScript tests refactoring-proof?**
+
+```bash
+npm install adaptive-tests adaptive-tests-typescript
+```
+
+Start with the [Quick Start](#quick-start) guide above!
+Start](#quick-start) guide above!

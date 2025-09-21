@@ -297,17 +297,9 @@ class ConfigLoader {
       const files = fs.readdirSync(this.rootPath);
 
       for (const file of files) {
-        // Check for specific config files
+        // Check for language-specific config files we support natively
         if (file === 'package.json') languages.add('javascript');
         if (file === 'tsconfig.json') languages.add('typescript');
-        if (file === 'Cargo.toml') languages.add('rust');
-        if (file === 'go.mod' || file === 'go.sum') languages.add('go');
-        if (file === 'pom.xml' || file === 'build.gradle') languages.add('java');
-        if (file === 'composer.json') languages.add('php');
-        if (file === 'Gemfile') languages.add('ruby');
-        if (file === 'requirements.txt' || file === 'setup.py' || file === 'pyproject.toml') {
-          languages.add('python');
-        }
       }
 
       // Scan source directories for language files
@@ -354,15 +346,9 @@ class ConfigLoader {
         } else if (entry.isFile()) {
           const ext = path.extname(entry.name);
 
-          // Map extensions to languages
+          // Map extensions to languages we ship in this package
           if (LANGUAGE_EXTENSIONS.javascript.includes(ext)) languages.add('javascript');
           if (LANGUAGE_EXTENSIONS.typescript.includes(ext)) languages.add('typescript');
-          if (LANGUAGE_EXTENSIONS.java.includes(ext)) languages.add('java');
-          if (LANGUAGE_EXTENSIONS.python.includes(ext)) languages.add('python');
-          if (LANGUAGE_EXTENSIONS.rust.includes(ext)) languages.add('rust');
-          if (LANGUAGE_EXTENSIONS.go.includes(ext)) languages.add('go');
-          if (LANGUAGE_EXTENSIONS.php.includes(ext)) languages.add('php');
-          if (LANGUAGE_EXTENSIONS.ruby.includes(ext)) languages.add('ruby');
         }
       }
     } catch (error) {
