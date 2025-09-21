@@ -3,10 +3,12 @@
 Status: internal roadmap for CodeCypher.adaptive-tests. Keep this file; do not link from public docs.
 
 ## Goals for MVP
+
 - Simple, stable, intuitive. No marketing UI, no experimental features by default.
 - Clear onboarding with a single “Get Started” path.
 
 ## Blockers to Ship
+
 - Welcome view
   - [ ] Dedicated Welcome/Empty state view (Activity Bar item)
   - [ ] One primary button: “Scaffold Test for Current File” (disabled until a file is open)
@@ -36,6 +38,7 @@ Status: internal roadmap for CodeCypher.adaptive-tests. Keep this file; do not l
   - [ ] Manual dogfood on 2–3 sample repos
 
 ## Nice-to-Haves (Post-MVP)
+
 - [ ] Contextual CodeLens (“Scaffold/Open Test” inline)
 - [ ] Folder batch scaffolding with preview
 - [ ] “Why” panel that shells to CLI and renders JSON results
@@ -43,9 +46,11 @@ Status: internal roadmap for CodeCypher.adaptive-tests. Keep this file; do not l
 - [ ] Settings sync for preferred output directory
 
 ## Non-Goals for MVP
+
 - No AI generation, no MCP servers, no Live Share, no fancy webview frameworks.
 
 ## Work Plan (Phases)
+
 1) Strip features + default off experiments
 2) Replace UI with native VS Code views
 3) Add Welcome view + empty state
@@ -53,4 +58,5 @@ Status: internal roadmap for CodeCypher.adaptive-tests. Keep this file; do not l
 5) Packaging sanity, smoke tests, sample repos
 
 ## Owner Notes
+
 - Keep this internal. Do not reference from README or docs site until we flip the switch.

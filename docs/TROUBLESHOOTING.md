@@ -271,8 +271,6 @@ src/
         └── com/example/YourClassTest.java
 ```
 
-
-
 ### Python
 
 #### Issue: "Module not found"
@@ -310,9 +308,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 **Solutions**:
 
-   - Open Command Palette: `Cmd/Ctrl + Shift + P`
-   - Run: "Developer: Show Extension Logs"
-   - Select: "Adaptive Tests"
+- Open Command Palette: `Cmd/Ctrl + Shift + P`
+- Run: "Developer: Show Extension Logs"
+- Select: "Adaptive Tests"
 
 1. **Reload VS Code window**:
    - Command Palette: "Developer: Reload Window"
