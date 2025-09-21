@@ -30,94 +30,8 @@ export class FiltersModule {
         this.filtersContainer.style.display = 'none';
         this.filtersContainer.setAttribute('aria-labelledby', 'filters-heading');
 
-        this.filtersContainer.innerHTML = `
-            <div class="filters-header">
-                <h3 id="filters-heading" class="filters-title">
-                    <button class="filters-toggle" aria-expanded="false" aria-controls="filters-content">
-                        <span class="filters-icon" aria-hidden="true">🔍</span>
-                        Advanced Filters
-                    </button>
-                </h3>
-                <button class="filters-clear" aria-label="Clear all filters">
-                    Clear All
-                </button>
-            </div>
-
-            <div id="filters-content" class="filters-content" aria-hidden="true">
-                <div class="filters-grid">
-                    <!-- Score Range Filters -->
-                    <div class="filter-group">
-                        <label for="min-score">Minimum Score</label>
-                        <input type="range" id="min-score" min="0" max="100" value="0"
-                               aria-describedby="min-score-value">
-                        <span id="min-score-value" class="range-value">0</span>
-                    </div>
-
-                    <div class="filter-group">
-                        <label for="max-score">Maximum Score</label>
-                        <input type="range" id="max-score" min="0" max="100" value="100"
-                               aria-describedby="max-score-value">
-                        <span id="max-score-value" class="range-value">100</span>
-                    </div>
-
-                    <!-- Language Filter -->
-                    <div class="filter-group">
-                        <label for="language-filter">Languages</label>
-                        <select id="language-filter" multiple aria-describedby="language-help">
-                            ${availableLanguages.map(lang =>
-                                `<option value="${lang}">${lang}</option>`
-                            ).join('')}
-                        </select>
-                        <div id="language-help" class="filter-help">
-                            Hold Ctrl/Cmd to select multiple languages
-                        </div>
-                    </div>
-
-                    <!-- Path Pattern Filter -->
-                    <div class="filter-group">
-                        <label for="path-pattern">Path Pattern</label>
-                        <input type="text" id="path-pattern"
-                               placeholder="e.g., src/, components/, utils/"
-                               aria-describedby="path-help">
-                        <div id="path-help" class="filter-help">
-                            Filter by file path (partial match)
-                        </div>
-                    </div>
-
-                    <!-- Sort Options -->
-                    <div class="filter-group">
-                        <label for="sort-by">Sort By</label>
-                        <select id="sort-by" aria-describedby="sort-help">
-                            <option value="score">Discovery Score</option>
-                            <option value="path">File Path</option>
-                            <option value="language">Language</option>
-                        </select>
-                        <div id="sort-help" class="filter-help">
-                            Choose primary sort criteria
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <label for="sort-order">Sort Order</label>
-                        <select id="sort-order" aria-describedby="order-help">
-                            <option value="desc">Highest First</option>
-                            <option value="asc">Lowest First</option>
-                        </select>
-                        <div id="order-help" class="filter-help">
-                            Sort direction
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Filter Stats -->
-                <div class="filter-stats" aria-live="polite">
-                    <div class="stats-summary">
-                        <span class="stats-count">0 results</span>
-                        <span class="stats-details"></span>
-                    </div>
-                </div>
-            </div>
-        `;
+        // Build filter UI structure using DOM methods
+        this.buildFilterStructure(availableLanguages);
 
         parentContainer.appendChild(this.filtersContainer);
 
@@ -126,6 +40,278 @@ export class FiltersModule {
         this.setupAccessibility();
 
         return this.filtersContainer;
+    }
+
+    /**
+     * Build filter structure using DOM methods to avoid innerHTML
+     */
+    buildFilterStructure(availableLanguages) {
+        // Clear container
+        while (this.filtersContainer.firstChild) {
+            this.filtersContainer.removeChild(this.filtersContainer.firstChild);
+        }
+
+        // Create header
+        const header = document.createElement('div');
+        header.className = 'filters-header';
+
+        const heading = document.createElement('h3');
+        heading.id = 'filters-heading';
+        heading.className = 'filters-title';
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'filters-toggle';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        toggleBtn.setAttribute('aria-controls', 'filters-content');
+
+        const icon = document.createElement('span');
+        icon.className = 'filters-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.textContent = '🔍';
+
+        const toggleText = document.createTextNode(' Advanced Filters');
+
+        toggleBtn.appendChild(icon);
+        toggleBtn.appendChild(toggleText);
+        heading.appendChild(toggleBtn);
+
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'filters-clear';
+        clearBtn.setAttribute('aria-label', 'Clear all filters');
+        clearBtn.textContent = 'Clear All';
+
+        header.appendChild(heading);
+        header.appendChild(clearBtn);
+
+        // Create content container
+        const content = document.createElement('div');
+        content.id = 'filters-content';
+        content.className = 'filters-content';
+        content.setAttribute('aria-hidden', 'true');
+
+        // Create filters grid
+        const grid = document.createElement('div');
+        grid.className = 'filters-grid';
+
+        // Add score range filters
+        grid.appendChild(this.createRangeFilter('min-score', 'Minimum Score', 0, 100, 0));
+        grid.appendChild(this.createRangeFilter('max-score', 'Maximum Score', 0, 100, 100));
+
+        // Add language filter
+        grid.appendChild(this.createLanguageFilter(availableLanguages));
+
+        // Add path pattern filter
+        grid.appendChild(this.createTextFilter(
+            'path-pattern',
+            'Path Pattern',
+            'e.g., src/, components/, utils/',
+            'Filter by file path (partial match)'
+        ));
+
+        // Add sort options
+        grid.appendChild(this.createSortByFilter());
+        grid.appendChild(this.createSortOrderFilter());
+
+        content.appendChild(grid);
+
+        // Create filter stats
+        const stats = document.createElement('div');
+        stats.className = 'filter-stats';
+        stats.setAttribute('aria-live', 'polite');
+
+        const statsSummary = document.createElement('div');
+        statsSummary.className = 'stats-summary';
+
+        const statsCount = document.createElement('span');
+        statsCount.className = 'stats-count';
+        statsCount.textContent = '0 results';
+
+        const statsDetails = document.createElement('span');
+        statsDetails.className = 'stats-details';
+
+        statsSummary.appendChild(statsCount);
+        statsSummary.appendChild(statsDetails);
+        stats.appendChild(statsSummary);
+        content.appendChild(stats);
+
+        // Append to container
+        this.filtersContainer.appendChild(header);
+        this.filtersContainer.appendChild(content);
+    }
+
+    /**
+     * Create a range filter element
+     */
+    createRangeFilter(id, label, min, max, value) {
+        const group = document.createElement('div');
+        group.className = 'filter-group';
+
+        const labelEl = document.createElement('label');
+        labelEl.setAttribute('for', id);
+        labelEl.textContent = label;
+
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.id = id;
+        input.min = min;
+        input.max = max;
+        input.value = value;
+        input.setAttribute('aria-describedby', id + '-value');
+
+        const valueSpan = document.createElement('span');
+        valueSpan.id = id + '-value';
+        valueSpan.className = 'range-value';
+        valueSpan.textContent = String(value);
+
+        group.appendChild(labelEl);
+        group.appendChild(input);
+        group.appendChild(valueSpan);
+
+        return group;
+    }
+
+    /**
+     * Create the language filter element
+     */
+    createLanguageFilter(languages) {
+        const group = document.createElement('div');
+        group.className = 'filter-group';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', 'language-filter');
+        label.textContent = 'Languages';
+
+        const select = document.createElement('select');
+        select.id = 'language-filter';
+        select.multiple = true;
+        select.setAttribute('aria-describedby', 'language-help');
+
+        // Add options
+        languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang;
+            option.textContent = lang;
+            select.appendChild(option);
+        });
+
+        const help = document.createElement('div');
+        help.id = 'language-help';
+        help.className = 'filter-help';
+        help.textContent = 'Hold Ctrl/Cmd to select multiple languages';
+
+        group.appendChild(label);
+        group.appendChild(select);
+        group.appendChild(help);
+
+        return group;
+    }
+
+    /**
+     * Create a text input filter element
+     */
+    createTextFilter(id, label, placeholder, helpText) {
+        const group = document.createElement('div');
+        group.className = 'filter-group';
+
+        const labelEl = document.createElement('label');
+        labelEl.setAttribute('for', id);
+        labelEl.textContent = label;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = id;
+        input.placeholder = placeholder;
+        input.setAttribute('aria-describedby', id + '-help');
+
+        const help = document.createElement('div');
+        help.id = id + '-help';
+        help.className = 'filter-help';
+        help.textContent = helpText;
+
+        group.appendChild(labelEl);
+        group.appendChild(input);
+        group.appendChild(help);
+
+        return group;
+    }
+
+    /**
+     * Create the sort by filter element
+     */
+    createSortByFilter() {
+        const group = document.createElement('div');
+        group.className = 'filter-group';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', 'sort-by');
+        label.textContent = 'Sort By';
+
+        const select = document.createElement('select');
+        select.id = 'sort-by';
+        select.setAttribute('aria-describedby', 'sort-help');
+
+        const options = [
+            { value: 'score', text: 'Discovery Score' },
+            { value: 'path', text: 'File Path' },
+            { value: 'language', text: 'Language' }
+        ];
+
+        options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            select.appendChild(option);
+        });
+
+        const help = document.createElement('div');
+        help.id = 'sort-help';
+        help.className = 'filter-help';
+        help.textContent = 'Choose primary sort criteria';
+
+        group.appendChild(label);
+        group.appendChild(select);
+        group.appendChild(help);
+
+        return group;
+    }
+
+    /**
+     * Create the sort order filter element
+     */
+    createSortOrderFilter() {
+        const group = document.createElement('div');
+        group.className = 'filter-group';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', 'sort-order');
+        label.textContent = 'Sort Order';
+
+        const select = document.createElement('select');
+        select.id = 'sort-order';
+        select.setAttribute('aria-describedby', 'order-help');
+
+        const options = [
+            { value: 'desc', text: 'Highest First' },
+            { value: 'asc', text: 'Lowest First' }
+        ];
+
+        options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            select.appendChild(option);
+        });
+
+        const help = document.createElement('div');
+        help.id = 'order-help';
+        help.className = 'filter-help';
+        help.textContent = 'Sort direction';
+
+        group.appendChild(label);
+        group.appendChild(select);
+        group.appendChild(help);
+
+        return group;
     }
 
     setupEventListeners(onFiltersChange) {
