@@ -2,15 +2,15 @@
   "name": "vscode-adaptive-tests-extension_experimental",
   "displayName": "Adaptive Tests",
   "description": "Visual discovery and scaffolding for resilient test suites",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "adaptive-tests",
   "icon": "media/icon.png",
   "engines": {
-    "vscode": "^1.95.0"
+    "vscode": "^1.104.0"
   },
   "categories": [
     "Testing",
-    "Other"
+    "AI"
   ],
   "keywords": [
     "testing",
@@ -38,6 +38,16 @@
   "extensionKind": [
     "workspace"
   ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Adaptive Tests requires a trusted workspace to analyze and scaffold files."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Adaptive Tests commands integrate with local tooling and require full workspace access."
+    }
+  },
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -162,11 +172,11 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/vscode": "^1.95.0",
-    "@types/node": "^20.12.7",
-    "@vscode/test-electron": "^2.4.2",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.1"
+    "@types/vscode": "^1.104.0",
+    "@types/node": "^24.5.2",
+    "@vscode/test-electron": "^2.5.2",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@adaptive-tests/javascript": "^0.3.0"

@@ -193,7 +193,7 @@ class DiscoveryCommand {
             // Fall back to bundled version
         }
         // Load bundled version
-        return require('adaptive-tests');
+        return require('@adaptive-tests/javascript');
     }
 }
 exports.DiscoveryCommand = DiscoveryCommand;

@@ -26,7 +26,7 @@ export class FiltersModule {
      */
     createFiltersUI(parentContainer, onFiltersChange, availableLanguages = []) {
         this.filtersContainer = document.createElement('div');
-        this.filtersContainer.className = 'filters-section';
+        this.filtersContainer.className = 'filters-section hidden';
         this.filtersContainer.style.display = 'none';
         this.filtersContainer.setAttribute('aria-labelledby', 'filters-heading');
 
@@ -228,11 +228,13 @@ export class FiltersModule {
         this.isVisible = !this.isVisible;
 
         if (this.isVisible) {
+            this.filtersContainer.classList.remove('hidden');
             this.filtersContainer.style.display = 'block';
             content.setAttribute('aria-hidden', 'false');
             toggleBtn.setAttribute('aria-expanded', 'true');
             toggleBtn.querySelector('.filters-icon').textContent = '🔽';
         } else {
+            this.filtersContainer.classList.add('hidden');
             this.filtersContainer.style.display = 'none';
             content.setAttribute('aria-hidden', 'true');
             toggleBtn.setAttribute('aria-expanded', 'false');
@@ -265,6 +267,115 @@ export class FiltersModule {
             sortBy: 'score',
             sortOrder: 'desc'
         };
+    }
+
+    applyFilterState(filterState = {}) {
+        this.currentFilters = {
+            ...this.currentFilters,
+            ...filterState,
+            languages: Array.isArray(filterState.languages) ? [...filterState.languages] : []
+        };
+
+        const minScoreInput = this.filtersContainer.querySelector('#min-score');
+        const maxScoreInput = this.filtersContainer.querySelector('#max-score');
+        const minScoreValue = this.filtersContainer.querySelector('#min-score-value');
+        const maxScoreValue = this.filtersContainer.querySelector('#max-score-value');
+        const pathInput = this.filtersContainer.querySelector('#path-pattern');
+        const sortBySelect = this.filtersContainer.querySelector('#sort-by');
+        const sortOrderSelect = this.filtersContainer.querySelector('#sort-order');
+        const languageSelect = this.filtersContainer.querySelector('#language-filter');
+
+        if (minScoreInput && minScoreValue) {
+            const value = this.currentFilters.minScore === '' ? 0 : Number(this.currentFilters.minScore);
+            minScoreInput.value = String(value);
+            minScoreValue.textContent = String(value);
+        }
+
+        if (maxScoreInput && maxScoreValue) {
+            const value = this.currentFilters.maxScore === '' ? 100 : Number(this.currentFilters.maxScore);
+            maxScoreInput.value = String(value);
+            maxScoreValue.textContent = String(value);
+        }
+
+        if (pathInput) {
+            pathInput.value = this.currentFilters.pathPattern || '';
+        }
+
+        if (sortBySelect) {
+            sortBySelect.value = this.currentFilters.sortBy || 'score';
+        }
+
+        if (sortOrderSelect) {
+            sortOrderSelect.value = this.currentFilters.sortOrder || 'desc';
+        }
+
+        if (languageSelect) {
+            const selection = new Set(this.currentFilters.languages || []);
+            Array.from(languageSelect.options).forEach(option => {
+                option.selected = selection.has(option.value);
+            });
+        }
+
+        if (filterState.isVisible && !this.isVisible) {
+            this.toggleFilters();
+        }
+    }
+
+    filterAndSort(results, filters = this.currentFilters) {
+        if (!Array.isArray(results)) {
+            return [];
+        }
+
+        const workingFilters = {
+            ...this.currentFilters,
+            ...filters
+        };
+
+        let filtered = results.slice();
+
+        const hasMin = workingFilters.minScore !== '' && workingFilters.minScore !== undefined;
+        const hasMax = workingFilters.maxScore !== '' && workingFilters.maxScore !== undefined;
+
+        if (hasMin) {
+            filtered = filtered.filter(result => typeof result.score === 'number' && result.score >= Number(workingFilters.minScore));
+        }
+
+        if (hasMax) {
+            filtered = filtered.filter(result => typeof result.score === 'number' && result.score <= Number(workingFilters.maxScore));
+        }
+
+        if (Array.isArray(workingFilters.languages) && workingFilters.languages.length > 0) {
+            const languagesSet = new Set(workingFilters.languages);
+            filtered = filtered.filter(result => !result.language || languagesSet.has(result.language));
+        }
+
+        if (workingFilters.pathPattern) {
+            const pattern = workingFilters.pathPattern.toLowerCase();
+            filtered = filtered.filter(result => {
+                const candidatePath = (result.path || result.relativePath || '').toLowerCase();
+                return candidatePath.includes(pattern);
+            });
+        }
+
+        const sortBy = workingFilters.sortBy || 'score';
+        const sortOrder = workingFilters.sortOrder === 'asc' ? 'asc' : 'desc';
+
+        filtered.sort((a, b) => {
+            let comparison = 0;
+            if (sortBy === 'score') {
+                const scoreA = typeof a.score === 'number' ? a.score : -Infinity;
+                const scoreB = typeof b.score === 'number' ? b.score : -Infinity;
+                comparison = scoreA - scoreB;
+            } else if (sortBy === 'path') {
+                comparison = (a.path || a.relativePath || '').localeCompare(b.path || b.relativePath || '');
+            } else if (sortBy === 'language') {
+                comparison = (a.language || '').localeCompare(b.language || '');
+            }
+
+            return sortOrder === 'asc' ? comparison : -comparison;
+        });
+
+        return filtered;
     }
 
     updateStats(results, filteredResults) {
@@ -303,15 +414,26 @@ export class FiltersModule {
     }
 
     getCurrentFilters() {
-        return { ...this.currentFilters };
+        return {
+            ...this.currentFilters,
+            languages: [...this.currentFilters.languages]
+        };
     }
 
     setAvailableLanguages(languages) {
         const languageSelect = this.filtersContainer.querySelector('#language-filter');
-        if (languageSelect) {
-            languageSelect.innerHTML = languages.map(lang =>
-                `<option value="${lang}">${lang}</option>`
-            ).join('');
+        if (!languageSelect) {
+            return;
         }
+
+        const selected = new Set(this.currentFilters.languages);
+
+        languageSelect.innerHTML = languages.map(lang =>
+            `<option value="${lang}">${lang}</option>`
+        ).join('');
+
+        Array.from(languageSelect.options).forEach(option => {
+            option.selected = selected.has(option.value);
+        });
     }
 }

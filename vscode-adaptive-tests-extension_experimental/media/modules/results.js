@@ -53,6 +53,46 @@ function createSkeletonElement() {
 }
 
 /**
+ * Normalises score breakdown data into a flat array of strings.
+ * Accepts either the legacy array shape or the factor object structure.
+ *
+ * @param {any} breakdown
+ * @returns {Array<string>}
+ */
+function normaliseScoreBreakdown(breakdown) {
+    if (!breakdown) {
+        return [];
+    }
+
+    if (Array.isArray(breakdown)) {
+        return breakdown;
+    }
+
+    if (Array.isArray(breakdown.factors)) {
+        return breakdown.factors
+            .map((factor) => {
+                if (!factor) {
+                    return '';
+                }
+                const parts = [];
+                if (factor.factor) {
+                    parts.push(String(factor.factor));
+                }
+                if (typeof factor.points === 'number' && !Number.isNaN(factor.points)) {
+                    parts.push(`(+${factor.points})`);
+                }
+                if (factor.description) {
+                    parts.push(String(factor.description));
+                }
+                return parts.join(' ').trim();
+            })
+            .filter(Boolean);
+    }
+
+    return [];
+}
+
+/**
  * Displays discovery results with summary, individual items, and navigation setup.
  * Creates interactive result elements with accessibility support.
  *
@@ -151,13 +191,14 @@ function createResultElement(result, index, totalResults) {
     }
 
     // Build breakdown HTML
+    const breakdownItems = normaliseScoreBreakdown(result.scoreBreakdown);
     let breakdownHtml = '';
-    if (result.showScores && result.scoreBreakdown && result.scoreBreakdown.length > 0) {
+    if (result.showScores && breakdownItems.length > 0) {
         breakdownHtml = `
             <div class="result-breakdown">
                 <div class="breakdown-title">Score Breakdown:</div>
                 <ul class="breakdown-list" role="list">
-                    ${result.scoreBreakdown.map(item => `<li role="listitem">${item}</li>`).join('')}
+                    ${breakdownItems.map(item => `<li role="listitem">${item}</li>`).join('')}
                 </ul>
             </div>
         `;

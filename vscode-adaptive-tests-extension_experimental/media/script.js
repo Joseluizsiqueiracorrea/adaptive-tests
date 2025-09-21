@@ -1,315 +1,638 @@
 /**
- * @fileoverview Main script for the Adaptive Tests Discovery Lens webview.
- * Manages test discovery, state management, UI interactions, and module coordination
- * for the VS Code extension with lazy-loaded ES modules.
- *
- * @author VS Code Adaptive Tests Extension
- * @version 2.0.0
+ * Adaptive Tests Discovery Lens webview controller.
+ * Modernized for the VS Code Tahoe 26 "liquid glass" release with
+ * resilient state restoration, accessibility, and filtering.
  */
-
-(function () {
-    /**
-     * VS Code API instance for extension communication.
-     * @type {Object}
-     */
+(() => {
     const vscode = acquireVsCodeApi();
 
-    // Core DOM elements - available immediately
-    /** @type {HTMLInputElement} Signature input textarea */
+    // Core DOM references (fail fast if the webview did not render correctly)
     const signatureInput = document.getElementById('signature-input');
-    /** @type {HTMLButtonElement} Discovery run button */
     const runButton = document.getElementById('run-discovery');
-    /** @type {HTMLElement} Results display section */
     const resultsSection = document.querySelector('.results-section');
-    /** @type {HTMLElement} Results container for items */
     const resultsContainer = document.getElementById('results-container');
-    /** @type {HTMLElement} Results summary display */
     const resultsSummary = document.querySelector('.results-summary');
-    /** @type {HTMLElement} Error display section */
     const errorSection = document.querySelector('.error-section');
-    /** @type {HTMLElement} Error message container */
-    const errorMessage = document.querySelector('.error-message');
-    /** @type {NodeList} Preset selection buttons */
-    const presetButtons = document.querySelectorAll('.preset-btn');
-    /** @type {HTMLElement} Screen reader announcements */
+    const errorMessage = errorSection ? errorSection.querySelector('.error-message') : null;
+    const presetButtons = Array.from(document.querySelectorAll('.preset-btn'));
     const statusAnnouncements = document.getElementById('status-announcements');
-    /** @type {HTMLElement} Progress indicator container */
     const progressContainer = document.querySelector('.discovery-progress');
-    /** @type {HTMLElement} Progress text display */
     const progressText = document.getElementById('progress-text');
-    /** @type {NodeList} Progress step indicators */
-    const progressSteps = document.querySelectorAll('.progress-step');
+    const progressSteps = Array.from(document.querySelectorAll('.progress-step'));
 
-    /**
-     * Central state management system for the Discovery Lens application.
-     * Provides structured state management with subscription system for reactive UI updates.
-     *
-     * @class StateManager
-     */
+    if (!signatureInput || !runButton || !resultsSection || !resultsContainer || !resultsSummary) {
+        console.error('[Adaptive Tests] Discovery Lens failed to initialise: missing required DOM nodes.');
+        return;
+    }
+
+    const originalRunButtonMarkup = runButton.innerHTML;
+
+    // Mutable state
+    let isLoading = false;
+    let lastSignature = null;
+    let lastResults = [];
+    let currentStepIndex = 0;
+    let validationTimer = null;
+
+    // Lazy-loaded modules
+    let resultsModule = null;
+    let errorsModule = null;
+    let navigationModule = null;
+    let filtersModuleInstance = null;
+
+    const progressTimers = new Set();
+
     class StateManager {
-        /**
-         * Creates an instance of StateManager with initial state and subscription system.
-         */
         constructor() {
-            /**
-             * @private
-             * @type {Object} The current application state
-             */
             this.state = {
-                /** @type {boolean} Loading state indicator */
                 isLoading: false,
-                /** @type {Object|null} Last discovery signature */
                 lastSignature: null,
-                /** @type {Array} Last discovery results */
                 lastResults: [],
-                /** @type {number|null} Validation timeout reference */
-                validationTimeout: null,
-                /** @type {number} Current progress step */
-                currentStep: 0,
-                /** @type {Object} UI-specific state */
                 ui: {
-                    /** @type {string|null} Current error message */
                     currentError: null,
-                    /** @type {string|null} Current error type */
                     currentErrorType: null,
-                    /** @type {boolean} Whether results are currently displayed */
                     resultsVisible: false,
-                    /** @type {number} Selected result index for navigation */
+                    resultsCount: 0,
+                    announcements: [],
                     selectedResultIndex: -1,
-                    /** @type {Array} Accessibility announcements queue */
-                    announcements: []
+                    selectedPreset: null
                 }
             };
-
-            /**
-             * @private
-             * @type {Array<Function>} List of subscriber functions
-             */
-            this.subscribers = [];
+            this.listeners = [];
         }
 
-        /**
-         * Gets the current state or a specific property from state.
-         *
-         * @param {string} [key] - Optional key to get specific state property
-         * @returns {any} The entire state object or specific property value
-         */
         getState(key) {
-            return key ? this.state[key] : { ...this.state };
-        }
-
-        /**
-         * Updates the state with new values and notifies subscribers.
-         *
-         * @param {Object} updates - Object containing state updates
-         * @param {boolean} [silent=false] - If true, doesn't notify subscribers
-         */
-        setState(updates, silent = false) {
-            const previousState = { ...this.state };
-            
-            // Deep merge updates into current state
-            this.state = this._deepMerge(this.state, updates);
-            
-            if (!silent) {
-                this._notifySubscribers(previousState, this.state);
+            if (key) {
+                return this.state[key];
             }
+            return { ...this.state };
         }
 
-        /**
-         * Subscribes to state changes.
-         *
-         * @param {Function} callback - Function to call when state changes
-         * @returns {Function} Unsubscribe function
-         */
-        subscribe(callback) {
-            this.subscribers.push(callback);
-            
-            // Return unsubscribe function
-            return () => {
-                const index = this.subscribers.indexOf(callback);
-                if (index > -1) {
-                    this.subscribers.splice(index, 1);
-                }
-            };
-        }
-
-        /**
-         * Performs a deep merge of two objects.
-         *
-         * @private
-         * @param {Object} target - Target object
-         * @param {Object} source - Source object to merge
-         * @returns {Object} Merged object
-         */
-        _deepMerge(target, source) {
-            const result = { ...target };
-            
-            for (const key in source) {
-                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-                    result[key] = this._deepMerge(result[key] || {}, source[key]);
-                } else {
-                    result[key] = source[key];
-                }
-            }
-            
-            return result;
-        }
-
-        /**
-         * Notifies all subscribers of state changes.
-         *
-         * @private
-         * @param {Object} previousState - Previous state object
-         * @param {Object} newState - New state object
-         */
-        _notifySubscribers(previousState, newState) {
-            this.subscribers.forEach(callback => {
+        setState(updates) {
+            const previous = JSON.parse(JSON.stringify(this.state));
+            this.state = deepMerge({ ...this.state }, updates);
+            this.listeners.forEach(listener => {
                 try {
-                    callback(newState, previousState);
+                    listener(this.state, previous);
                 } catch (error) {
-                    console.error('Error in state subscriber:', error);
+                    console.error('[Adaptive Tests] state listener error', error);
                 }
             });
         }
+
+        subscribe(listener) {
+            this.listeners.push(listener);
+            return () => {
+                const index = this.listeners.indexOf(listener);
+                if (index >= 0) {
+                    this.listeners.splice(index, 1);
+                }
+            };
+        }
     }
 
-    // Global state manager instance
+    function deepMerge(target, source) {
+        Object.keys(source).forEach(key => {
+            const value = source[key];
+            if (Array.isArray(value)) {
+                target[key] = [...value];
+            } else if (value && typeof value === 'object') {
+                target[key] = deepMerge(target[key] ? { ...target[key] } : {}, value);
+            } else {
+                target[key] = value;
+            }
+        });
+        return target;
+    }
+
     const stateManager = new StateManager();
-    
-    // Make stateManager globally accessible for modules
     window.stateManager = stateManager;
+    window.announceToScreenReader = announceToScreenReader;
+    window.openFile = openFile;
+    window.scaffoldTest = scaffoldTest;
+    window.retryLastDiscovery = retryLastDiscovery;
 
-    // Lazy-loaded modules - loaded on demand for performance
-    /** @type {Object|null} Presets module for signature templates */
-    let presetModule = null;
-    /** @type {Object|null} Results module for discovery result display */
-    let resultsModule = null;
-    /** @type {Object|null} Navigation module for keyboard navigation */
-    let navigationModule = null;
-    /** @type {Object|null} Errors module for error handling and display */
-    /** @type {Object|null} Filters module for result filtering and sorting */
-    let filtersModule = null;
-    let errorsModule = null;
+    init().catch(error => console.error('[Adaptive Tests] Failed to initialise Discovery Lens', error));
 
-    /**
-     * Initializes the application by setting up state subscriptions, event listeners,
-     * restoring previous state, and configuring accessibility features.
-     *
-     * @function init
-     */
-    function init() {
-        // Set up state change subscriptions
-        setupStateSubscriptions();
-        
-        // Restore previous state
-        const state = vscode.getState();
-        if (state) {
-            // Update state manager with restored data
-            stateManager.setState({
-                lastResults: state.results || [],
-                lastSignature: state.lastSignature || null
-            }, true); // Silent update during initialization
-            
-            if (state.signature) {
-                signatureInput.value = state.signature;
-            }
-            if (state.results) {
-                // Lazy load results module when needed
-                loadResultsModule().then(() => {
-                    if (resultsModule) {
-                        resultsModule.displayResults({
-                            results: state.results,
-                            signature: state.lastSignature,
-                            totalCandidates: state.totalCandidates
-                        }, resultsSection, resultsContainer, resultsSummary, announceToScreenReader, manageFocus, saveState, setupResultNavigation);
-                    }
-                });
-            }
+    async function init() {
+        attachEventListeners();
+        await setupPresetHandlers();
+        setupDetailsAccessibility();
+        restoreState();
+    }
+
+    function attachEventListeners() {
+        runButton.addEventListener('click', runDiscovery);
+        signatureInput.addEventListener('keydown', handleSignatureKeydown);
+        signatureInput.addEventListener('input', debounceValidation);
+        document.addEventListener('keydown', handleGlobalKeydown);
+        window.addEventListener('message', handleMessage);
+    }
+
+    async function setupPresetHandlers() {
+        if (!presetButtons.length) {
+            return;
+        }
+        const { setupPresetHandlers } = await import('./modules/presets.js');
+        setupPresetHandlers(signatureInput, presetButtons, announceToScreenReader, saveState);
+    }
+
+    function setupDetailsAccessibility() {
+        const details = document.querySelector('.help-section details');
+        const summary = details ? details.querySelector('summary') : null;
+        if (!details || !summary) {
+            return;
+        }
+        summary.addEventListener('click', () => {
+            requestAnimationFrame(() => {
+                summary.setAttribute('aria-expanded', details.open.toString());
+            });
+        });
+    }
+
+    function restoreState() {
+        const persisted = vscode.getState();
+        if (!persisted) {
+            return;
         }
 
-        // Essential event listeners (always loaded)
-        runButton.addEventListener('click', runDiscovery);
-        signatureInput.addEventListener('keydown', handleInputKeydown);
-        signatureInput.addEventListener('input', debounceValidation);
+        if (persisted.signature) {
+            signatureInput.value = persisted.signature;
+        }
 
-        // Lazy load preset handlers when needed
-        setupPresetHandlers();
+        if (persisted.lastSignature) {
+            lastSignature = persisted.lastSignature;
+            stateManager.setState({ lastSignature });
+        }
 
-        // Global keyboard navigation
-        document.addEventListener('keydown', handleGlobalKeydown);
-
-        // Handle messages from extension
-        window.addEventListener('message', handleMessage);
-
-        // Handle details accessibility
-        setupDetailsAccessibility();
+        if (Array.isArray(persisted.results) && persisted.results.length) {
+            lastResults = persisted.results;
+            stateManager.setState({ lastResults });
+            const totalCandidates = persisted.totalCandidates ?? persisted.results.length;
+            setTimeout(() => {
+                displayResults(
+                    {
+                        results: persisted.results,
+                        signature: persisted.lastSignature ?? null,
+                        totalCandidates
+                    },
+                    {
+                        skipStateSave: true,
+                        restoredFilters: persisted.filters ?? null
+                    }
+                ).catch(error => console.error('[Adaptive Tests] Failed to restore discovery results', error));
+            }, 0);
+        }
     }
 
-    /**
-     * Sets up state change subscriptions to automatically update UI when state changes.
-     * Manages reactive updates for loading states, errors, results, and UI elements.
-     *
-     * @function setupStateSubscriptions
-     */
-    function setupStateSubscriptions() {
-        stateManager.subscribe((newState, previousState) => {
-            // Handle loading state changes
-            if (newState.isLoading !== previousState.isLoading) {
-                setLoading(newState.isLoading);
+    async function handleMessage(event) {
+        const message = event.data || {};
+
+        switch (message.command) {
+            case 'displayResults':
+                setLoading(false);
+                await displayResults(message).catch(error => {
+                    console.error('[Adaptive Tests] Failed to display discovery results', error);
+                    showError('Unable to render discovery results. See console for details.', 'DISCOVERY');
+                });
+                break;
+            case 'showError':
+                setLoading(false);
+                await showError(message.error || 'Discovery failed.', message.errorType).catch(err => {
+                    console.error('[Adaptive Tests] Failed to show error state', err);
+                });
+                break;
+            case 'updateProgress':
+                updateProgress(
+                    typeof message.step === 'number' ? message.step : currentStepIndex,
+                    typeof message.text === 'string' ? message.text : ''
+                );
+                break;
+            default:
+                break;
+        }
+    }
+
+    async function runDiscovery() {
+        if (isLoading) {
+            return;
+        }
+
+        const rawSignature = signatureInput.value.trim();
+        if (!rawSignature) {
+            await showError('Please enter a discovery signature before running discovery.', 'VALIDATION');
+            manageFocus(signatureInput);
+            return;
+        }
+
+        let parsedSignature;
+        try {
+            parsedSignature = JSON.parse(rawSignature);
+        } catch (error) {
+            await showError('Invalid JSON signature. Please fix the syntax and try again.', 'VALIDATION');
+            manageFocus(signatureInput);
+            return;
+        }
+
+        if (!parsedSignature.name) {
+            await showError('Signature must include at least a "name" property.', 'VALIDATION');
+            manageFocus(signatureInput);
+            return;
+        }
+
+        lastSignature = parsedSignature;
+        stateManager.setState({
+            lastSignature: parsedSignature,
+            lastResults: []
+        });
+
+        setLoading(true);
+        hideError();
+
+        const { showSkeleton } = await loadResultsModule();
+        showResultsSection();
+        showSkeleton(resultsContainer, 5);
+
+        showProgress();
+        startProgressAnimation();
+
+        announceToScreenReader('Starting discovery. Results will appear soon.', 'assertive');
+
+        vscode.postMessage({
+            command: 'runDiscovery',
+            signature: parsedSignature
+        });
+
+        saveState();
+    }
+
+    function setLoading(loading) {
+        isLoading = loading;
+        stateManager.setState({ isLoading: loading });
+
+        runButton.disabled = loading;
+        runButton.classList.toggle('loading', loading);
+
+        if (loading) {
+            runButton.setAttribute('aria-busy', 'true');
+            runButton.setAttribute('aria-label', 'Running discovery, please wait');
+            runButton.innerHTML = '<span class="progress-spinner" aria-hidden="true"></span><span>Running Discovery…</span>';
+            showProgress();
+        } else {
+            runButton.removeAttribute('aria-busy');
+            runButton.setAttribute('aria-label', 'Run discovery to find matching code files');
+            runButton.innerHTML = originalRunButtonMarkup;
+            hideProgress();
+        }
+    }
+
+    async function displayResults(payload, options = {}) {
+        hideError();
+
+        const signature = payload.signature ?? null;
+        const totalCandidates = payload.totalCandidates ?? (Array.isArray(payload.results) ? payload.results.length : 0);
+        lastResults = Array.isArray(payload.results) ? payload.results : [];
+
+        stateManager.setState({
+            lastResults,
+            ui: {
+                ...stateManager.getState('ui'),
+                resultsVisible: true,
+                resultsCount: lastResults.length
             }
-            
-            // Handle error state changes
-            if (newState.ui.currentError !== previousState.ui.currentError) {
-                if (newState.ui.currentError) {
-                    showError(newState.ui.currentError, newState.ui.currentErrorType);
-                } else {
-                    hideError();
-                }
+        });
+
+        const filters = await ensureFilters(lastResults);
+        if (filters && options.restoredFilters) {
+            filters.applyFilterState(options.restoredFilters);
+        }
+
+        const activeFilters = filters ? filters.getCurrentFilters() : null;
+        const filteredResults = filters && activeFilters
+            ? filters.filterAndSort(lastResults, activeFilters)
+            : lastResults;
+
+        await renderResults(filteredResults, totalCandidates, signature);
+
+        if (filters) {
+            filters.updateStats(lastResults, filteredResults);
+        }
+
+        announceResults(filteredResults.length, lastResults.length);
+
+        if (!options.skipStateSave) {
+            saveState(totalCandidates);
+        }
+    }
+
+    async function renderResults(resultsToRender, totalCandidates, signature) {
+        const module = await loadResultsModule();
+        await ensureNavigationModule();
+
+        module.displayResults(
+            {
+                results: resultsToRender,
+                signature,
+                totalCandidates
+            },
+            resultsSection,
+            resultsContainer,
+            resultsSummary,
+            announceToScreenReader,
+            manageFocus,
+            () => saveState(totalCandidates),
+            container => navigationModule.setupResultNavigation(container)
+        );
+
+        showResultsSection();
+    }
+
+    async function ensureFilters(results) {
+        if (!results || results.length === 0) {
+            if (filtersModuleInstance && filtersModuleInstance.filtersContainer) {
+                filtersModuleInstance.filtersContainer.classList.add('hidden');
+                filtersModuleInstance.filtersContainer.style.display = 'none';
             }
-            
-            // Handle results visibility changes
-            if (newState.ui.resultsVisible !== previousState.ui.resultsVisible) {
-                if (!newState.ui.resultsVisible) {
-                    hideResults();
-                }
-            }
-            
-            // Handle signature input synchronization
-            if (newState.lastSignature !== previousState.lastSignature && newState.lastSignature) {
-                const signatureJson = JSON.stringify(newState.lastSignature, null, 2);
-                if (signatureInput.value !== signatureJson) {
-                    signatureInput.value = signatureJson;
-                }
+            return null;
+        }
+
+        const filters = await getFiltersModule();
+        const languages = Array.from(new Set(results.map(result => result.language).filter(Boolean))).sort();
+
+        if (!filters.filtersContainer) {
+            filters.createFiltersUI(resultsSection, handleFiltersChange, languages);
+        } else {
+            filters.setAvailableLanguages(languages);
+            filters.filtersContainer.classList.remove('hidden');
+            filters.filtersContainer.style.display = 'block';
+        }
+
+        return filters;
+    }
+
+    async function handleFiltersChange(newFilters) {
+        if (!lastResults.length) {
+            return;
+        }
+
+        const filters = await getFiltersModule();
+        const filtered = filters.filterAndSort(lastResults, newFilters);
+        await renderResults(filtered, lastResults.length, lastSignature);
+        filters.updateStats(lastResults, filtered);
+        announceResults(filtered.length, lastResults.length);
+        saveState(lastResults.length);
+    }
+
+    function announceResults(filteredCount, totalCount) {
+        if (totalCount === 0) {
+            announceToScreenReader('No matching results found.');
+        } else if (filteredCount === totalCount) {
+            announceToScreenReader(`Found ${filteredCount} results.`);
+        } else {
+            announceToScreenReader(`Showing ${filteredCount} of ${totalCount} filtered results.`);
+        }
+    }
+
+    async function showError(message, errorType) {
+        const module = await loadErrorsModule();
+        const category = errorType || module.categorizeError(message);
+
+        module.showError(
+            message,
+            errorSection,
+            errorMessage,
+            resultsSection,
+            announceToScreenReader,
+            manageFocus,
+            category,
+            lastSignature
+        );
+
+        if (errorSection) {
+            errorSection.classList.remove('hidden');
+            errorSection.style.display = 'block';
+        }
+
+        stateManager.setState({
+            ui: {
+                ...stateManager.getState('ui'),
+                currentError: message,
+                currentErrorType: category,
+                resultsVisible: false
             }
         });
     }
 
-    /**
-     * Lazy loading functions for ES modules - loads modules only when needed
-     * to improve initial load performance and reduce memory footprint.
-     */
-
-    /**
-     * Loads the presets module for signature templates.
-     *
-     * @async
-     * @function loadPresetModule
-     * @returns {Promise<Object>} The presets module
-     */
-    async function loadPresetModule() {
-        if (!presetModule) {
-            presetModule = await import('./modules/presets.js');
+    function hideError() {
+        if (errorsModule && typeof errorsModule.hideError === 'function') {
+            errorsModule.hideError(errorSection);
         }
-        return presetModule;
+
+        if (errorSection) {
+            errorSection.classList.add('hidden');
+            errorSection.style.display = 'none';
+        }
+
+        stateManager.setState({
+            ui: {
+                ...stateManager.getState('ui'),
+                currentError: null,
+                currentErrorType: null
+            }
+        });
     }
 
-    /**
-     * Loads the results module for discovery result display.
-     *
-     * @async
-     * @function loadResultsModule
-     * @returns {Promise<Object>} The results module
-     */
+    function showResultsSection() {
+        resultsSection.classList.remove('hidden');
+        resultsSection.style.display = 'block';
+    }
+
+    function showProgress() {
+        if (!progressContainer) {
+            return;
+        }
+        progressContainer.classList.remove('hidden');
+        progressContainer.style.display = progressContainer.dataset.display || 'flex';
+        resetProgress();
+    }
+
+    function hideProgress() {
+        if (!progressContainer) {
+            return;
+        }
+        progressContainer.classList.add('hidden');
+        progressContainer.style.display = 'none';
+        resetProgress();
+        clearProgressAnimation();
+    }
+
+    function startProgressAnimation() {
+        clearProgressAnimation();
+        resetProgress();
+        const steps = [
+            { delay: 200, text: 'Scanning workspace…' },
+            { delay: 1100, text: 'Analyzing syntax trees…' },
+            { delay: 2100, text: 'Scoring candidates…' },
+            { delay: 3100, text: 'Finalizing results…' }
+        ];
+
+        steps.forEach((entry, index) => {
+            const timer = setTimeout(() => updateProgress(index, entry.text), entry.delay);
+            progressTimers.add(timer);
+        });
+    }
+
+    function clearProgressAnimation() {
+        progressTimers.forEach(timer => clearTimeout(timer));
+        progressTimers.clear();
+    }
+
+    function resetProgress() {
+        currentStepIndex = 0;
+        if (progressText) {
+            progressText.textContent = 'Discovering files…';
+        }
+        progressSteps.forEach(step => {
+            step.classList.remove('active');
+            step.classList.remove('completed');
+        });
+    }
+
+    function updateProgress(stepIndex, text) {
+        currentStepIndex = Math.max(0, Math.min(progressSteps.length - 1, stepIndex));
+
+        if (progressText && text) {
+            progressText.textContent = text;
+        }
+
+        progressSteps.forEach((step, index) => {
+            step.classList.toggle('active', index === currentStepIndex);
+            step.classList.toggle('completed', index < currentStepIndex);
+        });
+    }
+
+    function announceToScreenReader(message, priority = 'polite') {
+        if (!statusAnnouncements) {
+            return;
+        }
+
+        statusAnnouncements.textContent = message;
+        statusAnnouncements.setAttribute('aria-live', priority);
+
+        const currentUi = stateManager.getState('ui');
+        const announcements = [...(currentUi.announcements || []), {
+            message,
+            priority,
+            timestamp: Date.now()
+        }];
+
+        stateManager.setState({
+            ui: {
+                ...currentUi,
+                announcements: announcements.slice(-10)
+            }
+        });
+
+        setTimeout(() => {
+            statusAnnouncements.textContent = '';
+        }, 1000);
+    }
+
+    function manageFocus(element, options = {}) {
+        if (!element || typeof element.focus !== 'function') {
+            return;
+        }
+        const delay = options.delay ?? 100;
+        setTimeout(() => {
+            element.focus(options);
+        }, delay);
+    }
+
+    function handleSignatureKeydown(event) {
+        if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            runDiscovery();
+        } else if (event.key === 'Escape') {
+            hideError();
+        }
+    }
+
+    function handleGlobalKeydown(event) {
+        if (event.key === 'Escape') {
+            hideError();
+        }
+
+        if (!navigationModule || !resultsContainer) {
+            return;
+        }
+
+        navigationModule.handleGlobalKeydown(event, resultsContainer);
+    }
+
+    function debounceValidation() {
+        if (validationTimer) {
+            clearTimeout(validationTimer);
+        }
+        validationTimer = setTimeout(validateSignature, 400);
+    }
+
+    async function validateSignature() {
+        const text = signatureInput.value.trim();
+        const module = await loadErrorsModule();
+
+        if (!text) {
+            module.clearInputError(signatureInput);
+            return;
+        }
+
+        const validation = module.validateSignature(text);
+        if (!validation.isValid) {
+            module.setInputError(validation.error, signatureInput);
+        } else {
+            module.clearInputError(signatureInput);
+        }
+    }
+
+    function openFile(path) {
+        vscode.postMessage({
+            command: 'openFile',
+            path
+        });
+    }
+
+    function scaffoldTest(path) {
+        vscode.postMessage({
+            command: 'scaffoldTest',
+            path
+        });
+    }
+
+    function retryLastDiscovery(signatureOverride) {
+        const signature = signatureOverride || lastSignature;
+        if (!signature) {
+            manageFocus(signatureInput);
+            return;
+        }
+
+        signatureInput.value = JSON.stringify(signature, null, 2);
+        hideError();
+        runDiscovery();
+    }
+
+    function saveState(totalCandidatesOverride) {
+        try {
+            vscode.setState({
+                signature: signatureInput.value,
+                results: lastResults,
+                lastSignature,
+                totalCandidates: totalCandidatesOverride ?? (lastResults ? lastResults.length : 0),
+                filters: filtersModuleInstance ? filtersModuleInstance.getCurrentFilters() : null
+            });
+        } catch (error) {
+            console.warn('[Adaptive Tests] Failed to persist Discovery Lens state', error);
+        }
+    }
+
     async function loadResultsModule() {
         if (!resultsModule) {
             resultsModule = await import('./modules/results.js');
@@ -317,650 +640,25 @@
         return resultsModule;
     }
 
-    /**
-     * Loads the navigation module for keyboard navigation and accessibility.
-     *
-     * @async
-     * @function loadNavigationModule
-     * @returns {Promise<Object>} The navigation module
-     */
-    async function loadNavigationModule() {
+    async function loadErrorsModule() {
+        if (!errorsModule) {
+            errorsModule = await import('./modules/errors.js');
+        }
+        return errorsModule;
+    }
+
+    async function ensureNavigationModule() {
         if (!navigationModule) {
             navigationModule = await import('./modules/navigation.js');
         }
         return navigationModule;
     }
 
-    /**
-     * Loads the errors module for error handling and display.
-     *
-     * @async
-     * @function loadErrorsModule
-     * @returns {Promise<Object>} The errors module
-     */
-    async function loadErrorsModule() {
-        if (!errorsModule) {
-            errorsModule = await import('./modules/errors.js');
+    async function getFiltersModule() {
+        if (!filtersModuleInstance) {
+            const module = await import('./modules/filters.js');
+            filtersModuleInstance = new module.FiltersModule();
         }
-        return errorsModule;
-    /**
-     * Loads the filters module for result filtering and sorting.
-     *
-     * @async
-     * @function loadFiltersModule
-     * @returns {Promise<Object>} The filters module
-     */
-    async function loadFiltersModule() {
-        if (!filtersModule) {
-            filtersModule = await import('./modules/filters.js');
-        }
-        return filtersModule;
+        return filtersModuleInstance;
     }
-    }
-
-    /**
-     * Setup functions with lazy loading - configure components as needed
-     */
-
-    /**
-     * Sets up preset button handlers with lazy-loaded presets module.
-     *
-     * @async
-     * @function setupPresetHandlers
-     */
-    async function setupPresetHandlers() {
-        const module = await loadPresetModule();
-        module.setupPresetHandlers(signatureInput, presetButtons, announceToScreenReader, saveState);
-    }
-
-    /**
-     * Sets up result navigation with lazy-loaded navigation module.
-     *
-     * @async
-     * @function setupResultNavigation
-     * @param {HTMLElement} resultsContainer - Container element for results
-     * @returns {Promise<any>} Navigation setup result
-     */
-    async function setupResultNavigation(resultsContainer) {
-        const module = await loadNavigationModule();
-        return module.setupResultNavigation(resultsContainer);
-    }
-
-    /**
-     * Core accessibility helper functions (always available)
-     */
-
-    /**
-     * Announces a message to screen readers for accessibility.
-     * Updates state manager with announcement history and provides live region updates.
-     *
-     * @function announceToScreenReader
-     * @param {string} message - Message to announce to screen readers
-     * @param {string} [priority='polite'] - Announcement priority ('polite' or 'assertive')
-     */
-    function announceToScreenReader(message, priority = 'polite') {
-        if (!statusAnnouncements) return;
-        
-        statusAnnouncements.textContent = message;
-        statusAnnouncements.setAttribute('aria-live', priority);
-        
-        // Update state with accessibility announcement
-        const currentState = stateManager.getState();
-        const announcements = [...currentState.ui.announcements, {
-            message,
-            priority,
-            timestamp: Date.now()
-        }];
-        
-        stateManager.setState({
-            ui: {
-                ...currentState.ui,
-                announcements: announcements.slice(-10) // Keep last 10 announcements
-            }
-        });
-        
-        // Clear after announcement to avoid repetition
-        setTimeout(() => {
-            statusAnnouncements.textContent = '';
-        }, 1000);
-    }
-
-    /**
-     * Manages focus with optional delay for better accessibility.
-     *
-     * @function manageFocus
-     * @param {HTMLElement} element - Element to focus
-     * @param {Object} [options={}] - Focus options
-     * @param {number} [options.delay=100] - Delay before focusing in milliseconds
-     */
-    function manageFocus(element, options = {}) {
-        setTimeout(() => {
-            if (element && typeof element.focus === 'function') {
-                element.focus(options);
-            }
-        }, options.delay || 100);
-    }
-
-    // Make announceToScreenReader available globally for modules
-    window.announceToScreenReader = announceToScreenReader;
-
-    /**
-     * Essential keyboard handlers (always loaded)
-     */
-
-    /**
-     * Handles keyboard input in the signature textarea.
-     * Supports Ctrl+Enter for discovery and Escape for error clearing.
-     *
-     * @function handleInputKeydown
-     * @param {KeyboardEvent} e - Keyboard event
-     */
-    function handleInputKeydown(e) {
-        if (e.key === 'Enter' && e.ctrlKey) {
-            e.preventDefault();
-            runDiscovery();
-        } else if (e.key === 'Escape') {
-            hideError();
-        }
-    }
-
-    /**
-     * Handles global keyboard navigation and shortcuts.
-     * Manages escape key handling and results navigation delegation.
-     *
-     * @async
-     * @function handleGlobalKeydown
-     * @param {KeyboardEvent} e - Keyboard event
-     */
-    async function handleGlobalKeydown(e) {
-        // Handle escape to clear focus/selections
-        if (e.key === 'Escape') {
-            if (navigationModule) {
-                navigationModule.resetSelection();
-            }
-        }
-
-        // Handle results navigation when focus is in results area
-        if (resultsContainer.contains(document.activeElement) ||
-            (document.activeElement && document.activeElement.classList.contains('result-item'))) {
-            
-            if (!navigationModule) {
-                await loadNavigationModule();
-            }
-            navigationModule.handleGlobalKeydown(e, resultsContainer);
-        }
-    }
-
-    /**
-     * Debounces signature validation to avoid excessive validation calls.
-     *
-     * @function debounceValidation
-     */
-    function debounceValidation() {
-        const currentTimeout = stateManager.getState('validationTimeout');
-        clearTimeout(currentTimeout);
-        
-        const newTimeout = setTimeout(async () => {
-            await validateSignature();
-        }, 500);
-        
-        stateManager.setState({ validationTimeout: newTimeout });
-    }
-
-    /**
-     * Validates the current signature input asynchronously.
-     * Uses the errors module to display validation feedback.
-     *
-     * @async
-     * @function validateSignature
-     */
-    async function validateSignature() {
-        const signatureText = signatureInput.value.trim();
-        if (!signatureText) return;
-
-        const errorsModule = await loadErrorsModule();
-        const validation = errorsModule.validateSignature(signatureText);
-        
-        if (!validation.isValid) {
-            errorsModule.setInputError(validation.error, signatureInput);
-        } else {
-            errorsModule.clearInputError(signatureInput);
-        }
-    }
-
-    /**
-     * Initiates the test discovery process.
-     * Validates input, updates state, and sends discovery request to extension.
-     *
-     * @async
-     * @function runDiscovery
-     */
-    async function runDiscovery() {
-        const currentState = stateManager.getState();
-        if (currentState.isLoading) return;
-
-        const signatureText = signatureInput.value.trim();
-        if (!signatureText) {
-            await showError('Please enter a discovery signature');
-            manageFocus(signatureInput);
-            return;
-        }
-
-        let signature;
-        try {
-            signature = JSON.parse(signatureText);
-        } catch (e) {
-            await showError('Invalid JSON signature. Please check your syntax.');
-            manageFocus(signatureInput);
-            return;
-        }
-
-        if (!signature.name) {
-            await showError('Signature must include at least a "name" property');
-            manageFocus(signatureInput);
-            return;
-        }
-
-        setLoading(true);
-        hideError();
-        hideResults();
-        
-        // Show skeleton loading in results
-        const resultsModule = await loadResultsModule();
-        resultsModule.showSkeleton(resultsContainer, 5);
-        resultsSection.style.display = 'block';
-        
-        // Clear input errors
-        const errorsModule = await loadErrorsModule();
-        errorsModule.clearInputError(signatureInput);
-
-        lastSignature = signature;
-        saveState();
-
-        announceToScreenReader('Starting discovery...', 'assertive');
-
-        // Send message to extension
-        vscode.postMessage({
-            command: 'runDiscovery',
-            signature: signature
-        });
-    }
-
-    /**
-     * Handles messages from the VS Code extension.
-     * Routes different message types to appropriate handlers.
-     *
-     * @async
-     * @function handleMessage
-     * @param {MessageEvent} event - Message event from VS Code extension
-     */
-    async function handleMessage(event) {
-        const message = event.data;
-
-        switch (message.command) {
-            case 'displayResults':
-                setLoading(false);
-                await displayResults(message);
-                break;
-            case 'showError':
-                setLoading(false);
-                await showError(message.error, message.errorType);
-                break;
-            case 'updateProgress':
-                if (message.step !== undefined && message.text) {
-                    updateProgress(message.step, message.text);
-                }
-                break;
-        }
-    }
-
-    /**
-     * Displays discovery results using the results module.
-     * Updates state and delegates to results module for rendering.
-     *
-     * @async
-     * @function displayResults
-     * @param {Object} data - Results data from discovery
-     */
-    /**
-     * Displays discovery results using the results module with filtering support.
-     * Updates state and delegates to results module for rendering with filter integration.
-     *
-     * @async
-     * @function displayResults
-     * @param {Object} data - Results data from discovery
-     */
-    async function displayResults(data) {
-        const module = await loadResultsModule();
-        const filters = await loadFiltersModule();
-        lastResults = data.results;
-
-        // Extract available languages for filter dropdown
-        const availableLanguages = [...new Set(data.results.map(r => r.language).filter(Boolean))];
-
-        // Create filters UI if not already created
-        if (!filters.filtersContainer) {
-            filters.createFiltersUI(resultsSection, handleFiltersChange, availableLanguages);
-        }
-
-        // Set available languages in filters
-        filters.setAvailableLanguages(availableLanguages);
-
-        // Display results with current filter state
-        const currentFilters = filters.getCurrentFilters();
-        const filteredResults = filtersModule.filterAndSort(data.results, currentFilters);
-
-        module.displayResults(
-            {
-                ...data,
-                results: filteredResults
-            },
-            resultsSection,
-            resultsContainer,
-            resultsSummary,
-            announceToScreenReader,
-            manageFocus,
-            saveState,
-            setupResultNavigation
-        );
-
-        // Update filter stats
-        filters.updateStats(data.results, filteredResults);
-
-        // Announce results to screen readers
-        const count = filteredResults.length;
-        const total = data.results.length;
-        if (count === total) {
-            announceToScreenReader(`Found ${count} results`);
-        } else {
-            announceToScreenReader(`Showing ${count} of ${total} filtered results`);
-        }
-    }
-
-    /**
-     * Handles filter changes and updates the results display.
-     * Applies new filters and refreshes the results view.
-     *
-     * @async
-     * @function handleFiltersChange
-     * @param {Object} newFilters - New filter configuration
-     */
-    async function handleFiltersChange(newFilters) {
-        if (!lastResults || lastResults.length === 0) return;
-
-        const module = await loadResultsModule();
-        const filters = await loadFiltersModule();
-
-        // Apply filters to current results
-        const filteredResults = filtersModule.filterAndSort(lastResults, newFilters);
-
-        // Update results display
-        module.displayResults(
-            {
-                results: filteredResults,
-                signature: lastSignature,
-                totalCandidates: lastResults.length
-            },
-            resultsSection,
-            resultsContainer,
-            resultsSummary,
-            announceToScreenReader,
-            manageFocus,
-            saveState,
-            setupResultNavigation
-        );
-
-        // Update filter stats
-        filters.updateStats(lastResults, filteredResults);
-
-        // Announce filter change to screen readers
-        const count = filteredResults.length;
-        const total = lastResults.length;
-        if (count === total) {
-            announceToScreenReader(`Filter updated, showing all ${count} results`);
-        } else {
-            announceToScreenReader(`Filter updated, showing ${count} of ${total} results`);
-        }
-    }
-    async function displayResults(data) {
-        const module = await loadResultsModule();
-        lastResults = data.results;
-        
-        module.displayResults(
-            data,
-            resultsSection,
-            resultsContainer,
-            resultsSummary,
-            announceToScreenReader,
-            manageFocus,
-            saveState,
-            setupResultNavigation
-        );
-    }
-
-    /**
-     * Sends a request to open a file in VS Code editor.
-     *
-     * @function openFile
-     * @param {string} path - File path to open
-     */
-    function openFile(path) {
-        vscode.postMessage({
-            command: 'openFile',
-            path: path
-        });
-    }
-
-    /**
-     * Sends a request to scaffold a test file for the given path.
-     *
-     * @function scaffoldTest
-     * @param {string} path - File path to scaffold test for
-     */
-    function scaffoldTest(path) {
-        vscode.postMessage({
-            command: 'scaffoldTest',
-            path: path
-        });
-    }
-
-    /**
-     * Sets loading state and updates UI elements accordingly.
-     * Manages button state, progress display, and accessibility attributes.
-     *
-     * @function setLoading
-     * @param {boolean} loading - Whether discovery is in loading state
-     */
-    function setLoading(loading) {
-        isLoading = loading;
-        runButton.disabled = loading;
-        runButton.classList.toggle('loading', loading);
-        runButton.setAttribute('aria-busy', loading.toString());
-
-        if (loading) {
-            runButton.innerHTML = '<span class="progress-spinner" aria-hidden="true"></span> Running Discovery...';
-            runButton.setAttribute('aria-label', 'Running discovery, please wait');
-            showProgress();
-            startProgressAnimation();
-        } else {
-            runButton.innerHTML = 'Run Discovery';
-            runButton.setAttribute('aria-label', 'Run discovery to find matching code files');
-            hideProgress();
-            resetProgress();
-        }
-    }
-
-    /**
-     * Shows the progress indicator with animation.
-     *
-     * @function showProgress
-     */
-    function showProgress() {
-        if (progressContainer) {
-            progressContainer.classList.add('visible');
-            progressContainer.style.display = 'flex';
-        }
-    }
-
-    /**
-     * Hides the progress indicator with transition.
-     *
-     * @function hideProgress
-     */
-    function hideProgress() {
-        if (progressContainer) {
-            progressContainer.classList.remove('visible');
-            setTimeout(() => {
-                if (!progressContainer.classList.contains('visible')) {
-                    progressContainer.style.display = 'none';
-                }
-            }, 300);
-        }
-    }
-
-    /**
-     * Resets progress display to initial state.
-     *
-     * @function resetProgress
-     */
-    function resetProgress() {
-        currentStep = 0;
-        progressSteps.forEach(step => {
-            step.classList.remove('active', 'completed');
-        });
-        if (progressText) {
-            progressText.textContent = 'Discovering files...';
-        }
-    }
-
-    /**
-     * Updates progress display with current step and text.
-     *
-     * @function updateProgress
-     * @param {number} step - Current progress step
-     * @param {string} text - Progress description text
-     */
-    function updateProgress(step, text) {
-        if (progressText) {
-            progressText.textContent = text;
-        }
-        
-        // Mark previous steps as completed
-        for (let i = 0; i < currentStep; i++) {
-            if (progressSteps[i]) {
-                progressSteps[i].classList.remove('active');
-                progressSteps[i].classList.add('completed');
-            }
-        }
-        
-        // Mark current step as active
-        if (progressSteps[currentStep]) {
-            progressSteps[currentStep].classList.add('active');
-        }
-        
-        currentStep = step;
-    }
-
-    /**
-     * Starts simulated progress animation during discovery.
-     *
-     * @function startProgressAnimation
-     */
-    function startProgressAnimation() {
-        resetProgress();
-        
-        // Simulate progress steps
-        setTimeout(() => updateProgress(0, 'Scanning workspace...'), 200);
-        setTimeout(() => updateProgress(1, 'Parsing code files...'), 1000);
-        setTimeout(() => updateProgress(2, 'Calculating scores...'), 2000);
-        setTimeout(() => updateProgress(3, 'Finalizing results...'), 3000);
-    }
-
-    /**
-     * Shows error message using the errors module.
-     * Categorizes and displays errors with appropriate user interactions.
-     *
-     * @async
-     * @function showError
-     * @param {string} message - Error message to display
-     * @param {string} [errorType] - Optional error type override
-     */
-    async function showError(message, errorType) {
-        const module = await loadErrorsModule();
-        const category = errorType || module.categorizeError(message);
-        module.showError(message, errorSection, errorMessage, resultsSection, announceToScreenReader, manageFocus, category, lastSignature);
-    }
-
-    /**
-     * Global retry function for error recovery.
-     * Available to error module for retry functionality.
-     */
-    window.retryLastDiscovery = function(signature) {
-        if (signature) {
-            signatureInput.value = JSON.stringify(signature, null, 2);
-            hideError();
-            runDiscovery();
-        }
-    };
-
-    /**
-     * Hides the error display section.
-     *
-     * @function hideError
-     */
-    function hideError() {
-        errorSection.style.display = 'none';
-    }
-
-    /**
-     * Hides the results display section and resets navigation state.
-     *
-     * @function hideResults
-     */
-    function hideResults() {
-        resultsSection.style.display = 'none';
-        if (navigationModule) {
-            navigationModule.resetSelection();
-        }
-    }
-
-    /**
-     * Saves current application state to VS Code webview state.
-     * Persists signature, results, and metadata for restoration.
-     *
-     * @function saveState
-     */
-    function saveState() {
-        vscode.setState({
-            signature: signatureInput.value,
-            results: lastResults,
-            lastSignature: lastSignature,
-            totalCandidates: lastResults.length
-        });
-    }
-
-    /**
-     * Sets up accessibility features for details elements.
-     *
-     * @function setupDetailsAccessibility
-     */
-    function setupDetailsAccessibility() {
-        const detailsElement = document.querySelector('details');
-        const summaryElement = document.querySelector('summary');
-        if (detailsElement && summaryElement) {
-            summaryElement.addEventListener('click', () => {
-                // Update aria-expanded after the click event
-                setTimeout(() => {
-                    summaryElement.setAttribute('aria-expanded', detailsElement.open.toString());
-                }, 0);
-            });
-        }
-    }
-
-    // Make functions available globally for onclick handlers
-    window.openFile = openFile;
-    window.scaffoldTest = scaffoldTest;
-
-    // Initialize on load
-    init();
 })();

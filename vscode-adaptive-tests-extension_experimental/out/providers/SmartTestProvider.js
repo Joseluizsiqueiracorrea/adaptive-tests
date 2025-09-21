@@ -1,73 +1,78 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SmartTestProvider = void 0;
+const vscode = __importStar(require("vscode"));
 /**
  * Smart Test Provider - Makes testing invisible and delightful
  * Focuses on auto-fixing broken imports and providing contextual guidance
  */
-export class SmartTestProvider {
-    private context: vscode.ExtensionContext;
-    private statusBarItem: vscode.StatusBarItem;
-
-    constructor(context: vscode.ExtensionContext) {
+class SmartTestProvider {
+    constructor(context) {
         this.context = context;
         this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
         this.initializeSmartTestMode();
     }
-
-    private initializeSmartTestMode() {
+    initializeSmartTestMode() {
         // Set up the smart test status bar
         this.statusBarItem.text = '$(shield-check) Smart Tests';
         this.statusBarItem.tooltip = 'Smart Tests: Auto-fix broken imports and never update test paths again';
         this.statusBarItem.command = 'adaptive-tests.showSmartTests';
         this.statusBarItem.show();
-
         // Register the smart test command
-        const smartTestCommand = vscode.commands.registerCommand(
-            'adaptive-tests.showSmartTests',
-            () => this.showSmartTestPanel()
-        );
-
+        const smartTestCommand = vscode.commands.registerCommand('adaptive-tests.showSmartTests', () => this.showSmartTestPanel());
         // Register enable smart mode command
-        const enableSmartModeCommand = vscode.commands.registerCommand(
-            'adaptive-tests.enableSmartMode',
-            () => this.enableSmartMode()
-        );
-
-        this.context.subscriptions.push(
-            this.statusBarItem,
-            smartTestCommand,
-            enableSmartModeCommand
-        );
+        const enableSmartModeCommand = vscode.commands.registerCommand('adaptive-tests.enableSmartMode', () => this.enableSmartMode());
+        this.context.subscriptions.push(this.statusBarItem, smartTestCommand, enableSmartModeCommand);
     }
-
-    private async showSmartTestPanel() {
-        const panel = vscode.window.createWebviewPanel(
-            'smartTests',
-            'Smart Tests',
-            vscode.ViewColumn.One,
-            { enableScripts: true }
-        );
-
+    async showSmartTestPanel() {
+        const panel = vscode.window.createWebviewPanel('smartTests', 'Smart Tests', vscode.ViewColumn.One, { enableScripts: true });
         panel.webview.html = this.getSmartTestWebviewContent();
-
         // Handle messages from webview
-        panel.webview.onDidReceiveMessage(
-            async (message) => {
-                switch (message.command) {
-                    case 'enableSmartMode':
-                        await this.enableSmartMode();
-                        break;
-                    case 'showDiscovery':
-                        vscode.commands.executeCommand('adaptive-tests.showDiscoveryLens');
-                        break;
-                }
+        panel.webview.onDidReceiveMessage(async (message) => {
+            switch (message.command) {
+                case 'enableSmartMode':
+                    await this.enableSmartMode();
+                    break;
+                case 'showDiscovery':
+                    vscode.commands.executeCommand('adaptive-tests.showDiscoveryLens');
+                    break;
             }
-        );
+        });
     }
-
-    private getSmartTestWebviewContent(): string {
+    getSmartTestWebviewContent() {
         return `
             <!DOCTYPE html>
             <html lang="en">
@@ -166,60 +171,52 @@ export class SmartTestProvider {
             </html>
         `;
     }
-
-    private async enableSmartMode() {
+    async enableSmartMode() {
         const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (!workspaceRoot) {
             vscode.window.showErrorMessage('No workspace folder open');
             return;
         }
-
         try {
-            await vscode.window.withProgress(
-                {
-                    location: vscode.ProgressLocation.Notification,
-                    title: 'Enabling Smart Tests...',
-                    cancellable: false
-                },
-                async (progress) => {
-                    progress.report({ increment: 0, message: 'Setting up auto-fix mode...' });
-
-                    // Enable invisible mode
-                    const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-                    const { exec } = require('child_process');
-                    const { promisify } = require('util');
-                    const execAsync = promisify(exec);
-
-                    try {
-                        await execAsync(`${npxCommand} adaptive-tests enable-invisible`, { cwd: workspaceRoot });
-                        progress.report({ increment: 100, message: 'Smart Tests enabled!' });
-                    } catch (error) {
-                        throw new Error('Failed to enable Smart Tests. Try running "npx adaptive-tests enable-invisible" manually.');
-                    }
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: 'Enabling Smart Tests...',
+                cancellable: false
+            }, async (progress) => {
+                progress.report({ increment: 0, message: 'Setting up auto-fix mode...' });
+                // Enable invisible mode
+                const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+                const { exec } = require('child_process');
+                const { promisify } = require('util');
+                const execAsync = promisify(exec);
+                try {
+                    await execAsync(`${npxCommand} adaptive-tests enable-invisible`, { cwd: workspaceRoot });
+                    progress.report({ increment: 100, message: 'Smart Tests enabled!' });
                 }
-            );
-
-            vscode.window.showInformationMessage(
-                '🎉 Smart Tests enabled! Your tests will now auto-adapt to code changes.',
-                'See How It Works'
-            ).then(selection => {
+                catch (error) {
+                    throw new Error('Failed to enable Smart Tests. Try running "npx adaptive-tests enable-invisible" manually.');
+                }
+            });
+            vscode.window.showInformationMessage('🎉 Smart Tests enabled! Your tests will now auto-adapt to code changes.', 'See How It Works').then(selection => {
                 if (selection === 'See How It Works') {
                     this.showSmartTestPanel();
                 }
             });
-
-        } catch (error: any) {
+        }
+        catch (error) {
             vscode.window.showErrorMessage(`Failed to enable Smart Tests: ${error.message}`);
         }
     }
-
-    public updateStatusBar(successCount: number = 0) {
+    updateStatusBar(successCount = 0) {
         if (successCount > 0) {
             this.statusBarItem.text = `($(check) ${successCount}) Smart Tests`;
             this.statusBarItem.tooltip = `Smart Tests: ${successCount} auto-fixes applied`;
-        } else {
+        }
+        else {
             this.statusBarItem.text = '$(shield-check) Smart Tests';
             this.statusBarItem.tooltip = 'Smart Tests: Auto-fix broken imports and never update test paths again';
         }
     }
 }
+exports.SmartTestProvider = SmartTestProvider;
+//# sourceMappingURL=SmartTestProvider.js.map

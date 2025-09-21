@@ -280,7 +280,7 @@ class DiscoveryLensPanel {
             // Fall back to bundled version
         }
         // Load bundled version
-        return require('adaptive-tests');
+        return require('@adaptive-tests/javascript');
     }
     // ==================== API Implementation ====================
     /**
@@ -362,12 +362,17 @@ class DiscoveryLensPanel {
         };
     }
     getWebviewContent() {
+        const webview = this.panel.webview;
         const styleUri = this.getWebviewUri('style.css');
         const scriptUri = this.getWebviewUri('script.js');
+        const cspSource = webview.cspSource;
+        const nonce = this.createNonce();
         const htmlTemplate = this.loadHtmlTemplate();
         return htmlTemplate
-            .replace('{{STYLE_URI}}', styleUri.toString())
-            .replace('{{SCRIPT_URI}}', scriptUri.toString());
+            .replace(/{{STYLE_URI}}/g, styleUri.toString())
+            .replace(/{{SCRIPT_URI}}/g, scriptUri.toString())
+            .replace(/{{CSP_SOURCE}}/g, cspSource)
+            .replace(/{{NONCE}}/g, nonce);
     }
     loadHtmlTemplate() {
         try {
@@ -382,6 +387,8 @@ class DiscoveryLensPanel {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}} 'unsafe-inline'; script-src 'nonce-{{NONCE}}'; font-src {{CSP_SOURCE}} https: data:;">
+    <meta name="color-scheme" content="light dark">
     <title>Discovery Lens</title>
     <link href="{{STYLE_URI}}" rel="stylesheet">
 </head>
@@ -390,13 +397,17 @@ class DiscoveryLensPanel {
         <h1>🔍 Discovery Lens</h1>
         <p>HTML template not found. Please check media/discovery.html</p>
     </div>
-    <script src="{{SCRIPT_URI}}"></script>
+    <script nonce="{{NONCE}}" src="{{SCRIPT_URI}}"></script>
 </body>
 </html>`;
         }
     }
     getWebviewUri(fileName) {
         return this.panel.webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', fileName));
+    }
+    createNonce() {
+        const crypto = require('crypto');
+        return crypto.randomBytes(16).toString('base64');
     }
     detectLanguageFromWorkspace(workspaceRoot) {
         const fs = require('fs');

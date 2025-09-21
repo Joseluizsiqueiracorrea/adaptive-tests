@@ -215,7 +215,7 @@ function setupErrorActions(errorType, originalSignature, errorSection) {
 
 function createErrorButton(text, type, onClick) {
     const button = document.createElement('button');
-    button.className = `error-btn ${type}`;
+    button.className = `error-button ${type}`;
     button.textContent = text;
     button.addEventListener('click', onClick);
     return button;
