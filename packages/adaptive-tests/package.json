@@ -25,7 +25,8 @@
     "index.mjs",
     "index.d.ts",
     "typescript.js",
-    "typescript.mjs"
+    "typescript.mjs",
+    "README.md"
   ],
   "keywords": [
     "adaptive",
