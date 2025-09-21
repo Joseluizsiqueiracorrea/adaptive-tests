@@ -54,7 +54,7 @@ composer.lock
 
 # TypeScript
 *.tsbuildinfo
-types/
+# Note: types/ was moved to languages/*/types - see types/README.md
 
 # VS Code Extension
 extensions/vscode-adaptive-tests/out/

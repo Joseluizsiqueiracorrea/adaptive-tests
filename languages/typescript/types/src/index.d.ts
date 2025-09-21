@@ -1,0 +1,42 @@
+declare const _exports: {
+    LegacyDiscoveryEngine: typeof adaptive.DiscoveryEngine;
+    getLegacyEngine: typeof getLegacyEngine;
+    DiscoveryEngine: typeof adaptive.DiscoveryEngine;
+    AdaptiveTest: typeof adaptive.AdaptiveTest;
+    TypeScriptDiscoveryEngine: typeof adaptive.TypeScriptDiscoveryEngine;
+    getDiscoveryEngine: typeof adaptive.getDiscoveryEngine;
+    getTypeScriptDiscoveryEngine: typeof adaptive.getTypeScriptDiscoveryEngine;
+    adaptiveTest: typeof adaptive.adaptiveTest;
+    discover: typeof adaptive.discover;
+    ConfigLoader: {
+        new (rootPath?: string): {
+            rootPath: string;
+            config: any;
+            validator: import("./adaptive/enhanced-config-schema").ConfigSchemaValidator;
+            logger: {};
+            load(inlineConfig?: object): object;
+            loadFromPackageJson(): any;
+            loadFromJsonFile(): any;
+            loadFromJsFile(): any;
+            validateConfig(config: any): any;
+            deepClone(obj: any): any;
+            deepMerge(target: any, source: any): any;
+            autoConfigureLanguages(config: any): any;
+            detectProjectLanguages(): any[];
+            scanDirectoryForLanguages(dirPath: any, languages: any, depth?: number): void;
+            validateEnhancedConfig(config: any): any;
+            normalizeConfig(config: any): any;
+            getLanguageConfig(language: any): any;
+            isLanguageEnabled(language: any): boolean;
+            clearCache(): void;
+        };
+        getDefaultConfig(): any;
+    };
+    ScoringEngine: typeof adaptive.ScoringEngine;
+    DEFAULT_CONFIG: any;
+    setLogger: typeof adaptive.setLogger;
+    getLogger: typeof adaptive.getLogger;
+};
+export = _exports;
+import adaptive = require("./adaptive");
+declare function getLegacyEngine(...args: any[]): any;
