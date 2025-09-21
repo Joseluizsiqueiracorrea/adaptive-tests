@@ -107,3 +107,4 @@ adaptive-tests.code-workspace
 # Local artifacts not tracked
 languages/javascript/index.d.ts
 languages/javascript/src/performance-monitor.js
+docs/onboarding-pr-checklist.md
