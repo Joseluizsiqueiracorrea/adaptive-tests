@@ -1,3 +1,5 @@
+const { performance } = require('perf_hooks');
+
 /**
  * Performance monitoring for Adaptive Tests
  * Provides insights into discovery performance in production

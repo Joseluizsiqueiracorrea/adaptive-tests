@@ -668,7 +668,7 @@ class DiscoveryEngine {
       '4. Clear cache if you just created the file: await engine.clearCache()',
       '5. Check your adaptive-tests.config.js for custom path scoring',
       '',
-      'See https://anon57396.github.io/adaptive-tests/common_issues for more help.'
+      'See https://anon57396.github.io/adaptive-tests/COMMON_ISSUES.html for more help.'
     );
 
     return new Error(errorLines.join('\n'));

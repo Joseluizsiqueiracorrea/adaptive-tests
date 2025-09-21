@@ -111,13 +111,40 @@ runs:
         case "${{ inputs.command }}" in
           test)
             echo "🧪 Running adaptive tests..."
-            if [ "${{ inputs.coverage }}" == "true" ]; then
-              npx adaptive-tests test "${{ inputs.test-pattern }}" --coverage --json > test-results.json
-              echo "coverage=coverage/lcov.info" >> $GITHUB_OUTPUT
-            else
-              npx adaptive-tests test "${{ inputs.test-pattern }}" --json > test-results.json
+            # Prefer repo script if present
+            if [ -f package.json ] && grep -q '"test:adaptive"' package.json; then
+              if [ "${{ inputs.coverage }}" == "true" ]; then
+                npm run test:adaptive -- --coverage || npm run test:adaptive
+                echo "coverage=coverage/lcov.info" >> $GITHUB_OUTPUT || true
+              else
+                npm run test:adaptive
+              fi
+              if [ -f test-results.json ]; then
+                echo "results=$(cat test-results.json)" >> $GITHUB_OUTPUT
+              fi
+              exit 0
             fi
-            echo "results=$(cat test-results.json)" >> $GITHUB_OUTPUT
+            # Fallback to installed runners
+            if npx --yes jest --version >/dev/null 2>&1; then
+              if [ "${{ inputs.coverage }}" == "true" ]; then
+                npx jest "${{ inputs.test-pattern }}" --coverage || npx jest
+                echo "coverage=coverage/lcov.info" >> $GITHUB_OUTPUT || true
+              else
+                npx jest "${{ inputs.test-pattern }}" || npx jest
+              fi
+            elif npx --yes vitest --version >/dev/null 2>&1; then
+              if [ "${{ inputs.coverage }}" == "true" ]; then
+                npx vitest run --coverage || npx vitest run
+              else
+                npx vitest run
+              fi
+            elif npx --yes mocha --version >/dev/null 2>&1; then
+              npx mocha "${{ inputs.test-pattern }}" || npx mocha
+            else
+              echo "❌ No supported test runner found and no test:adaptive script present."
+              echo "Please add a 'test:adaptive' npm script or install jest/vitest/mocha."
+              exit 1
+            fi
             ;;
 
           discover)

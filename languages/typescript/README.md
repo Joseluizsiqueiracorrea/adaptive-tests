@@ -18,7 +18,7 @@ npm install --save-dev typescript ts-node
 
 ```typescript
 import { discover } from 'adaptive-tests';
-import { getTypeScriptDiscoveryEngine } from 'adaptive-tests-typescript';
+import { getTypeScriptDiscoveryEngine } from '@adaptive-tests/typescript';
 
 describe('UserService', () => {
   let UserService: any;
@@ -42,47 +42,11 @@ describe('UserService', () => {
 });
 ```
 
-### Interface Discovery
+### Interface Discovery (planned)
+Type-aware interface discovery helpers are planned. For now, use getTypeScriptDiscoveryEngine with a signature that matches your interface’s concrete implementations.
 
-```typescript
-import { discoverInterface } from 'adaptive-tests-typescript';
-
-describe('Payment interfaces', () => {
-  test('discovers payment gateway interface', async () => {
-    const IPaymentGateway = await discoverInterface({
-      name: 'IPaymentGateway',
-      methods: ['processPayment', 'refund'],
-      properties: ['supportedCurrencies']
-    });
-
-    // Test implementations of the interface
-    const StripeGateway = await discover({
-      name: 'StripeGateway',
-      implements: ['IPaymentGateway']
-    });
-
-    expect(StripeGateway).toBeDefined();
-  });
-});
-```
-
-### Generic Type Discovery
-
-```typescript
-describe('Generic classes', () => {
-  test('discovers repository with generic types', async () => {
-    const UserRepository = await discover({
-      name: 'Repository',
-      type: 'class',
-      generics: ['User'],  // Repository<User>
-      methods: ['findAll', 'save']
-    });
-
-    const repo = new UserRepository();
-    expect(repo.findAll).toBeDefined();
-  });
-});
-```
+### Generic Type Discovery (planned)
+Generic matching helpers are planned. Today, rely on names/methods properties in the signature and TypeScript path alias resolution.
 
 ---
 

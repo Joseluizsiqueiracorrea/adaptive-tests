@@ -5,8 +5,8 @@
  */
 
 const path = require('path');
-// Import from JavaScript workspace package
-const { DiscoveryEngine } = require('@adaptive-tests/javascript/src/discovery-engine');
+// Import public API from JavaScript package
+const { DiscoveryEngine } = require('@adaptive-tests/javascript');
 
 /**
  * @typedef {import('@adaptive-tests/javascript/src/discovery-engine').DiscoveryOptions} DiscoveryOptions
@@ -21,14 +21,21 @@ class TypeScriptDiscoveryEngine extends DiscoveryEngine {
    * @param {DiscoveryOptions} [options={}] - Configuration options for the engine.
    */
   constructor(rootPath = process.cwd(), options = {}) {
-    const tsOptions = { ...options };
-    // Ensure TypeScript extensions are included
+    // Ensure TypeScript extensions are included under discovery.extensions
     const defaultTSExtensions = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
-    tsOptions.extensions = Array.isArray(options.extensions) && options.extensions.length > 0
-      ? [...new Set([...options.extensions, ...defaultTSExtensions])]
+    const base = (options && typeof options === 'object') ? options : {};
+    const baseDiscovery = base.discovery || {};
+    const mergedExtensions = Array.isArray(baseDiscovery.extensions) && baseDiscovery.extensions.length > 0
+      ? Array.from(new Set([...baseDiscovery.extensions, ...defaultTSExtensions]))
       : defaultTSExtensions;
-
-    super(rootPath, tsOptions);
+    const inlineConfig = {
+      ...base,
+      discovery: {
+        ...baseDiscovery,
+        extensions: mergedExtensions
+      }
+    };
+    super(rootPath, inlineConfig);
   }
 }
 

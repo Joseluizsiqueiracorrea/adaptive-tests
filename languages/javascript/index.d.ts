@@ -36,7 +36,7 @@ export class AdaptiveTest {
 export function getDiscoveryEngine(rootPath?: string): DiscoveryEngine;
 export function adaptiveTest(signature: DiscoverySignature): Promise<any>;
 export function discover<T = any>(
-  signature: DiscoverySignature,
+  signature: string | DiscoverySignature,
   rootPath?: string
 ): Promise<T>;
 
