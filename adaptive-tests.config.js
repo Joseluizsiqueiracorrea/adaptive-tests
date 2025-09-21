@@ -57,8 +57,6 @@ module.exports = {
           '/components/': 5,
           '/modules/': 10,
           '/scripts/': 25,
-          '/fixtures/temp/': 200,
-          '/tests/fixtures/inheritance/': 150,
 
           // Business logic locations
           '/business/': 20,

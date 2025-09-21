@@ -1,6 +1,0 @@
-{
-  "name": "jest-adaptive",
-  "version": "0.3.0",
-  "main": "index.js",
-  "description": "Jest adapter for adaptive-tests framework"
-}

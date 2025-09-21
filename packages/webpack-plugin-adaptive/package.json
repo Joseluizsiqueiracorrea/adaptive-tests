@@ -1,6 +1,0 @@
-{
-  "name": "webpack-plugin-adaptive",
-  "version": "0.3.0",
-  "main": "index.js",
-  "description": "Preview Webpack plugin that surfaces adaptive-tests discovery in build pipelines"
-}
