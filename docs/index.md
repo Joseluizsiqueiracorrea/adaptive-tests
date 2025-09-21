@@ -73,7 +73,12 @@ test('creates users', async () => {
 
 ### The Problem: Tests Break When You Move Files
 
-**Before refactoring** - Your tests pass:
+Traditional test suites bind themselves to _where_ code lives: `import { Calculator } from '../src/utils/Calculator'`. That relative path is the fragile link. As soon as the file relocates, the test runner cannot resolve the import, the suite aborts, and you get a wall of red before any assertions execute.
+
+We wanted this landing page to make that failure mode painfully obvious, so here’s the full sequence.
+
+#### Before a refactor – everything is green
+
 ```javascript
 // File location: src/utils/Calculator.js
 export class Calculator {
@@ -81,7 +86,7 @@ export class Calculator {
   subtract(a, b) { return a - b; }
 }
 
-// Test file: tests/Calculator.test.js
+// tests/Calculator.test.js
 import { Calculator } from '../src/utils/Calculator';
 
 test('adds numbers correctly', () => {
@@ -90,7 +95,8 @@ test('adds numbers correctly', () => {
 });
 ```
 
-**After moving the file** - Same code, different location, tests fail:
+#### After moving the file – the code still works, but the test import does not
+
 ```javascript
 // Moved to: src/math/calc/Calculator.js (same code, new location)
 export class Calculator {
@@ -98,13 +104,24 @@ export class Calculator {
   subtract(a, b) { return a - b; }
 }
 
-// Test still looks for old location:
+// Test is still hard-coded to the old path
 import { Calculator } from '../src/utils/Calculator';
-// ❌ Error: Cannot find module '../src/utils/Calculator'
-// ❌ Test suite fails before even running
 ```
 
-**The Real Cost**: You just spent 30 minutes reorganizing your code structure. Now you'll spend another hour updating import paths in 50+ test files. This is pure waste.
+Running the suite now fails _before_ your assertions execute:
+
+```text
+$ npm test
+ FAIL  tests/Calculator.test.js
+  ● Test suite failed to run
+
+    Cannot find module '../src/utils/Calculator' from 'tests/Calculator.test.js'
+
+    Require stack:
+      tests/Calculator.test.js
+```
+
+That one refactor just bought you an hour of tedious search-and-replace across dozens of test files. The code is fine; the imports are not.
 
 ### The Solution: Tests That Find Your Code
 
@@ -139,6 +156,7 @@ mv src/PaymentService.js src/services/payment/PaymentService.js
 ```
 
 **Traditional Tests**: Now you have 60+ import statements to fix across 20 test files. Your IDE might catch some, but not all. You'll spend the next hour:
+
 1. Running tests to see what broke
 2. Fixing import paths one by one
 3. Re-running to find the ones you missed
@@ -149,16 +167,19 @@ mv src/PaymentService.js src/services/payment/PaymentService.js
 ### For Skeptics: Common Questions
 
 **"My IDE updates imports automatically"**
+
 - IDEs often miss test files, especially with complex relative paths
 - When CI/CD runs, there's no IDE to help
 - AI agents refactoring at scale don't have IDE support
 
 **"This seems like over-engineering"**
+
 - It's actually simplification: your tests become simpler and more maintainable
 - The discovery happens once at test startup, then uses cache
 - Performance impact: <10ms after initial scan
 
 **"What about multiple files with the same name?"**
+
 - Add specificity: `discover({ name: 'Calculator', methods: ['add'] })`
 - Or use path hints: `discover({ name: 'Calculator', pathIncludes: 'billing' })`
 - The engine scores and ranks matches - you get the best one
