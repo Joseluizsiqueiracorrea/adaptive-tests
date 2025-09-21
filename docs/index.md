@@ -5,14 +5,17 @@ title: Adaptive Tests - Tests That Never Break
 
 <div align="center">
 
-# Your Tests Break When You Move Files.
-## **Ours Don't.**
+## Your Tests Break When You Move Files
+
+### **Ours Don't**
 
 <br>
 
-### 🎯 Move `UserService.js` anywhere. Tests still pass.
-### 🚀 Refactor your entire codebase. Tests still pass.
-### ✨ Let AI reorganize everything. Tests still pass.
+### 🎯 Move `UserService.js` anywhere. Tests still work
+
+### 🚀 Refactor your entire codebase. Tests still work
+
+### ✨ Let AI reorganize everything. Tests still work
 
 <br>
 
@@ -26,7 +29,7 @@ const UserService = await discover('UserService');
 
 <br>
 
-**[Get Started in 2 Minutes →](#quick-start)** | **[See Live Demo](https://github.com/anon57396/adaptive-tests#demo)** | **[Why It Works](#how-it-works)**
+**[Get Started in 2 Minutes →](#quick-start)** | **[See Live Demo](https://github.com/anon57396/adaptive-tests)** | **[Why It Works](#how-it-works)**
 
 </div>
 
@@ -49,18 +52,21 @@ Every developer knows this pain:
 Pick your language and start in literally 2 minutes:
 
 ### JavaScript / TypeScript
+
 ```bash
 npm install @adaptive-tests/javascript
 npx adaptive-tests init
 ```
 
 ### Python
+
 ```bash
 pip install adaptive-tests-py
 adaptive-tests init
 ```
 
 ### Java
+
 ```xml
 <dependency>
     <groupId>io.adaptivetests</groupId>
@@ -74,11 +80,13 @@ adaptive-tests init
 ## How It Works
 
 Traditional tests use **file paths** to find code:
+
 ```javascript
 import { Calculator } from '../utils/Calculator'; // Breaks when moved
 ```
 
 Adaptive tests use **code structure** to find code:
+
 ```javascript
 const Calculator = await discover({
   name: 'Calculator',
@@ -94,6 +102,7 @@ We analyze your code's AST (Abstract Syntax Tree) to find what you're looking fo
 ## Real Examples
 
 ### Before (Fragile)
+
 ```javascript
 // Break every time you reorganize
 import { UserService } from '../../../backend/services/users/UserService';
@@ -106,6 +115,7 @@ describe('User management', () => {
 ```
 
 ### After (Bulletproof)
+
 ```javascript
 const { discover } = require('@adaptive-tests/javascript');
 
@@ -150,22 +160,26 @@ Works with your existing test framework:
 ## Documentation
 
 ### Essentials
+
 - [Why Adaptive Tests?](WHY_ADAPTIVE_TESTS.md) - Deep dive into the problem & solution
 - [Migration Guide](MIGRATION_GUIDE.md) - Convert existing tests
 - [Best Practices](BEST_PRACTICES.md) - Patterns for success
 
 ### Language Guides
+
 - [JavaScript Guide](../languages/javascript/README.md)
 - [TypeScript Guide](../languages/typescript/README.md)
 - [Python Guide](../languages/python/README.md)
 - [Java Guide](../languages/java/README.md)
 
 ### Framework Quickstarts
+
 - [React](../languages/javascript/docs/REACT_QUICKSTART.md)
 - [Vue.js](../languages/javascript/docs/VUE_QUICKSTART.md)
 - [Express](../languages/javascript/docs/EXPRESS_QUICKSTART.md)
 
 ### Advanced
+
 - [How It Works](HOW_IT_WORKS.md) - Technical architecture
 - [API Reference](API_REFERENCE.md) - Complete API docs
 - [CI/CD Integration](CI_STRATEGY.md) - GitHub Actions & more
@@ -180,14 +194,14 @@ npm install @adaptive-tests/javascript
 npx adaptive-tests init
 ```
 
-**[GitHub Repository](https://github.com/anon57396/adaptive-tests)** | **[NPM Package](https://www.npmjs.com/package/@adaptive-tests/javascript)** | **[Report Issues](https://github.com/anon57396/adaptive-tests/issues)**
+**[GitHub Repository](https://github.com/anon57396/adaptive-tests)** | **[NPM Package](https://www.npmjs.com/package/adaptive-tests)** | **[Report Issues](https://github.com/anon57396/adaptive-tests/issues)**
 
 ---
 
 <div align="center">
 
-### Stop fixing imports. Start shipping features.
+## Stop fixing imports. Start shipping features
 
-**Built with ❤️ for developers who refactor fearlessly**
+Built with ❤️ for developers who refactor fearlessly
 
 </div>
