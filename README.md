@@ -63,10 +63,20 @@ Get started in minutes with our interactive setup wizard.
 npm install @adaptive-tests/javascript --save-dev
 npx adaptive-tests init
 
+# (Optional) Diagnose discovery
+npx adaptive-tests why '{"name":"Calculator","type":"class"}'
+
 # For Python
 pip install adaptive-tests-py
 adaptive-tests init
 ```
+
+Stuck? Try these quick fixes:
+- Ensure your file types are included (e.g., add `.ts`/`.tsx` in discovery.extensions)
+- Try a simpler signature: `{ "name": "YourClass" }`
+- Run `npx adaptive-tests why '…'` and adjust based on the result
+
+Works with Cursor / Copilot / VS Code — no extension required.
 
 **[→ See the full Quick Start Guide](QUICKSTART.md)**
 

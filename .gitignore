@@ -17,6 +17,11 @@ MARKDOWN_REVIEW_INDEX.md
 venv/
 env/
 __pycache__/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.tox/
 *.py[cod]
 *$py.class
 *.so
@@ -63,6 +68,7 @@ vscode-adaptive-tests-extension_experimental/
 
 # Testing
 .nyc_output/
+**/.coverage*
 junit.xml
 test-results/
 tests/adaptive/UserService.test.js
