@@ -133,4 +133,4 @@ jobs:
       - name: Test discovery functionality
         run: |
           echo "🔍 Testing core discovery..."
-          node -e "const { discover } = require('./src/adaptive'); console.log('✅ Discovery loaded successfully');"
+          node -e "const { discover } = require('./src/index.js'); console.log('✅ Discovery loaded successfully');"
