@@ -1,6 +1,6 @@
 {
   "name": "adaptive-tests",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Tests that don't break when you move files. Smart test discovery finds your code by understanding its structure, not hardcoded paths. Works with Jest, Mocha, Vitest.",
   "main": "index.js",
   "module": "index.mjs",
