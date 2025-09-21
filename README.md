@@ -65,7 +65,9 @@ Each language implementation is self-contained with examples, documentation, and
 ### 📦 JavaScript/Node.js
 
 ```bash
-npm install adaptive-tests
+npm install @adaptive-tests/javascript
+# or the meta package that includes everything:
+# npm install adaptive-tests
 ```
 
 → **[Complete JavaScript Guide](./languages/javascript/README.md)**
@@ -93,7 +95,7 @@ pip install adaptive-tests-py
 ### 📘 TypeScript
 
 ```bash
-npm install adaptive-tests @adaptive-tests/typescript
+npm install @adaptive-tests/javascript @adaptive-tests/typescript
 ```
 
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**

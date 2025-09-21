@@ -1,19 +1,14 @@
 # GitHub Action for Adaptive Tests
 
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Adaptive%20Tests-green?logo=github)](https://github.com/marketplace/actions/adaptive-tests)
+> ⚠️ **Note:** The official GitHub Action is currently in development. Please use the manual setup instructions below for now.
+
 [![Action Status](https://github.com/anon57396/adaptive-tests/workflows/CI/badge.svg)](https://github.com/anon57396/adaptive-tests/actions)
 
-Use the official Marketplace action to run adaptive tests in CI. If your organization restricts Marketplace actions, use the manual Node.js job shown below.
+While we develop the official GitHub Action, you can easily run adaptive tests in CI using the manual Node.js setup shown below.
 
 ## Quick Start
 
-If you are using the official action:
-
-```yaml
-- uses: adaptive-tests-action/adaptive-tests@v1
-```
-
-Otherwise, use this manual setup:
+Use this manual setup (recommended):
 
 ```yaml
 steps:
@@ -30,7 +25,7 @@ The action automatically detects your project type and runs adaptive tests.
 
 ## Installation
 
-### Option 1: Simple (Recommended)
+### Option 1: Simple Manual Setup (Recommended)
 
 ```yaml
 name: Tests
@@ -41,17 +36,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: adaptive-tests-action/adaptive-tests@v1
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:adaptive
 ```
 
-### Option 2: With Configuration
+### Option 2: With Coverage Reporting
 
 ```yaml
-- uses: adaptive-tests-action/adaptive-tests@v1
-  with:
-    command: test
-    coverage: true
-    fail-on-missing: true
+steps:
+  - uses: actions/checkout@v4
+  - uses: actions/setup-node@v5
+    with:
+      node-version: '20'
+      cache: 'npm'
+  - run: npm ci
+  - run: npm run test:adaptive -- --coverage
+  - uses: actions/upload-artifact@v3
+    with:
+      name: coverage-report
+      path: coverage/
 ```
 
 ### Option 3: Multiple Commands

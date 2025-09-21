@@ -1,4 +1,4 @@
-# Simple Adaptive Tests Example
+# Adaptive Tests Usage Patterns
 
 This shows different ways to use Adaptive Tests, from quick fixes to full control.
 
@@ -181,7 +181,7 @@ class UserServiceAdaptiveTest extends AdaptiveTest {
 }
 ```
 
-## Key Benefits of Progressive Approach
+## Key Benefits of Layered Approach
 
 1. **No vendor lock-in** - Each layer is optional
 2. **Learn at your own pace** - Start simple, advance when ready
@@ -194,7 +194,7 @@ class UserServiceAdaptiveTest extends AdaptiveTest {
 ```bash
 # Clone this example
 git clone https://github.com/anon57396/adaptive-tests.git
-cd adaptive-tests/examples/progressive-disclosure
+cd adaptive-tests/languages/javascript/examples/usage-patterns
 
 # Install dependencies
 npm install

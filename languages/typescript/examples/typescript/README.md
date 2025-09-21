@@ -34,7 +34,7 @@ npx jest languages/typescript/examples/typescript/tests --runInBand
 3. Import the TypeScript discovery helpers:
 
    ```typescript
-   import { getTypeScriptDiscoveryEngine } from 'adaptive-tests';
+   import { getTypeScriptDiscoveryEngine } from 'adaptive-tests/typescript';
 
    const engine = getTypeScriptDiscoveryEngine();
    const UserService = await engine.discoverTarget({

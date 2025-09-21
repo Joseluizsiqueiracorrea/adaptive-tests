@@ -20,7 +20,7 @@ For a single test file:
 
 ```bash
 # 1. Install adaptive-tests
-npm install adaptive-tests
+npm install @adaptive-tests/javascript
 
 # 2. Generate adaptive version of existing test
 npx adaptive-tests scaffold src/components/Button.js --output-dir tests/adaptive
@@ -106,7 +106,7 @@ test('handles click', () => {
 
 ```javascript
 // tests/adaptive/Button.test.js
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 const { render, fireEvent } = require('@testing-library/react');
 
 test('handles click', async () => {
@@ -143,7 +143,7 @@ test('GET /users returns list', async () => {
 
 ```javascript
 // tests/adaptive/userRoutes.test.js
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 const request = require('supertest');
 
 test('GET /users returns list', async () => {
@@ -177,7 +177,7 @@ test('increments count', () => {
 #### After
 
 ```javascript
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 const { mount } = require('@vue/test-utils');
 
 test('increments count', async () => {
@@ -248,7 +248,7 @@ describe('AuthService', () => {
 
 ```javascript
 // When a module exports multiple items
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 
 test('uses multiple exports', async () => {
   const validators = await discover({
@@ -331,7 +331,7 @@ npx adaptive-tests why '{"name":"YourModule"}'
 npx adaptive-tests analyze src/YourModule.js
 
 # 3. Add custom search paths
-const { discover } = require('adaptive-tests');
+const { discover } = require('@adaptive-tests/javascript');
 
 const Module = await discover({
   name: 'Module'

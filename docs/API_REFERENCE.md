@@ -20,6 +20,7 @@ All language implementations follow the same discovery pattern:
 **Purpose:** Find code by structure, not file paths
 
 **Parameters:**
+
 - `signature` (Object): What to find
   - `name` (string): Name of the class/function/module
   - `type` (string): Type ('class', 'function', 'module', etc.)
@@ -31,6 +32,7 @@ All language implementations follow the same discovery pattern:
 ## Quick Examples
 
 ### JavaScript
+
 ```javascript
 const { discover } = require('@adaptive-tests/javascript');
 
@@ -42,6 +44,7 @@ const MyClass = await discover({
 ```
 
 ### TypeScript
+
 ```typescript
 import { discover } from '@adaptive-tests/typescript';
 
@@ -52,17 +55,25 @@ const MyInterface = await discover({
 ```
 
 ### Python
+
 ```python
 from adaptive_tests import discover
+import asyncio
 
-UserModel = await discover({
-    'name': 'UserModel',
-    'type': 'class',
-    'methods': ['save', 'delete']
-})
+async def test_user_model():
+    UserModel = await discover({
+        'name': 'UserModel',
+        'type': 'class',
+        'methods': ['save', 'delete']
+    })
+    return UserModel
+
+# Run in async context
+UserModel = asyncio.run(test_user_model())
 ```
 
 ### Java
+
 ```java
 import io.adaptivetests.Discovery;
 
@@ -78,11 +89,13 @@ Class<?> userService = Discovery.discover(
 ## Why This Works
 
 **Traditional tests break when code moves:**
+
 ```javascript
 import UserService from './src/services/UserService'; // ❌ Breaks when file moves
 ```
 
 **Adaptive tests survive refactoring:**
+
 ```javascript
 const UserService = await discover({
   name: 'UserService',
@@ -93,6 +106,7 @@ const UserService = await discover({
 ## Configuration
 
 Each language package supports configuration files:
+
 - **JavaScript/TypeScript:** `adaptive-tests.config.js`
 - **Python:** `pyproject.toml` or `adaptive_tests.yml`
 - **Java:** `adaptive-tests.xml` or Maven/Gradle configuration

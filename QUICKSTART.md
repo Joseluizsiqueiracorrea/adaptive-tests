@@ -13,7 +13,7 @@
 ## 1. Install
 
 ```bash
-npm install adaptive-tests
+npm install @adaptive-tests/javascript
 # Optional, only if you want to discover raw TypeScript sources
 npm install --save-dev ts-node
 
@@ -31,7 +31,7 @@ Want language parity?
 
 ```javascript
 const path = require('path');
-const { getDiscoveryEngine } = require('adaptive-tests');
+const { getDiscoveryEngine } = require('@adaptive-tests/javascript');
 
 const engine = getDiscoveryEngine(path.resolve(__dirname, '../..'));
 
