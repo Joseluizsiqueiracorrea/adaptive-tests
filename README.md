@@ -408,17 +408,24 @@ npx adaptive-tests scaffold src/components/MyComponent.tsx
 
 ```bash
 npx adaptive-tests init                                      # Interactive setup wizard
+npx adaptive-tests init                                      # Interactive setup wizard
 npx adaptive-tests migrate tests                            # Convert traditional tests to adaptive
-npx adaptive-tests scaffold src/services/UserService.js     # Generate test from source
+npx adaptive-tests scaffold languages/javascript/examples/calculator/src/Calculator.js     # Generate test from source
 npx adaptive-tests scaffold --batch src/                    # Scaffold entire directory
+npx adaptive-tests why '{"name":"..."}'                       # Explain why a signature matched (or not)
+npx adaptive-tests enable-invisible                         # Auto-fix broken imports in existing tests
 ```
 
 ### Migration Tool (New!)
 
-Automatically convert your existing traditional tests to adaptive tests:
+Automatically convert your existing traditional tests to adaptive tests.
 
 ```bash
-npx adaptive-tests migrate [directory]
+# Migrate a single file
+npx adaptive-tests migrate path/to/your/test.js
+
+# Migrate an entire directory, creating new files in a different directory
+npx adaptive-tests migrate --input tests/traditional --output tests/adaptive
 ```
 
 The migration tool:
