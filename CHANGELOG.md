@@ -13,7 +13,7 @@ All notable changes to this project are documented here. Dates are omitted when 
 
 - `discover()` accepts an options object so callers can pass `{ rootPath, discovery: {...} }` without first creating an engine instance.
 - File system scanning is hardened: `LRUCache` parameters are validated, path resolution is fully async, and traversal outside the project root is blocked.
-- GitHub Action: automatically installs `adaptive-tests@0.3.0`, exposes coverage paths, and respects the repo’s preferred package manager via `install-command`.
+- GitHub Action: automatically installs `adaptive-tests@0.3.x`, exposes coverage paths, and respects the repo’s preferred package manager via `install-command`.
 - Release tooling: added `npm run publish:all` plus a build script for companion plugins to keep Marketplace packages in sync.
 
 ### Changed

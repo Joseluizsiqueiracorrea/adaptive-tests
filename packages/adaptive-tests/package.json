@@ -60,6 +60,14 @@
   },
   "author": "Adaptive Tests",
   "license": "MIT",
+  "homepage": "https://anon57396.github.io/adaptive-tests/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anon57396/adaptive-tests.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anon57396/adaptive-tests/issues"
+  },
   "dependencies": {
     "@adaptive-tests/javascript": "^0.3.0"
   },
