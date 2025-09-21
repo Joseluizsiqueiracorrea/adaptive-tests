@@ -4,9 +4,28 @@ All notable changes to this project are documented here. Dates are omitted when 
 
 ## [0.3.0] - 2025-09-21
 
-- **npm Release**: Published `@adaptive-tests/javascript`, `@adaptive-tests/typescript`, and the umbrella `adaptive-tests` CLI at 0.3.0
-- **Docs**: Updated Quick Start instructions to reference the live packages and clarified publishing guidance
-- **Tooling**: Added `npm run publish:all` to publish all npm packages in the correct order with a single command
+### Breaking
+
+- Removed the shared language plugin registry and `BaseLanguageIntegration` shim from the JavaScript runtime. The package now ships only the JavaScript/TypeScript discovery engine and no longer bundles the experimental PHP, Ruby, Rust or Wolfram collectors.
+- TypeScript installs now wrap the JavaScript engine explicitly. Installing `@adaptive-tests/typescript` will pull in `@adaptive-tests/javascript` automatically.
+
+### Added
+
+- `discover()` accepts an options object so callers can pass `{ rootPath, discovery: {...} }` without first creating an engine instance.
+- File system scanning is hardened: `LRUCache` parameters are validated, path resolution is fully async, and traversal outside the project root is blocked.
+- GitHub Action: automatically installs `adaptive-tests@0.3.0`, exposes coverage paths, and respects the repo’s preferred package manager via `install-command`.
+- Release tooling: added `npm run publish:all` plus a build script for companion plugins to keep Marketplace packages in sync.
+
+### Changed
+
+- Scaffolding CLI (and VS Code command) now loads the adaptive-tests API via dynamic import and surfaces clearer error messages.
+- Cleaned up legacy calculator examples, removed deprecated scripts, and refreshed package metadata across the workspaces.
+- Consolidated CI workflows: modern Node.js baselines, leaner job matrix, and consistent validation across JavaScript, TypeScript, and Python suites.
+
+### Documentation
+
+- Reworked Quick Start + language guides to clarify that JavaScript is the shared core, TypeScript is a thin wrapper, and Python/Java ship independent engines.
+- Updated landing page, comparison guide, and troubleshooting docs for the new install flow and supported languages.
 
 ## [0.2.5] - 2025-09-19
 
