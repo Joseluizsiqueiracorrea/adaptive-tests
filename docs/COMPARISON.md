@@ -66,7 +66,7 @@ describe('UserService', () => {
 
   beforeAll(async () => {
     UserService = await discover({ name: 'UserService', type: 'class' });
-    DatabaseMock = await discover({ name: 'DatabaseMock' });
+    DatabaseMock = await discover('DatabaseMock');
   });
 
   test('creates user', () => {
@@ -445,5 +445,5 @@ They're not competitors—they're partners. Use both and never fix import errors
 
 ---
 
-*Ready to try? Start here: [Quick Start Guide](../QUICKSTART.md)*
+*Ready to try? Start here: [Quick Start Guide](../README.md#quick-start-guide)*
 *Questions? [GitHub Discussions](https://github.com/anon57396/adaptive-tests/discussions)*

@@ -494,6 +494,6 @@ const wrapper = mount(Component, {
 
 - [Vue Test Utils Documentation](https://test-utils.vuejs.org/)
 - [Adaptive Tests API Reference](./API_REFERENCE.md)
-- [Troubleshooting Guide](./TROUBLESHOOTING.md)
+- [Troubleshooting Guide](../../TROUBLESHOOTING.md)
 
 Happy testing with Vue! 💚

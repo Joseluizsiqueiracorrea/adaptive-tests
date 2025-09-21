@@ -452,7 +452,7 @@ process.env.DATABASE_URL = 'sqlite::memory:';
 // tests/teardown.js
 afterAll(async () => {
   // Close database connections
-  const db = await discover({ name: 'database' });
+  const db = await discover('database');
   await db.close();
 });
 ```
@@ -563,7 +563,7 @@ jobs:
 
 - [Express Documentation](https://expressjs.com/)
 - [Supertest Documentation](https://github.com/visionmedia/supertest)
-- [Adaptive Tests API Reference](./API_REFERENCE.md)
+- [Adaptive Tests API Reference](../../API_REFERENCE.md)
 - [Migration Guide](./MIGRATION_GUIDE.md)
 
 Happy API testing! 🚀
