@@ -35,6 +35,9 @@
     "ai",
     "discovery"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Adaptive Tests",
   "license": "MIT",
   "dependencies": {

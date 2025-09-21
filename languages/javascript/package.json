@@ -20,6 +20,9 @@
     "index.d.ts",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "jest --runInBand",
     "lint": "eslint src/**/*.js",

@@ -45,7 +45,11 @@
     "demo:ts:restore-broken-ts": "node languages/typescript/scripts/restore-broken-ts.js",
     "demo:ts:restore-ts": "node languages/typescript/scripts/restore-ts.js",
     "demo:ts:refactor-ts": "node languages/typescript/scripts/refactor-ts.js",
-    "demo:ts:broken-ts": "node languages/typescript/scripts/demo-broken-ts.js"
+    "demo:ts:broken-ts": "node languages/typescript/scripts/demo-broken-ts.js",
+    "publish:javascript": "cd languages/javascript && npm publish",
+    "publish:typescript": "cd languages/typescript && npm publish",
+    "publish:meta": "cd packages/adaptive-tests && npm publish",
+    "publish:all": "npm run publish:javascript && npm run publish:typescript && npm run publish:meta"
   },
   "engines": {
     "node": ">=16.0.0",
