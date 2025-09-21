@@ -3,6 +3,7 @@
 ## Philosophy: Errors That Help, Not Frustrate
 
 Every error message in Adaptive Tests follows these principles:
+
 1. **Tell what went wrong** - Clear problem statement
 2. **Show why it failed** - Context and details
 3. **Suggest how to fix it** - Actionable next steps
@@ -15,7 +16,8 @@ Every error message in Adaptive Tests follows these principles:
 #### Error: No candidates found for signature
 
 **What you see:**
-```
+
+```text
 Error: No candidates found for signature {"name":"UserService","type":"class"}
 
 No files matched your search criteria. This could mean:
@@ -36,6 +38,7 @@ Current search configuration:
 ```
 
 **Quick fixes:**
+
 ```bash
 # See what files are being considered
 npx adaptive-tests why '{"name":"UserService"}'
@@ -52,7 +55,8 @@ find . -name "*UserService*" -type f
 #### Error: Multiple candidates with identical scores
 
 **What you see:**
-```
+
+```text
 Error: Multiple candidates have identical score (156 points)
 
 Found 3 files with the same score:
@@ -85,7 +89,8 @@ Run 'npx adaptive-tests why' with --verbose to see full scoring breakdown
 #### Error: Signature validation failed
 
 **What you see:**
-```
+
+```text
 Error: Module found but doesn't match signature requirements
 
 File: src/services/UserAPI.js
@@ -119,7 +124,8 @@ npx adaptive-tests analyze src/services/UserAPI.js
 #### Error: Configuration file invalid
 
 **What you see:**
-```
+
+```text
 Error: Invalid configuration in adaptive-tests.config.js
 
 Problems found:
@@ -147,7 +153,7 @@ Example of valid configuration:
 }
 
 Using default configuration. Fix the errors and restart.
-See full config docs: https://github.com/anon57396/adaptive-tests/docs/configuration.md
+See full config docs: CONFIGURATION.md
 ```
 
 ---
@@ -157,7 +163,8 @@ See full config docs: https://github.com/anon57396/adaptive-tests/docs/configura
 #### Error: Module cannot be loaded
 
 **What you see:**
-```
+
+```text
 Error: Found matching file but cannot load module
 
 File: src/services/DatabaseService.ts
@@ -192,7 +199,8 @@ Alternative: Pre-compile TypeScript files and discover from .js output
 #### Error: Circular dependency detected
 
 **What you see:**
-```
+
+```text
 Error: Circular dependency detected during discovery
 
 Dependency chain:
@@ -227,7 +235,8 @@ Set allowCircular: true in adaptive-tests.config.js
 #### Warning: Discovery taking too long
 
 **What you see:**
-```
+
+```text
 Warning: Discovery took 3,847ms (threshold: 1000ms)
 
 Performance breakdown:
@@ -272,7 +281,8 @@ Run with DEBUG=adaptive:perf for detailed timing information
 #### Error: BeforeAll hook timeout
 
 **What you see:**
-```
+
+```text
 Error: Timeout in beforeAll hook - discovery took too long
 
 Test: UserService.adaptive.test.js

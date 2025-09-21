@@ -92,4 +92,4 @@ You can also configure:
 - **File extensions to consider:** `discovery.extensions`
 - **Scoring weights for each category:** `discovery.scoring`
 
-**[→ See the full Configuration Guide](docs/CONFIGURATION.md)**
+**[→ See the full Configuration Guide](CONFIGURATION.md)**
