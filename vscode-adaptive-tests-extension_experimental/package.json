@@ -2,11 +2,11 @@
   "name": "vscode-adaptive-tests-extension_experimental",
   "displayName": "Adaptive Tests",
   "description": "Visual discovery and scaffolding for resilient test suites",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "adaptive-tests",
   "icon": "media/icon.png",
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.95.0"
   },
   "categories": [
     "Testing",
@@ -20,6 +20,13 @@
     "resilient"
   ],
   "activationEvents": [
+    "onCommand:adaptive-tests.showDiscoveryLens",
+    "onCommand:adaptive-tests.scaffoldFile",
+    "onCommand:adaptive-tests.scaffoldBatch",
+    "onCommand:adaptive-tests.openTest",
+    "onCommand:adaptive-tests.runDiscovery",
+    "onCommand:adaptive-tests.smartTest",
+    "onView:adaptive-tests.discoveryView",
     "onLanguage:javascript",
     "onLanguage:typescript",
     "onLanguage:php",
@@ -27,6 +34,9 @@
     "onLanguage:python",
     "onLanguage:go",
     "onLanguage:rust"
+  ],
+  "extensionKind": [
+    "workspace"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -152,11 +162,11 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/vscode": "^1.75.0",
-    "@types/node": "^18.x",
-    "@vscode/test-electron": "^2.3.0",
-    "typescript": "^5.0.0",
-    "vitest": "^1.6.0"
+    "@types/vscode": "^1.95.0",
+    "@types/node": "^20.12.7",
+    "@vscode/test-electron": "^2.4.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.1"
   },
   "dependencies": {
     "@adaptive-tests/javascript": "^0.3.0"

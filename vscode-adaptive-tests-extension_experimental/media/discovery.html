@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}} 'unsafe-inline'; script-src {{CSP_SOURCE}}; font-src {{CSP_SOURCE}} https: data:;">
+    <meta name="color-scheme" content="light dark">
     <title>Discovery Lens</title>
     <link href="{{STYLE_URI}}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🔍 Discovery Lens</h1>
-            <p class="subtitle">Visualize how adaptive-tests discovers your code</p>
+    <div class="container glass-surface">
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Discovery Lens</h1>
+                <p class="subtitle">Visualize adaptive discovery with Tahoe-inspired liquid glass styling.</p>
+            </div>
         </header>
 
-        <main>
-            <section class="input-section" aria-labelledby="input-heading">
+        <main class="layout">
+            <section class="card input-section" aria-labelledby="input-heading">
                 <h2 id="input-heading" class="visually-hidden">Discovery Configuration</h2>
-                <label for="signature-input">Enter Discovery Signature (JSON)</label>
+
+                <label for="signature-input">Discovery Signature (JSON)</label>
                 <textarea
                     id="signature-input"
                     placeholder='{"name": "Calculator", "type": "class", "methods": ["add", "subtract"]}'
@@ -47,14 +52,15 @@
                 </fieldset>
 
                 <button id="run-discovery" class="primary-btn" aria-describedby="run-help">
-                    Run Discovery
+                    <span class="primary-btn__icon" aria-hidden="true">🚀</span>
+                    <span>Run Discovery</span>
                 </button>
                 <div id="run-help" class="visually-hidden">
                     Run discovery to find matching code files. Use Ctrl+Enter as a keyboard shortcut.
                 </div>
             </section>
 
-            <div class="discovery-progress" role="status" aria-labelledby="progress-text">
+            <div class="card discovery-progress hidden" role="status" aria-labelledby="progress-text" data-display="flex">
                 <div class="progress-indicator">
                     <span class="progress-spinner" aria-hidden="true"></span>
                     <span id="progress-text">Discovering files...</span>
@@ -67,14 +73,14 @@
                 </div>
             </div>
 
-            <section class="results-section" style="display: none;" aria-labelledby="results-heading">
+            <section class="card results-section hidden" aria-labelledby="results-heading">
                 <h2 id="results-heading">Discovery Results</h2>
                 <div class="results-summary" role="status" aria-live="polite" aria-atomic="true"></div>
                 <div id="status-announcements" aria-live="assertive" aria-atomic="true" class="visually-hidden"></div>
                 <div id="results-container" role="list" aria-labelledby="results-heading"></div>
             </section>
 
-            <section class="error-section" style="display: none;" role="alert" aria-labelledby="error-heading">
+            <section class="card error-section hidden" role="alert" aria-labelledby="error-heading">
                 <h2 id="error-heading" class="visually-hidden">Error</h2>
                 <div class="error-content">
                     <div class="error-icon" aria-hidden="true">⚠️</div>
@@ -90,7 +96,7 @@
                 </div>
             </section>
 
-            <section class="help-section" aria-labelledby="help-heading">
+            <section class="card help-section" aria-labelledby="help-heading">
                 <details>
                     <summary id="help-heading" aria-expanded="false" aria-controls="help-content">
                         How Discovery Works
@@ -111,6 +117,6 @@
         </main>
     </div>
 
-    <script src="{{SCRIPT_URI}}"></script>
+    <script nonce="{{NONCE}}" src="{{SCRIPT_URI}}"></script>
 </body>
 </html>
