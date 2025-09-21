@@ -83,4 +83,3 @@ Place configuration in `adaptive-tests.config.json` or `.adaptive-tests-java.jso
 ```
 
 Support for `pom.xml` / `build.gradle` configuration blocks is planned. Track progress in `docs/INTERNAL_EXECUTION_PLAN.md`.
-

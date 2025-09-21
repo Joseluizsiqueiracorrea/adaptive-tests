@@ -29,8 +29,7 @@ adaptive-tests/
 │   ├── python/             # adaptive-tests-py package
 │   ├── java/               # adaptive-tests-java package
 │   └── ...                 # Other language placeholders
-├── tools/                  # Developer tools
-│   └── vscode-adaptive-tests/ # VS Code extension source
+├── vscode-adaptive-tests-extension_experimental/ # VS Code extension source
 ├── scripts/                # Build and validation scripts
 └── docs/                   # Documentation
 ```
@@ -274,6 +273,10 @@ npm audit
 - Validate all user input
 - Use AST parsing to avoid code injection
 - Keep dependencies updated
+
+---
+
+Questions? Open a [discussion](https://github.com/anon57396/adaptive-tests/discussions) or check our [troubleshooting guide](../docs/TROUBLESHOOTING.md).
 
 ---
 

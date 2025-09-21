@@ -9,15 +9,7 @@ const { ErrorHandler } = require('./error-handler');
 
 const LANGUAGE_EXTENSIONS = {
   javascript: ['.js', '.mjs', '.cjs'],
-  typescript: ['.ts', '.tsx'],
-  java: ['.java'],
-  python: ['.py'],
-  rust: ['.rs'],
-  go: ['.go'],
-  php: ['.php'],
-  ruby: ['.rb'],
-  csharp: ['.cs'],
-  cpp: ['.cpp', '.cxx', '.cc', '.hpp', '.hxx', '.h']
+  typescript: ['.ts', '.tsx']
 };
 
 const DEFAULT_LANGUAGE_CONFIG = {
@@ -59,7 +51,7 @@ const DEFAULT_LANGUAGE_CONFIG = {
 const ENHANCED_CONFIG_SCHEMA = {
   discovery: {
     // Global discovery settings
-    extensions: ['.js', '.ts', '.tsx', '.jsx', '.java', '.py', '.rs', '.go', '.php', '.rb'],
+    extensions: ['.js', '.ts', '.tsx', '.jsx'],
     maxDepth: 10,
     concurrency: 8,
     skipDirectories: [
@@ -197,203 +189,6 @@ const ENHANCED_CONFIG_SCHEMA = {
             strictMode: true
           }
         }
-      },
-
-      java: {
-        ...DEFAULT_LANGUAGE_CONFIG,
-        extensions: LANGUAGE_EXTENSIONS.java,
-        skipPatterns: ['*Test.java', '*Tests.java'],
-        scoring: {
-          ...DEFAULT_LANGUAGE_CONFIG.scoring,
-          customScoring: {
-            preferPublicClasses: 10,
-            preferAnnotations: 8,
-            preferInheritance: 12
-          }
-        },
-        parser: {
-          timeout: 8000,
-          options: {
-            javaVersion: '11'
-          }
-        },
-        testGeneration: {
-          enabled: true,
-          templatePath: 'junit5',
-          outputPath: 'src/test/java',
-          options: {
-            useJUnit5: true,
-            generateMockito: true
-          }
-        }
-      },
-
-      python: {
-        ...DEFAULT_LANGUAGE_CONFIG,
-        extensions: LANGUAGE_EXTENSIONS.python,
-        skipPatterns: ['__pycache__/*', '*.pyc'],
-        scoring: {
-          ...DEFAULT_LANGUAGE_CONFIG.scoring,
-          customScoring: {
-            preferClasses: 10,
-            preferDunderMethods: -5, // Prefer non-dunder methods
-            preferPublicMethods: 8
-          }
-        },
-        parser: {
-          timeout: 5000,
-          options: {
-            pythonVersion: 'python3',
-            enableAsync: true
-          }
-        },
-        testGeneration: {
-          enabled: true,
-          templatePath: 'pytest',
-          outputPath: 'tests',
-          options: {
-            usePytest: true,
-            generateFixtures: true
-          }
-        }
-      },
-
-      rust: {
-        ...DEFAULT_LANGUAGE_CONFIG,
-        extensions: LANGUAGE_EXTENSIONS.rust,
-        skipPatterns: ['target/*', '*.rlib'],
-        scoring: {
-          ...DEFAULT_LANGUAGE_CONFIG.scoring,
-          customScoring: {
-            preferPublicItems: 15,
-            preferTraits: 12,
-            preferGenerics: 10,
-            preferDerives: 8
-          }
-        },
-        parser: {
-          timeout: 6000,
-          options: {
-            edition: '2021'
-          }
-        },
-        testGeneration: {
-          enabled: true,
-          templatePath: 'rust-test',
-          outputPath: 'tests',
-          options: {
-            generateCargoToml: true,
-            useCargoTest: true
-          }
-        }
-      },
-
-      go: {
-        ...DEFAULT_LANGUAGE_CONFIG,
-        extensions: LANGUAGE_EXTENSIONS.go,
-        skipPatterns: ['*_test.go', 'vendor/*'],
-        scoring: {
-          ...DEFAULT_LANGUAGE_CONFIG.scoring,
-          customScoring: {
-            preferExportedSymbols: 15,
-            preferInterfaces: 12,
-            preferMethods: 10
-          }
-        },
-        parser: {
-          timeout: 5000,
-          options: {
-            goVersion: '1.19'
-          }
-        },
-        testGeneration: {
-          enabled: true,
-          templatePath: 'go-test',
-          outputPath: 'same-directory',
-          options: {
-            useTestify: false,
-            generateBenchmarks: false
-          }
-        }
-      },
-
-      php: {
-        ...DEFAULT_LANGUAGE_CONFIG,
-        extensions: LANGUAGE_EXTENSIONS.php,
-        skipPatterns: ['vendor/*', '*.phar'],
-        scoring: {
-          ...DEFAULT_LANGUAGE_CONFIG.scoring,
-          customScoring: {
-            preferClasses: 10,
-            preferNamespaces: 8,
-            preferVisibility: 5
-          }
-        },
-        parser: {
-          timeout: 5000,
-          options: {
-            phpVersion: '8.0'
-          }
-        },
-        testGeneration: {
-          enabled: true,
-          templatePath: 'phpunit',
-          outputPath: 'tests',
-          options: {
-            usePHPUnit: true,
-            generateMocks: true
-          }
-        }
-      },
-
-      ruby: {
-        ...DEFAULT_LANGUAGE_CONFIG,
-        extensions: LANGUAGE_EXTENSIONS.ruby,
-        skipPatterns: ['*_spec.rb', '*_test.rb'],
-        scoring: {
-          ...DEFAULT_LANGUAGE_CONFIG.scoring,
-          customScoring: {
-            preferClasses: 10,
-            preferModules: 8,
-            preferPublicMethods: 5
-          }
-        },
-        parser: {
-          timeout: 5000,
-          options: {
-            rubyVersion: '3.0'
-          }
-        },
-        testGeneration: {
-          enabled: true,
-          templatePath: 'rspec',
-          outputPath: 'spec',
-          options: {
-            useRSpec: true,
-            generateFactories: false
-          }
-        }
-      }
-    },
-
-    // Plugin configuration
-    plugins: {
-      enabled: true,
-      autoDiscovery: true,
-      disabled: [], // List of disabled language plugins
-      allowList: [], // If specified, only these plugins are enabled
-
-      // Plugin-specific configuration
-      configuration: {
-        // Each plugin can have its own config section
-        'java-integration': {
-          useAdvancedParsing: true,
-          cacheMetadata: true
-        },
-        'rust-integration': {
-          useLezerParser: true,
-          enableIncrementalParsing: false
-        }
       }
     }
   },
@@ -433,12 +228,6 @@ const ENHANCED_CONFIG_SCHEMA = {
     extensions: {
       '.ts': 20,
       '.tsx': 18,
-      '.rs': 18,
-      '.java': 15,
-      '.go': 15,
-      '.py': 12,
-      '.rb': 10,
-      '.php': 8,
       '.jsx': 5,
       '.js': 0
     },
@@ -467,13 +256,7 @@ const ENHANCED_CONFIG_SCHEMA = {
       // Built-in template configurations
       builtin: {
         javascript: 'jest',
-        typescript: 'jest-ts',
-        java: 'junit5',
-        python: 'pytest',
-        rust: 'rust-test',
-        go: 'go-test',
-        php: 'phpunit',
-        ruby: 'rspec'
+        typescript: 'jest-ts'
       }
     }
   }

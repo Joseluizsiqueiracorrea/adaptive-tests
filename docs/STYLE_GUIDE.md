@@ -17,14 +17,14 @@ This guide ensures consistent, clear, and accessible documentation across the Ad
 
 | Use This | Instead Of | Why |
 |-----------|------------|-----|
-| "Auto-fix import errors" | "Invisible Mode" | More concrete, explains what it does |
+| "Invisible mode" | "Auto-fix import errors" | Reinforces the product name across docs |
 | "Tests don't break when you move files" | "AI-ready testing infrastructure" | Specific benefit, not abstract concept |
 | "Find code by understanding what it looks like" | "AST-based analysis" | Concrete explanation, not technical jargon |
 | "Move files around? Tests still pass" | "Zero-runtime discovery" | Practical benefit, not technical detail |
 
 ### Feature Names
 
-- **Auto-Fix**: For automatically fixing broken imports in existing tests
+- **Invisible Mode**: For automatically fixing broken imports in existing tests
 - **Simple Discovery**: For the basic `discover()` API
 - **Advanced Features**: For complex configuration and tooling
 

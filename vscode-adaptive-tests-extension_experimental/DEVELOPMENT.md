@@ -95,7 +95,7 @@ npx vsce publish
 - [ ] Auto-open configuration works
 - [ ] Handles existing files (prompt to overwrite)
 - [ ] Shows error for unsupported file types
-- [ ] Works for JS, TS, PHP, Java, Python
+- [ ] Works for JS, TS, Java, Python
 
 #### CodeLens
 

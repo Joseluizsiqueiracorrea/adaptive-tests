@@ -19,10 +19,6 @@ use the Discovery Lens CLI to verify the reasoning in your own repo.
 | TypeScript  | DiscoveryEngine with TS extensions (`src/adaptive/typescript/discovery.js`)         | `discover`, `why`, `scaffold`                  | Jest suites (ts-jest)          | Resolves path aliases through `tsconfig-resolver.js` |
 | Python      | `spawnSync` bridge running `ast.parse` (`src/adaptive/python/python-discovery-integration.js`) | `discover`, `scaffold`, `why` (signature hints) | Pytest skeletons               | Requires local `python3`; 5 s timeout + 1 MB buffer |
 | Java        | `java-parser` AST collector (`src/adaptive/java/java-discovery-collector.js`)       | `discover`, `scaffold`                        | JUnit tests                    | Auto-detects Maven/Gradle layouts |
-| Go          | Tree-sitter (`tree-sitter-go`) collector (`src/adaptive/go/go-discovery-collector.js`) | `discover`, `scaffold`                        | Go test skeletons              | Optional dependency; graceful fallback when parser missing |
-| PHP         | Native PHP bridge with `php-parser` fallback (`src/adaptive/php/php-discovery-collector.js`) | `discover`, `scaffold`                        | PHPUnit cases                  | Captures namespaces, traits, and functions |
-| Ruby        | Ripper AST fallbacks with caching (`src/adaptive/ruby/ruby-discovery-integration.js`) | `discover`, `scaffold`                        | RSpec skeletons                | 2 s interpreter checks + bounded cache |
-| Rust        | Lezer-based parser (`src/adaptive/rust/rust-discovery-collector.js`)                | `discover`, `scaffold`                        | Rust test modules (`#[cfg(test)]`) | Infers crate/module names for output paths |
 
 Run Discovery Lens:
 

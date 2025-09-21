@@ -47,6 +47,8 @@ Each language implementation is self-contained with examples, documentation, and
 - **[🐍 Python](./languages/python/)** - Full pytest integration
 - **[☕ Java](./languages/java/)** - Maven/Gradle packages with Spring Boot integration
 
+Each package ships its own discovery engine, scaffolding, fixtures, and docs. Shared registries have been removed from the JavaScript codebase so that installing one language never drags in another.
+
 ### **Developer Tools**
 
 - **[🔧 VS Code Extension](./vscode-adaptive-tests-extension_experimental/)** - IDE integration _(development alpha)_
@@ -106,6 +108,36 @@ npm install @adaptive-tests/javascript @adaptive-tests/typescript
 ```
 
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**
+
+### Example Signatures
+
+```javascript
+// Find a class by name
+await engine.discoverTarget({ name: 'UserService', type: 'class' });
+
+// Find a function that lives anywhere
+await engine.discoverTarget({ name: 'calculateTax', type: 'function' });
+
+// Match a class by methods and instance properties
+await engine.discoverTarget({
+  type: 'class',
+  methods: ['login', 'logout'],
+  properties: ['sessions']
+});
+
+// Regex on names works too
+await engine.discoverTarget({ name: /Controller$/, type: 'class' });
+```
+
+### The Adaptive Way
+
+```javascript
+// ❌ Hardcoded relative import that breaks on refactor
+const Calculator = require('../../../src/utils/Calculator');
+
+// ✅ Adaptive discovery that survives refactoring
+const Calculator = await engine.discoverTarget({ name: 'Calculator', type: 'class' });
+```
 
 ---
 
@@ -587,7 +619,7 @@ npm run validate   # Run validation suite
 
 ### Resources
 
-- **[Development Guide](.github/DEVELOPMENT.md)** - Complete developer documentation
+- **[Development Guide](DEVELOPMENT.md)** - Complete developer documentation
 - **[GitHub Discussions](https://github.com/anon57396/adaptive-tests/discussions)** - Ask questions, share ideas
 - **[Issue Tracker](https://github.com/anon57396/adaptive-tests/issues)** - Report bugs, request features
 - **[Contributing Guide](CONTRIBUTING.md)** - How to contribute
@@ -596,7 +628,7 @@ npm run validate   # Run validation suite
 ### Project Health
 
 - ✅ Tests running in CI with coverage
-- ✅ Core: JS/TS; Beta: Python/Java/PHP; Experimental: Go/Rust/Ruby/Wolfram
+- ✅ Core: JS/TS (v0.3.0); Beta: Python (v0.2.5), Java (v0.3.0-SNAPSHOT); Experimental: PHP, Go, Rust, Ruby, Wolfram
 - ✅ Codecov reporting and GitHub Actions CI/CD
 
 ## Contributing & Support

@@ -369,7 +369,6 @@ ollama pull codellama
 ### Beta Support
 
 - **Java** (8+)
-- **PHP** (7.4+)
 - **Go** (1.18+)
 - **Rust** (2021 edition)
 

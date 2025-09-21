@@ -146,4 +146,4 @@ The configuration mirrors the JavaScript engine — overrides cascade across Nod
 - Dependency wiring inside generated tests is intentionally minimal; TODO comments highlight where to provide fakes or fixtures.
 - Gradle project autodetection falls back to `src/test/java` if the source lives outside `src/main/java`.
 
-We ship the Java bridge as an early preview — feedback and issues are welcome while we drive parity with the mature JavaScript and PHP integrations.
+We ship the Java bridge as an early preview — feedback and issues are welcome while we drive parity with the mature JavaScript and TypeScript integrations.

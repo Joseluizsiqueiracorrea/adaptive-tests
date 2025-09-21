@@ -272,31 +272,7 @@ src/
         └── com/example/YourClassTest.java
 ```
 
-### PHP
 
-#### Issue: "Composer autoload not found"
-
-**Solution**:
-
-```bash
-composer install
-composer dump-autoload
-```
-
-#### Issue: "PHPUnit not configured"
-
-**Solution**:
-
-```xml
-<!-- phpunit.xml -->
-<phpunit bootstrap="vendor/autoload.php">
-  <testsuites>
-    <testsuite name="adaptive">
-      <directory>tests/adaptive</directory>
-    </testsuite>
-  </testsuites>
-</phpunit>
-```
 
 ### Python
 

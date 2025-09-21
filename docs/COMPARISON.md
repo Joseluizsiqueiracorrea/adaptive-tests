@@ -424,7 +424,7 @@ After initial discovery (cached), adaptive tests run within 5% of traditional te
 
 ### "Is this just for JavaScript?"
 
-No. Adaptive Tests supports JavaScript, TypeScript, Python, Java, and experimentally Go, Rust, Ruby, and PHP. One pattern, multiple languages.
+No. Adaptive Tests supports JavaScript, TypeScript, Python, and Java. One pattern, multiple languages.
 
 ### "What if discovery fails?"
 
