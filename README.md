@@ -183,6 +183,9 @@ The extension is currently in development and not yet available on the VS Code M
 - **Easy to adopt** – Start with one test file or convert your whole test suite
 - **Works with your tools** – Integrates with Jest, Mocha, Vitest, and more
 
+**→ [Read the full case: Why Adaptive Tests?](docs/WHY_ADAPTIVE_TESTS.md)**
+**→ [Compare with Jest, Mocha, Pytest, and more](docs/COMPARISON.md)**
+
 ---
 
 ### 🔧 Auto-Fix Import Errors
@@ -527,12 +530,15 @@ You don't need complex test selection for adaptive tests because:
 
 ### Technical Documentation
 
-- [How It Works](docs/HOW_IT_WORKS.md)
-- [API Reference](docs/API_REFERENCE.md)
-- [Best Practices](docs/BEST_PRACTICES.md)
-- [CI/CD Strategy](docs/CI_STRATEGY.md)
-- Prompt Guide (AIs & automation): PROMPT_GUIDE.md
-- [Positioning Playbook](docs/PITCH.md)
+- **[Why Adaptive Tests?](docs/WHY_ADAPTIVE_TESTS.md)** - The engineering case with ROI calculations
+- **[Framework Comparison](docs/COMPARISON.md)** - vs Jest, Mocha, Vitest, Pytest, JUnit
+- [How It Works](docs/HOW_IT_WORKS.md) - Technical implementation details
+- [API Reference](docs/API_REFERENCE.md) - Complete API documentation
+- [Error Messages Guide](docs/ERROR_MESSAGES.md) - Troubleshooting and debugging
+- [Best Practices](docs/BEST_PRACTICES.md) - Patterns and anti-patterns
+- [CI/CD Strategy](docs/CI_STRATEGY.md) - Integration strategies
+- [Prompt Guide](PROMPT_GUIDE.md) - For AI & automation
+- [Positioning Playbook](docs/PITCH.md) - For advocates
 
 ### Extensions & Tools
 

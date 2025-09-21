@@ -30,9 +30,11 @@ test('finds my service automatically', async () => {
 
 ### Getting Started
 
-- [How It Works](HOW_IT_WORKS.md)
-- [Migration Guide](MIGRATION_GUIDE.md)
-- [Best Practices](BEST_PRACTICES.md)
+- **[Why Adaptive Tests?](WHY_ADAPTIVE_TESTS.md)** - The business case with ROI
+- **[Framework Comparison](COMPARISON.md)** - vs Jest, Mocha, Pytest, JUnit
+- [How It Works](HOW_IT_WORKS.md) - Technical deep dive
+- [Migration Guide](MIGRATION_GUIDE.md) - Migrate existing tests
+- [Best Practices](BEST_PRACTICES.md) - Patterns and tips
 
 ### Framework Guides
 
@@ -44,10 +46,11 @@ test('finds my service automatically', async () => {
 
 ### Reference
 
-- [API Reference](API_REFERENCE.md)
-- [CI/CD Strategy](CI_STRATEGY.md)
-- [Troubleshooting](TROUBLESHOOTING.md)
-- [Common Issues](COMMON_ISSUES.md)
+- [API Reference](API_REFERENCE.md) - Complete API docs
+- **[Error Messages Guide](ERROR_MESSAGES.md)** - Detailed error explanations
+- [CI/CD Strategy](CI_STRATEGY.md) - Integration strategies
+- [Troubleshooting](TROUBLESHOOTING.md) - Problem solving
+- [Common Issues](COMMON_ISSUES.md) - Known issues
 
 ### GitHub Integration
 
@@ -55,6 +58,8 @@ test('finds my service automatically', async () => {
 - [Automated Publishing](AUTOMATED_PUBLISHING.md)
 
 ## 🎯 Why Adaptive Tests?
+
+**Save $200,000+ per year on test maintenance.** Tests that break from moving files cost your team 15-20% of their time. Adaptive Tests eliminates this entirely.
 
 ### The Problem
 
@@ -73,6 +78,8 @@ Adaptive tests find your code automatically:
 // This works no matter where Calculator lives
 const Calculator = await discover({ name: 'Calculator' });
 ```
+
+**[→ Read the full engineering case](WHY_ADAPTIVE_TESTS.md)**
 
 ## ✨ Features
 

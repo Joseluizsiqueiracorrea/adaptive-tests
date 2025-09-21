@@ -1,7 +1,7 @@
 {
   "name": "@adaptive-tests/javascript",
   "version": "0.3.0",
-  "description": "JavaScript core implementation of adaptive-tests",
+  "description": "JavaScript testing that survives refactoring - finds code by structure, not file paths. Never fix broken imports again.",
   "main": "src/index.js",
   "types": "index.d.ts",
   "bin": {
@@ -61,6 +61,30 @@
   "engines": {
     "node": ">=16.0.0"
   },
+  "keywords": [
+    "testing",
+    "test",
+    "jest",
+    "mocha",
+    "vitest",
+    "refactoring",
+    "ast",
+    "discovery",
+    "adaptive",
+    "resilient",
+    "import-free",
+    "ai-ready",
+    "test-runner",
+    "test-framework",
+    "javascript",
+    "nodejs",
+    "unit-testing",
+    "integration-testing",
+    "tdd",
+    "bdd",
+    "automatic",
+    "smart-testing"
+  ],
   "optionalDependencies": {
     "tree-sitter": "^0.25.0",
     "tree-sitter-go": "^0.25.0"

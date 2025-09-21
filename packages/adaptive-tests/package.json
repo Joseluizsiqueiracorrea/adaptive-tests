@@ -1,7 +1,7 @@
 {
   "name": "adaptive-tests",
   "version": "0.3.0",
-  "description": "Adaptive Tests CLI and runtime meta-package",
+  "description": "Tests that don't break when you move files. Smart test discovery finds your code by understanding its structure, not hardcoded paths. Works with Jest, Mocha, Vitest.",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
@@ -30,10 +30,29 @@
   "keywords": [
     "adaptive",
     "testing",
-    "ast",
+    "test",
+    "jest",
+    "mocha",
+    "vitest",
+    "refactoring",
     "refactor",
+    "resilient",
+    "import",
+    "imports",
+    "broken-tests",
+    "test-maintenance",
+    "ast",
     "ai",
-    "discovery"
+    "ai-ready",
+    "discovery",
+    "smart",
+    "automatic",
+    "test-runner",
+    "test-framework",
+    "developer-tools",
+    "devtools",
+    "dx",
+    "developer-experience"
   ],
   "publishConfig": {
     "access": "public"
