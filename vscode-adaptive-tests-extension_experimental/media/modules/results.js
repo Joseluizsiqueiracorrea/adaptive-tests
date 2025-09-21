@@ -13,7 +13,10 @@
  * @param {number} [count=3] - Number of skeleton items to display
  */
 export function showSkeleton(resultsContainer, count = 3) {
-    resultsContainer.innerHTML = '';
+    // Clear container safely
+    while (resultsContainer.firstChild) {
+        resultsContainer.removeChild(resultsContainer.firstChild);
+    }
     
     for (let i = 0; i < count; i++) {
         const skeletonEl = createSkeletonElement();
@@ -32,22 +35,43 @@ function createSkeletonElement() {
     div.className = 'skeleton-result';
     div.setAttribute('aria-hidden', 'true');
     
-    div.innerHTML = `
-        <div class="skeleton-header">
-            <div class="skeleton skeleton-path"></div>
-            <div class="skeleton skeleton-score"></div>
-        </div>
-        <div class="skeleton-breakdown">
-            <div class="skeleton skeleton-breakdown-title"></div>
-            <div class="skeleton skeleton-breakdown-item"></div>
-            <div class="skeleton skeleton-breakdown-item"></div>
-            <div class="skeleton skeleton-breakdown-item"></div>
-        </div>
-        <div class="skeleton-actions">
-            <div class="skeleton skeleton-action"></div>
-            <div class="skeleton skeleton-action"></div>
-        </div>
-    `;
+    // Build skeleton structure with DOM methods
+    const header = document.createElement('div');
+    header.className = 'skeleton-header';
+
+    const pathSkeleton = document.createElement('div');
+    pathSkeleton.className = 'skeleton skeleton-path';
+
+    const scoreSkeleton = document.createElement('div');
+    scoreSkeleton.className = 'skeleton skeleton-score';
+
+    header.appendChild(pathSkeleton);
+    header.appendChild(scoreSkeleton);
+    div.appendChild(header);
+
+    const breakdown = document.createElement('div');
+    breakdown.className = 'skeleton-breakdown';
+
+    const breakdownTitle = document.createElement('div');
+    breakdownTitle.className = 'skeleton skeleton-breakdown-title';
+    breakdown.appendChild(breakdownTitle);
+
+    for (let i = 0; i < 3; i++) {
+        const item = document.createElement('div');
+        item.className = 'skeleton skeleton-breakdown-item';
+        breakdown.appendChild(item);
+    }
+    div.appendChild(breakdown);
+
+    const actions = document.createElement('div');
+    actions.className = 'skeleton-actions';
+
+    for (let i = 0; i < 2; i++) {
+        const action = document.createElement('div');
+        action.className = 'skeleton skeleton-action';
+        actions.appendChild(action);
+    }
+    div.appendChild(actions);
     
     return div;
 }

@@ -7,6 +7,7 @@ import {
     DiscoveryState,
     ScoreBreakdown
 } from '../types/api';
+import { PathValidator, CommandSanitizer } from '../security/PathValidator';
 
 export class DiscoveryLensPanel implements IDiscoveryLensAPI {
     private readonly panel: vscode.WebviewPanel;
@@ -59,8 +60,8 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
             dark: vscode.Uri.joinPath(context.extensionUri, 'media', 'search-dark.svg')
         };
 
-        // Set HTML content
-        this.panel.webview.html = this.getWebviewContent();
+        // Set HTML content asynchronously
+        this.initializeWebviewContent();
 
         // Handle messages from webview
         this.panel.webview.onDidReceiveMessage(
@@ -144,7 +145,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
             const sanitizedResults: DiscoveryResult[] = [];
             for (const candidate of candidates) {
-                const resolved = this.resolvePathInsideRoot(
+                const resolved = PathValidator.resolvePathInsideRoot(
                     workspaceRoot,
                     candidate.path ?? candidate.absolutePath ?? ''
                 );
@@ -277,17 +278,9 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
     private async handleOpenFile(filePath: string) {
         try {
-            const folders = vscode.workspace.workspaceFolders ?? [];
-            let resolved: { absolute: string; relative: string } | null = null;
-            for (const folder of folders) {
-                resolved = this.resolvePathInsideRoot(folder.uri.fsPath, filePath);
-                if (resolved) {
-                    break;
-                }
-            }
-
+            const resolved = PathValidator.resolveWorkspacePath(filePath);
             if (!resolved) {
-                throw new Error('Requested file is outside of the current workspace.');
+                throw new Error('File path is outside workspace boundaries');
             }
 
             const document = await vscode.workspace.openTextDocument(resolved.absolute);
@@ -299,17 +292,9 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
     private async handleScaffoldTest(filePath: string) {
         try {
-            const folders = vscode.workspace.workspaceFolders ?? [];
-            let resolved: { absolute: string; relative: string } | null = null;
-            for (const folder of folders) {
-                resolved = this.resolvePathInsideRoot(folder.uri.fsPath, filePath);
-                if (resolved) {
-                    break;
-                }
-            }
-
+            const resolved = PathValidator.resolveWorkspacePath(filePath);
             if (!resolved) {
-                throw new Error('Requested file is outside of the current workspace.');
+                throw new Error('File path is outside workspace boundaries');
             }
 
             await vscode.commands.executeCommand('adaptive-tests.scaffoldFile', vscode.Uri.file(resolved.absolute));
@@ -324,11 +309,14 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
             const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
             if (workspaceRoot) {
                 const localPath = path.join(workspaceRoot, 'node_modules', '@adaptive-tests', 'javascript');
-                const fs = require('fs');
+                const { promises: fs } = require('fs');
 
-                // Validate the module exists before requiring
-                if (fs.existsSync(localPath)) {
+                // Check if module exists asynchronously
+                try {
+                    await fs.access(localPath);
                     return require(localPath);
+                } catch {
+                    // Module doesn't exist locally, will use bundled
                 }
             }
         } catch (e) {
@@ -436,20 +424,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
         workspaceRoot: string,
         targetPath: string
     ): { absolute: string; relative: string } | null {
-        if (!targetPath) {
-            return null;
-        }
-
-        const absolute = path.isAbsolute(targetPath)
-            ? path.resolve(targetPath)
-            : path.resolve(workspaceRoot, targetPath);
-        const relative = path.relative(workspaceRoot, absolute);
-
-        if (relative.startsWith('..') || path.isAbsolute(relative)) {
-            return null;
-        }
-
-        return { absolute, relative };
+        return PathValidator.resolvePathInsideRoot(workspaceRoot, targetPath);
     }
 
     private sanitizeSignatureForCLI(signature: DiscoverySignature): DiscoverySignature {
@@ -523,13 +498,18 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
         };
     }
 
-    private getWebviewContent(): string {
+    private async initializeWebviewContent(): Promise<void> {
+        const html = await this.getWebviewContent();
+        this.panel.webview.html = html;
+    }
+
+    private async getWebviewContent(): Promise<string> {
         const webview = this.panel.webview;
         const styleUri = this.getWebviewUri('style.css');
         const scriptUri = this.getWebviewUri('script.js');
         const cspSource = webview.cspSource;
         const nonce = this.createNonce();
-        const htmlTemplate = this.loadHtmlTemplate();
+        const htmlTemplate = await this.loadHtmlTemplate();
 
         return htmlTemplate
             .replace(/{{STYLE_URI}}/g, styleUri.toString())
@@ -538,11 +518,11 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
             .replace(/{{NONCE}}/g, nonce);
     }
 
-    private loadHtmlTemplate(): string {
+    private async loadHtmlTemplate(): Promise<string> {
         try {
             const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'discovery.html');
-            const htmlContent = require('fs').readFileSync(htmlPath.fsPath, 'utf8');
-            return htmlContent;
+            const htmlContent = await vscode.workspace.fs.readFile(htmlPath);
+            return Buffer.from(htmlContent).toString('utf8');
         } catch (error) {
             // Fallback to inline HTML if template file doesn't exist
             return `<!DOCTYPE html>
@@ -632,6 +612,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
         // Sanitize signature to prevent injection
         const sanitizedSignature = this.sanitizeSignatureForCLI(signature);
+        // For spawn, we don't need shell escaping - just JSON string
         const signatureJson = JSON.stringify(sanitizedSignature);
         let executable: string;
         let spawnArgs: string[];

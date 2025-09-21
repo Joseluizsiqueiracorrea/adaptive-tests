@@ -25,7 +25,7 @@
         return;
     }
 
-    const originalRunButtonMarkup = runButton.innerHTML;
+    const originalRunButtonText = runButton.textContent || 'Run Discovery';
 
     // Mutable state
     let isLoading = false;
@@ -276,12 +276,28 @@
         if (loading) {
             runButton.setAttribute('aria-busy', 'true');
             runButton.setAttribute('aria-label', 'Running discovery, please wait');
-            runButton.innerHTML = '<span class="progress-spinner" aria-hidden="true"></span><span>Running Discovery…</span>';
+            runButton.disabled = true;
+
+            // Clear and add loading content safely
+            while (runButton.firstChild) {
+                runButton.removeChild(runButton.firstChild);
+            }
+
+            const spinner = document.createElement('span');
+            spinner.className = 'progress-spinner';
+            spinner.setAttribute('aria-hidden', 'true');
+
+            const text = document.createElement('span');
+            text.textContent = 'Running Discovery…';
+
+            runButton.appendChild(spinner);
+            runButton.appendChild(text);
             showProgress();
         } else {
             runButton.removeAttribute('aria-busy');
             runButton.setAttribute('aria-label', 'Run discovery to find matching code files');
-            runButton.innerHTML = originalRunButtonMarkup;
+            runButton.disabled = false;
+            runButton.textContent = originalRunButtonText;
             hideProgress();
         }
     }
@@ -635,7 +651,7 @@
 
     async function loadResultsModule() {
         if (!resultsModule) {
-            resultsModule = await import('./modules/results.js');
+            resultsModule = await import('./modules/results-secure.js');
         }
         return resultsModule;
     }

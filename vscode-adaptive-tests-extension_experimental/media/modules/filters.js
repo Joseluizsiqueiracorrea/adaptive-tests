@@ -428,12 +428,17 @@ export class FiltersModule {
 
         const selected = new Set(this.currentFilters.languages);
 
-        languageSelect.innerHTML = languages.map(lang =>
-            `<option value="${lang}">${lang}</option>`
-        ).join('');
+        // Clear and rebuild options safely
+        while (languageSelect.firstChild) {
+            languageSelect.removeChild(languageSelect.firstChild);
+        }
 
-        Array.from(languageSelect.options).forEach(option => {
-            option.selected = selected.has(option.value);
+        languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang;
+            option.textContent = lang;
+            option.selected = selected.has(lang);
+            languageSelect.appendChild(option);
         });
     }
 }

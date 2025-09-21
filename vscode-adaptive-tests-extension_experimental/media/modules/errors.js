@@ -177,7 +177,10 @@ function setupErrorActions(errorType, originalSignature, errorSection) {
     const actionsContainer = errorSection.querySelector('#error-actions') || errorSection.querySelector('.error-actions');
     if (!actionsContainer) return;
     
-    actionsContainer.innerHTML = '';
+    // Clear container safely
+    while (actionsContainer.firstChild) {
+        actionsContainer.removeChild(actionsContainer.firstChild);
+    }
     
     // Always show retry button
     const retryButton = createErrorButton('🔄 Retry', 'primary', () => {

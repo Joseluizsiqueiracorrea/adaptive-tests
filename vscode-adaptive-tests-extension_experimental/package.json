@@ -169,7 +169,9 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint": "npm run lint:md",
+    "lint:md": "npx markdownlint '**/*.md' --ignore node_modules --ignore out"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
