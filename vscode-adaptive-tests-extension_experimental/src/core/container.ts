@@ -38,7 +38,9 @@ export class Container {
       token,
       singleton: true,
       dependencies: deps,
-      tags: []
+      tags: [],
+      constructor: undefined,
+      factory: undefined
     };
 
     if (typeof factory === 'function' && factory.prototype) {
@@ -60,7 +62,9 @@ export class Container {
       token,
       singleton: false,
       dependencies: deps,
-      tags: []
+      tags: [],
+      constructor: undefined,
+      factory: undefined
     };
 
     if (typeof factory === 'function' && factory.prototype) {
@@ -82,8 +86,10 @@ export class Container {
       token,
       value,
       singleton: true,
-      tags: []
-    });
+      tags: [],
+      constructor: undefined,
+      factory: undefined
+    } as ServiceDescriptor<T>);
     this.logger.debug('Registered value', { token: String(token) });
     return this;
   }
@@ -251,60 +257,61 @@ export async function bootstrapContainer(context: vscode.ExtensionContext): Prom
 
   // Register configuration service
   container.singleton(TOKENS.ConfigService, async (c) => {
-    const { ConfigService } = await import('./services/ConfigService');
+    const { ConfigService } = await import('../services/ConfigService');
     const logger = await c.resolve<Logger>(TOKENS.Logger);
     return new ConfigService(logger);
   });
 
   // Register cache service
   container.singleton(TOKENS.CacheService, async (c) => {
-    const { CacheService } = await import('./services/CacheService');
+    const { CacheService } = await import('../services/CacheService');
     const logger = await c.resolve<Logger>(TOKENS.Logger);
     return new CacheService(logger);
   });
 
   // Register telemetry service
   container.singleton(TOKENS.TelemetryService, async (c) => {
-    const { TelemetryService } = await import('./services/TelemetryService');
+    const { TelemetryService } = await import('../services/TelemetryService');
     const logger = await c.resolve<Logger>(TOKENS.Logger);
     const config = await c.resolve(TOKENS.ConfigService);
-    return new TelemetryService(logger, config);
+    return new TelemetryService(logger, config as any);
   });
 
+  // Note: These services don't exist yet, commenting them out
   // Register file system service
-  container.singleton(TOKENS.FileSystemService, async (c) => {
-    const { FileSystemService } = await import('./services/FileSystemService');
-    const logger = await c.resolve<Logger>(TOKENS.Logger);
-    return new FileSystemService(logger);
-  });
+  // container.singleton(TOKENS.FileSystemService, async (c) => {
+  //   const { FileSystemService } = await import('../services/FileSystemService');
+  //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+  //   return new FileSystemService(logger);
+  // });
 
   // Register discovery engine
-  container.singleton(TOKENS.DiscoveryEngine, async (c) => {
-    const { DiscoveryEngineService } = await import('./services/DiscoveryEngineService');
-    const logger = await c.resolve<Logger>(TOKENS.Logger);
-    const cache = await c.resolve(TOKENS.CacheService);
-    const fs = await c.resolve(TOKENS.FileSystemService);
-    return new DiscoveryEngineService(logger, cache, fs);
-  });
+  // container.singleton(TOKENS.DiscoveryEngine, async (c) => {
+  //   const { DiscoveryEngineService } = await import('../services/DiscoveryEngineService');
+  //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+  //   const cache = await c.resolve(TOKENS.CacheService);
+  //   const fs = await c.resolve(TOKENS.FileSystemService);
+  //   return new DiscoveryEngineService(logger, cache, fs);
+  // });
 
   // Register scaffold service
-  container.singleton(TOKENS.ScaffoldService, async (c) => {
-    const { ScaffoldService } = await import('./services/ScaffoldService');
-    const logger = await c.resolve<Logger>(TOKENS.Logger);
-    const discovery = await c.resolve(TOKENS.DiscoveryEngine);
-    const fs = await c.resolve(TOKENS.FileSystemService);
-    const config = await c.resolve(TOKENS.ConfigService);
-    return new ScaffoldService(logger, discovery, fs, config);
-  });
+  // container.singleton(TOKENS.ScaffoldService, async (c) => {
+  //   const { ScaffoldService } = await import('../services/ScaffoldService');
+  //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+  //   const discovery = await c.resolve(TOKENS.DiscoveryEngine);
+  //   const fs = await c.resolve(TOKENS.FileSystemService);
+  //   const config = await c.resolve(TOKENS.ConfigService);
+  //   return new ScaffoldService(logger, discovery, fs, config);
+  // });
 
   // Register commands
-  container.singleton(TOKENS.Commands, async (c) => {
-    const { CommandManager } = await import('./commands/CommandManager');
-    const logger = await c.resolve<Logger>(TOKENS.Logger);
-    const scaffold = await c.resolve(TOKENS.ScaffoldService);
-    const discovery = await c.resolve(TOKENS.DiscoveryEngine);
-    return new CommandManager(context, logger, scaffold, discovery);
-  });
+  // container.singleton(TOKENS.Commands, async (c) => {
+  //   const { CommandManager } = await import('../commands/CommandManager');
+  //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+  //   const scaffold = await c.resolve(TOKENS.ScaffoldService);
+  //   const discovery = await c.resolve(TOKENS.DiscoveryEngine);
+  //   return new CommandManager(context, logger, scaffold, discovery);
+  // });
 
   // Register providers
   container.singleton(TOKENS.DiscoveryTreeProvider, async (c) => {
@@ -329,7 +336,7 @@ export async function bootstrapContainer(context: vscode.ExtensionContext): Prom
  */
 export function Injectable(token: Token<any>) {
   return function <T extends Constructor>(target: T) {
-    Reflect.defineMetadata('di:token', token, target);
+    // Reflect.defineMetadata('di:token', token, target);
     return target;
   };
 }
@@ -339,8 +346,8 @@ export function Injectable(token: Token<any>) {
  */
 export function Inject(token: Token<any>) {
   return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
-    const existingTokens = Reflect.getMetadata('di:tokens', target) || [];
-    existingTokens[parameterIndex] = token;
-    Reflect.defineMetadata('di:tokens', existingTokens, target);
+    // const existingTokens = Reflect.getMetadata('di:tokens', target) || [];
+    // existingTokens[parameterIndex] = token;
+    // Reflect.defineMetadata('di:tokens', existingTokens, target);
   };
 }

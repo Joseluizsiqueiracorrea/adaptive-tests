@@ -58,7 +58,9 @@ class Container {
             token,
             singleton: true,
             dependencies: deps,
-            tags: []
+            tags: [],
+            constructor: undefined,
+            factory: undefined
         };
         if (typeof factory === 'function' && factory.prototype) {
             descriptor.constructor = factory;
@@ -78,7 +80,9 @@ class Container {
             token,
             singleton: false,
             dependencies: deps,
-            tags: []
+            tags: [],
+            constructor: undefined,
+            factory: undefined
         };
         if (typeof factory === 'function' && factory.prototype) {
             descriptor.constructor = factory;
@@ -98,7 +102,9 @@ class Container {
             token,
             value,
             singleton: true,
-            tags: []
+            tags: [],
+            constructor: undefined,
+            factory: undefined
         });
         this.logger.debug('Registered value', { token: String(token) });
         return this;
@@ -245,54 +251,55 @@ async function bootstrapContainer(context) {
     container.factory(exports.TOKENS.Logger, () => (0, logger_1.createLogger)('extension'));
     // Register configuration service
     container.singleton(exports.TOKENS.ConfigService, async (c) => {
-        const { ConfigService } = await Promise.resolve().then(() => __importStar(require('./services/ConfigService')));
+        const { ConfigService } = await Promise.resolve().then(() => __importStar(require('../services/ConfigService')));
         const logger = await c.resolve(exports.TOKENS.Logger);
         return new ConfigService(logger);
     });
     // Register cache service
     container.singleton(exports.TOKENS.CacheService, async (c) => {
-        const { CacheService } = await Promise.resolve().then(() => __importStar(require('./services/CacheService')));
+        const { CacheService } = await Promise.resolve().then(() => __importStar(require('../services/CacheService')));
         const logger = await c.resolve(exports.TOKENS.Logger);
         return new CacheService(logger);
     });
     // Register telemetry service
     container.singleton(exports.TOKENS.TelemetryService, async (c) => {
-        const { TelemetryService } = await Promise.resolve().then(() => __importStar(require('./services/TelemetryService')));
+        const { TelemetryService } = await Promise.resolve().then(() => __importStar(require('../services/TelemetryService')));
         const logger = await c.resolve(exports.TOKENS.Logger);
         const config = await c.resolve(exports.TOKENS.ConfigService);
         return new TelemetryService(logger, config);
     });
+    // Note: These services don't exist yet, commenting them out
     // Register file system service
-    container.singleton(exports.TOKENS.FileSystemService, async (c) => {
-        const { FileSystemService } = await Promise.resolve().then(() => __importStar(require('./services/FileSystemService')));
-        const logger = await c.resolve(exports.TOKENS.Logger);
-        return new FileSystemService(logger);
-    });
+    // container.singleton(TOKENS.FileSystemService, async (c) => {
+    //   const { FileSystemService } = await import('../services/FileSystemService');
+    //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+    //   return new FileSystemService(logger);
+    // });
     // Register discovery engine
-    container.singleton(exports.TOKENS.DiscoveryEngine, async (c) => {
-        const { DiscoveryEngineService } = await Promise.resolve().then(() => __importStar(require('./services/DiscoveryEngineService')));
-        const logger = await c.resolve(exports.TOKENS.Logger);
-        const cache = await c.resolve(exports.TOKENS.CacheService);
-        const fs = await c.resolve(exports.TOKENS.FileSystemService);
-        return new DiscoveryEngineService(logger, cache, fs);
-    });
+    // container.singleton(TOKENS.DiscoveryEngine, async (c) => {
+    //   const { DiscoveryEngineService } = await import('../services/DiscoveryEngineService');
+    //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+    //   const cache = await c.resolve(TOKENS.CacheService);
+    //   const fs = await c.resolve(TOKENS.FileSystemService);
+    //   return new DiscoveryEngineService(logger, cache, fs);
+    // });
     // Register scaffold service
-    container.singleton(exports.TOKENS.ScaffoldService, async (c) => {
-        const { ScaffoldService } = await Promise.resolve().then(() => __importStar(require('./services/ScaffoldService')));
-        const logger = await c.resolve(exports.TOKENS.Logger);
-        const discovery = await c.resolve(exports.TOKENS.DiscoveryEngine);
-        const fs = await c.resolve(exports.TOKENS.FileSystemService);
-        const config = await c.resolve(exports.TOKENS.ConfigService);
-        return new ScaffoldService(logger, discovery, fs, config);
-    });
+    // container.singleton(TOKENS.ScaffoldService, async (c) => {
+    //   const { ScaffoldService } = await import('../services/ScaffoldService');
+    //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+    //   const discovery = await c.resolve(TOKENS.DiscoveryEngine);
+    //   const fs = await c.resolve(TOKENS.FileSystemService);
+    //   const config = await c.resolve(TOKENS.ConfigService);
+    //   return new ScaffoldService(logger, discovery, fs, config);
+    // });
     // Register commands
-    container.singleton(exports.TOKENS.Commands, async (c) => {
-        const { CommandManager } = await Promise.resolve().then(() => __importStar(require('./commands/CommandManager')));
-        const logger = await c.resolve(exports.TOKENS.Logger);
-        const scaffold = await c.resolve(exports.TOKENS.ScaffoldService);
-        const discovery = await c.resolve(exports.TOKENS.DiscoveryEngine);
-        return new CommandManager(context, logger, scaffold, discovery);
-    });
+    // container.singleton(TOKENS.Commands, async (c) => {
+    //   const { CommandManager } = await import('../commands/CommandManager');
+    //   const logger = await c.resolve<Logger>(TOKENS.Logger);
+    //   const scaffold = await c.resolve(TOKENS.ScaffoldService);
+    //   const discovery = await c.resolve(TOKENS.DiscoveryEngine);
+    //   return new CommandManager(context, logger, scaffold, discovery);
+    // });
     // Register providers
     container.singleton(exports.TOKENS.DiscoveryTreeProvider, async (c) => {
         const { DiscoveryTreeProvider } = await Promise.resolve().then(() => __importStar(require('../providers/DiscoveryTreeProvider')));
@@ -312,7 +319,7 @@ async function bootstrapContainer(context) {
  */
 function Injectable(token) {
     return function (target) {
-        Reflect.defineMetadata('di:token', token, target);
+        // Reflect.defineMetadata('di:token', token, target);
         return target;
     };
 }
@@ -321,9 +328,9 @@ function Injectable(token) {
  */
 function Inject(token) {
     return function (target, propertyKey, parameterIndex) {
-        const existingTokens = Reflect.getMetadata('di:tokens', target) || [];
-        existingTokens[parameterIndex] = token;
-        Reflect.defineMetadata('di:tokens', existingTokens, target);
+        // const existingTokens = Reflect.getMetadata('di:tokens', target) || [];
+        // existingTokens[parameterIndex] = token;
+        // Reflect.defineMetadata('di:tokens', existingTokens, target);
     };
 }
 //# sourceMappingURL=container.js.map
