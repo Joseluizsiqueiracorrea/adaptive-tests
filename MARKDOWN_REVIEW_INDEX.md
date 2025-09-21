@@ -55,40 +55,40 @@
 | TROUBLESHOOTING.md | ✅ | Comprehensive troubleshooting guide. |
 | WHY_ADAPTIVE_TESTS.md | ✅ | Detailed engineering case for using adaptive-tests. |
 | advanced-patterns.md | ✅ | Explains the AdaptiveTest class. |
-| ai-prompts.md | ❌ | **IMPORTANT** - Copy-paste prompts for AI usage |
-| getting-started-invisible.md | ❌ | What is invisible mode? |
+| ai-prompts.md | ✅ | Copy-paste prompts for AI usage. |
+| getting-started-invisible.md | ✅ | Explains "Invisible Mode". |
 
 ### /.github Directory (4 files)
 | File | Status | Issues/Notes |
 |------|--------|--------------|
-| ISSUE_TEMPLATE/bug_report.md | ❌ | Generic template |
-| ISSUE_TEMPLATE/feature_request.md | ❌ | Generic template |
-| PULL_REQUEST_TEMPLATE.md | ❌ | Generic template |
+| ISSUE_TEMPLATE/bug_report.md | ✅ | Detailed and specific bug report template. |
+| ISSUE_TEMPLATE/feature_request.md | ✅ | Detailed and specific feature request template. |
+| PULL_REQUEST_TEMPLATE.md | ✅ | Detailed and specific pull request template. |
 
 ### /languages/javascript Directory (4 files)
 | File | Status | Issues/Notes |
 |------|--------|--------------|
-| README.md | ❌ | Main JS docs |
-| docs/EXPRESS_QUICKSTART.md | ❌ | Framework-specific |
-| docs/REACT_QUICKSTART.md | ❌ | Framework-specific |
-| docs/VUE_QUICKSTART.md | ❌ | Framework-specific |
-| examples/usage-patterns/README.md | ❌ | |
-| templates/nextjs/README.md | ❌ | Template docs |
-| templates/vite/README.md | ❌ | Template docs |
+| README.md | ✅ | Good overview of the JavaScript package. |
+| docs/EXPRESS_QUICKSTART.md | ✅ | Quick start guide for Express.js. |
+| docs/REACT_QUICKSTART.md | ✅ | Quick start guide for React. |
+| docs/VUE_QUICKSTART.md | ✅ | Quick start guide for Vue.js. |
+| examples/usage-patterns/README.md | ✅ | Explains the three usage patterns. |
+| templates/nextjs/README.md | ✅ | README for the Next.js template. |
+| templates/vite/README.md | ✅ | README for the Vite template. |
 
 ### /languages/typescript Directory (2 files)
 | File | Status | Issues/Notes |
 |------|--------|--------------|
-| README.md | ❌ | Main TS docs |
-| examples/typescript/README.md | ❌ | |
+| README.md | ✅ | Good overview of the TypeScript package. |
+| examples/typescript/README.md | ✅ | Explains the TypeScript example. |
 
 ### /languages/python Directory (4 files)
 | File | Status | Issues/Notes |
 |------|--------|--------------|
-| README.md | ❌ | Main Python docs |
-| PACKAGE_README.md | ❌ | PyPI package docs? |
-| examples/python/README.md | ❌ | |
-| templates/django/README.md | ❌ | |
+| README.md | ✅ | Good overview of the Python package. |
+| PACKAGE_README.md | ✅ | README for the Python package (PyPI). |
+| examples/python/README.md | ✅ | Explains the Python example. |
+| templates/django/README.md | ✅ | README for the Django template. |
 
 ### /languages/java Directory (3 files)
 | File | Status | Issues/Notes |
@@ -110,9 +110,9 @@
 | DEVELOPMENT.md | ❌ | Extension dev guide |
 
 ## Total: 59 Markdown Files
-- ✅ Reviewed: 30
+- ✅ Reviewed: 48
 - 🔄 In progress: 0
-- ❌ Not reviewed: 27
+- ❌ Not reviewed: 9
 - 🗑️ Deleted: 2
 - 🤖 Auto-generated: Unknown (need to identify)
 
@@ -145,4 +145,22 @@
 - **Session 23**: Reviewed docs/TROUBLESHOOTING.md.
 - **Session 24**: Reviewed docs/WHY_ADAPTIVE_TESTS.md.
 - **Session 25**: Reviewed docs/advanced-patterns.md.
-- **Session 26**: [To be continued...]
+- **Session 26**: Reviewed docs/ai-prompts.md.
+- **Session 27**: Reviewed docs/getting-started-invisible.md.
+- **Session 28**: Reviewed .github/ISSUE_TEMPLATE/bug_report.md.
+- **Session 29**: Reviewed .github/ISSUE_TEMPLATE/feature_request.md.
+- **Session 30**: Reviewed .github/PULL_REQUEST_TEMPLATE.md.
+- **Session 31**: Reviewed languages/javascript/README.md.
+- **Session 32**: Reviewed languages/javascript/docs/EXPRESS_QUICKSTART.md.
+- **Session 33**: Reviewed languages/javascript/docs/REACT_QUICKSTART.md.
+- **Session 34**: Reviewed languages/javascript/docs/VUE_QUICKSTART.md.
+- **Session 35**: Reviewed languages/javascript/examples/usage-patterns/README.md.
+- **Session 36**: Reviewed languages/javascript/templates/nextjs/README.md.
+- **Session 37**: Reviewed languages/javascript/templates/vite/README.md.
+- **Session 38**: Reviewed languages/typescript/README.md.
+- **Session 39**: Reviewed languages/typescript/examples/typescript/README.md.
+- **Session 40**: Reviewed languages/python/README.md.
+- **Session 41**: Reviewed languages/python/PACKAGE_README.md.
+- **Session 42**: Reviewed languages/python/examples/python/README.md.
+- **Session 43**: Reviewed languages/python/templates/django/README.md.
+- **Session 44**: [To be continued...]
