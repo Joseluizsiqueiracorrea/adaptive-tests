@@ -554,7 +554,7 @@ the contrast immediately.
 Adaptive Tests 0.3.0 is now live across package managers:
 
 - npm: `adaptive-tests`, `@adaptive-tests/javascript`, `@adaptive-tests/typescript` (0.3.0)
-- PyPI: `adaptive-tests-py` (0.3.0)
+- PyPI: `adaptive-tests-py` (0.2.5)
 
 When you are ready to publish the next release:
 

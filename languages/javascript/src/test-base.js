@@ -14,7 +14,24 @@ const { getDiscoveryEngine } = require('./discovery-engine');
 
 /**
  * An abstract base class for creating adaptive tests.
+ *
+ * Adaptive tests automatically discover their target modules using AST-based analysis
+ * instead of hardcoded file paths, making them resilient to code refactoring.
+ *
  * @abstract
+ * @example
+ * ```javascript
+ * class MyCalculatorTest extends AdaptiveTest {
+ *   getSignature() {
+ *     return { name: 'Calculator', type: 'class' };
+ *   }
+ *
+ *   testAddition() {
+ *     const result = this.target.add(2, 3);
+ *     assert.equal(result, 5);
+ *   }
+ * }
+ * ```
  */
 class AdaptiveTest {
   constructor() {
