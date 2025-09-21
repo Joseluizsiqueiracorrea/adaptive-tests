@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![VS Code Marketplace](https://img.shields.io/vscode-marketplace/v/adaptive-tests.adaptive-tests.svg?label=VS%20Code%20Marketplace&color=blue)](https://marketplace.visualstudio.com/items?itemName=adaptive-tests.adaptive-tests)
-[![Downloads](https://img.shields.io/vscode-marketplace/d/adaptive-tests.adaptive-tests.svg)](https://marketplace.visualstudio.com/items?itemName=adaptive-tests.adaptive-tests)
-[![Rating](https://img.shields.io/vscode-marketplace/r/adaptive-tests.adaptive-tests.svg)](https://marketplace.visualstudio.com/items?itemName=adaptive-tests.adaptive-tests)
+[![VS Code Marketplace](https://img.shields.io/vscode-marketplace/v/CodeCypher.vscode-adaptive-tests-extension_experimental.svg?label=VS%20Code%20Marketplace&color=blue)](https://marketplace.visualstudio.com/items?itemName=CodeCypher.vscode-adaptive-tests-extension_experimental)
+[![Downloads](https://img.shields.io/vscode-marketplace/d/CodeCypher.vscode-adaptive-tests-extension_experimental.svg)](https://marketplace.visualstudio.com/items?itemName=CodeCypher.vscode-adaptive-tests-extension_experimental)
+[![Rating](https://img.shields.io/vscode-marketplace/r/CodeCypher.vscode-adaptive-tests-extension_experimental.svg)](https://marketplace.visualstudio.com/items?itemName=CodeCypher.vscode-adaptive-tests-extension_experimental)
 [![License](https://img.shields.io/github/license/anon57396/adaptive-tests.svg)](LICENSE)
 
 ### 🚀 AI-Powered Test Generation • 🔍 Smart Discovery • ⚡ Lightning Fast

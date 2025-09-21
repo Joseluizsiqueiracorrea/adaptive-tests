@@ -3,7 +3,7 @@
   "displayName": "Adaptive Tests",
   "description": "Visual discovery and scaffolding for resilient test suites",
   "version": "0.2.1",
-  "publisher": "adaptive-tests",
+  "publisher": "CodeCypher",
   "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.104.0"
