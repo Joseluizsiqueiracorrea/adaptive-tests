@@ -81,7 +81,7 @@ npm install @adaptive-tests/javascript --save-dev
 npx adaptive-tests init
 ```
 
-**[→ Full JavaScript Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/javascript/README.md)**
+**[→ Full JavaScript Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/javascript/README.md)**
 
 ### Python
 
@@ -93,7 +93,7 @@ pip install adaptive-tests-py
 adaptive-tests init
 ```
 
-**[→ Full Python Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/python/README.md)**
+**[→ Full Python Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/python/README.md)**
 
 ### Java
 
@@ -107,7 +107,7 @@ Add the dependency to your `pom.xml`:
 </dependency>
 ```
 
-**[→ Full Java Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/java/README.md)**
+**[→ Full Java Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/java/README.md)**
 
 ---
 

@@ -1,6 +1,6 @@
 # AGENTS.md - Contributing to Adaptive-Tests Repository
 
-**📍 SCOPE: For AI agents working on the adaptive-tests framework itself**
+## 📍 SCOPE: For AI agents working on the adaptive-tests framework itself
 
 | Document | Purpose |
 |----------|---------|
@@ -65,6 +65,13 @@ If asked to "ensure 100% test coverage", you should:
 4. **Respect documentation** – README, Quick Start guides, and `docs/` are part
    of the public story. Keep them aligned with the code.
 
+## 0.3.0 Quick Facts for Agents
+
+- **JavaScript is the core**: the plugin registry and shared `BaseLanguageIntegration` were removed. Only the JS/TS engine ships from this package.
+- **TypeScript piggybacks on JS**: installing `@adaptive-tests/typescript` pulls in the JS engine; do not attempt to fork discovery logic into a TS-only engine.
+- **Python/Java are standalone**: each lives under `languages/python` and `languages/java` with its own discovery implementation.
+- **Docs must reflect the above**: when updating language guides, double-check links on `anon57396.github.io` and run `npm run lint:links`.
+
 ## Multi-Agent Collaboration Contract
 
 We often have several AI agents working **simultaneously on `main`**. To keep the
@@ -110,7 +117,8 @@ experience sane for humans and bots alike:
 
 ### Operational Checks
 
-- `npm run agent:preflight` – enforce the multi-agent safety contract before editing
+- Run `git status -sb` before editing to confirm your workspace is clean and spot untracked paths.
+- After editing docs, run `npm run lint:links` to catch broken URLs before you push.
 
 ### Simulator Scripts
 
@@ -125,18 +133,16 @@ experience sane for humans and bots alike:
   zero-runtime static analysis)
 - `languages/javascript/src/scoring-engine.js` – heuristic scoring applied during discovery
 - `languages/javascript/src/test-base.js` – base class plus helper for Jest-style suites
-- `languages/typescript/src/discovery.js` – TypeScript façade extending JavaScript engine
-- `languages/javascript/src/index.js` – public entry point for JavaScript package
+- `languages/typescript/src/discovery.js` – thin façade that re-exports the JavaScript engine for TS consumers
+- `languages/javascript/src/index.js` – public entry point for the JavaScript package (and transitive entry for TypeScript)
 
 Supporting directories:
 
 - `languages/javascript/examples/` – calculators, services, ESM modules, React/Todo samples
-- `languages/javascript/tests/` – traditional and adaptive discovery fixtures
-- `languages/python/` – Python companion package
-- `languages/java/` – Java companion package and CLI tooling
-- `languages/php/`, `languages/go/`, `languages/rust/`, `languages/ruby/`, `languages/wolfram/` – experimental samples
-- `fixtures/` – shared cross-language signatures and sample projects
-- `tools/shared/` – shared tooling utilities
+- `languages/javascript/tests/` – traditional suites plus adaptive fixtures under `tests/fixtures/`
+- `languages/typescript/examples/` – TypeScript calculator sample and adaptive tests
+- `languages/python/` – Python companion package (standalone discovery engine, fixtures, and pytest suites)
+- `languages/java/` – Java companion package and CLI tooling (standalone discovery engine)
 - `vscode-adaptive-tests-extension_experimental/` – VS Code extension for Discovery Lens and scaffolding
 - `languages/javascript/scripts/` & `languages/typescript/scripts/` – demo automation invoked by `npm run demo:*`
 

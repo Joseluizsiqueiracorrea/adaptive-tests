@@ -43,7 +43,7 @@ def test_user_service():
     assert user is not None
 ```
 
-### pytest Integration
+### Basic pytest Integration
 
 ```python
 import pytest
@@ -363,7 +363,7 @@ else:
 
 ## Testing Frameworks
 
-### pytest Integration
+### Advanced pytest Integration
 
 ```python
 # conftest.py
@@ -530,7 +530,7 @@ OrderService = discover("OrderService")
 
 ### Common Issues
 
-**Import errors after refactoring**
+#### Import errors after refactoring
 
 ```python
 # Use discovery instead of direct imports
@@ -542,14 +542,14 @@ from adaptive_tests import discover
 UserService = discover("UserService")
 ```
 
-**Discovery fails to find class**
+#### Discovery fails to find class
 
 ```bash
 # Debug with CLI
 adaptive-tests why "UserService" --verbose
 ```
 
-**Performance issues**
+#### Performance issues
 
 ```python
 # Optimize search patterns
@@ -563,7 +563,7 @@ engine = DiscoveryEngine(
 )
 ```
 
-**Type hints not recognized**
+#### Type hints not recognized
 
 ```python
 # Enable type hint parsing
@@ -613,7 +613,7 @@ MIT - See [LICENSE](../../LICENSE) for details.
 
 ---
 
-**Ready to make your Python tests refactoring-proof?**
+## Ready to make your Python tests refactoring-proof?
 
 ```bash
 pip install adaptive-tests-py

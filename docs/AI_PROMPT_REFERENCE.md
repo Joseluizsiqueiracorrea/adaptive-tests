@@ -1,6 +1,6 @@
 # AI Prompt Reference - Quick Copy-Paste Prompts
 
-**📍 SCOPE: Ready-to-use prompt templates for common scenarios**
+## 📍 SCOPE: Ready-to-use prompt templates for common scenarios
 
 | Document | Purpose |
 |----------|---------|

@@ -48,10 +48,10 @@ const Calculator = await discover({ name: 'Calculator' });
 
 | Language | Status | Package | Guide |
 |---|---|---|---|
-| **JavaScript** | ✅ Stable | [`@adaptive-tests/javascript`](https://www.npmjs.com/package/@adaptive-tests/javascript) | [Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/javascript/README.md) |
-| **TypeScript** | ✅ Stable | [`@adaptive-tests/typescript`](https://www.npmjs.com/package/@adaptive-tests/typescript) | [Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/typescript/README.md) |
-| **Python** | ✅ Stable | [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/) | [Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/python/README.md) |
-| **Java** | ✅ Stable | `io.adaptivetests` | [Guide](https://github.com/anon57396/adaptive-tests/tree/main/languages/java/README.md) |
+| **JavaScript** | ✅ Stable | [`@adaptive-tests/javascript`](https://www.npmjs.com/package/@adaptive-tests/javascript) | [Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/javascript/README.md) |
+| **TypeScript** | ✅ Stable | [`@adaptive-tests/typescript`](https://www.npmjs.com/package/@adaptive-tests/typescript) | [Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/typescript/README.md) |
+| **Python** | ✅ Stable | [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/) | [Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/python/README.md) |
+| **Java** | ✅ Stable | `io.adaptivetests` | [Guide](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/java/README.md) |
 
 > ℹ️  The TypeScript package wraps the JavaScript discovery engine. Installing `@adaptive-tests/typescript` pulls in the JavaScript core automatically.
 

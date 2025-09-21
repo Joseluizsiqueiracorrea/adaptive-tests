@@ -4,7 +4,7 @@ This guide will help you get started with Adaptive Tests in your project. We rec
 
 ## JavaScript / TypeScript
 
-### 1. Install
+### 1. Install JavaScript/TypeScript
 
 ```bash
 npm install @adaptive-tests/javascript --save-dev
@@ -16,7 +16,7 @@ If you are using TypeScript, you will also need:
 npm install @adaptive-tests/typescript --save-dev
 ```
 
-### 2. Initialize
+### 2. Initialize JavaScript/TypeScript
 
 Run the interactive setup wizard:
 
@@ -30,7 +30,7 @@ This will:
 - Configure your project to use Adaptive Tests.
 - Create example tests to get you started.
 
-### 3. Write Your First Adaptive Test
+### 3. Write Your First JavaScript/TypeScript Adaptive Test
 
 Here is an example of a simple adaptive test:
 
@@ -53,13 +53,13 @@ describe('Calculator', () => {
 
 ## Python
 
-### 1. Install
+### 1. Install Python
 
 ```bash
 pip install adaptive-tests-py
 ```
 
-### 2. Initialize
+### 2. Initialize Python
 
 Run the interactive setup wizard:
 
@@ -73,7 +73,7 @@ This will:
 - Configure your project to use Adaptive Tests.
 - Create example tests to get you started.
 
-### 3. Write Your First Adaptive Test
+### 3. Write Your First Python Adaptive Test
 
 ```python
 from adaptive_tests import discover
@@ -106,7 +106,7 @@ Add the following dependency to your `pom.xml`:
 </dependency>
 ```
 
-### 2. Write Your First Adaptive Test
+### 2. Write Your First Java Adaptive Test
 
 ```java
 import io.adaptivetests.Discovery;
