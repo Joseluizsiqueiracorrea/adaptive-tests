@@ -445,5 +445,5 @@ They're not competitors—they're partners. Use both and never fix import errors
 
 ---
 
-*Ready to try? Start here: [Quick Start Guide](../README.md#quick-start-guide)*
+*Ready to try? Start here: [Quick Start Guide](https://anon57396.github.io/adaptive-tests/#quick-start)*
 *Questions? [GitHub Discussions](https://github.com/anon57396/adaptive-tests/discussions)*

@@ -71,6 +71,8 @@ Get up and running with your preferred language.
 
 ### JavaScript / TypeScript
 
+> Heads up: the TypeScript package re-uses the JavaScript discovery engine. Installing `@adaptive-tests/typescript` will pull in `@adaptive-tests/javascript` automatically.
+
 ```bash
 # 1. Install the package
 npm install @adaptive-tests/javascript --save-dev

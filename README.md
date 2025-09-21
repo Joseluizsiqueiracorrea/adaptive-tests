@@ -53,6 +53,8 @@ const Calculator = await discover({ name: 'Calculator' });
 | **Python** | ✅ Stable | [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/) | [Guide](./languages/python/README.md) |
 | **Java** | ✅ Stable | `io.adaptivetests` | [Guide](./languages/java/README.md) |
 
+> ℹ️  The TypeScript package wraps the JavaScript discovery engine. Installing `@adaptive-tests/typescript` pulls in the JavaScript core automatically.
+
 ## Quick Start
 
 Get started in minutes with our interactive setup wizard.

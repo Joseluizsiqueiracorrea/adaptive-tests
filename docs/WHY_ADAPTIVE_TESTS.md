@@ -211,4 +211,4 @@ npx adaptive-tests scaffold src/your-most-moved-file.js
 
 *Questions? Join the discussion: [GitHub Discussions](https://github.com/anon57396/adaptive-tests/discussions)*
 
-*Ready to eliminate import errors forever? [Get Started →](../README.md#quick-start-guide)*
+*Ready to eliminate import errors forever? [Get Started →](https://anon57396.github.io/adaptive-tests/#quick-start)*
