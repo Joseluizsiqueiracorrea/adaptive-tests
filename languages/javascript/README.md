@@ -1,61 +1,66 @@
-# @adaptive-tests/javascript
+# Adaptive Tests for JavaScript
 
-**AI-ready testing infrastructure for JavaScript and Node.js projects**
+AI‑ready testing that survives refactors. Finds code by its structure, not by file paths.
 
-## Quick Start
+## Quick Start (60 seconds)
 
 ```bash
-# Install (meta package bundles the JS engine)
-npm install adaptive-tests
-# Or install just the JavaScript package
-# npm install @adaptive-tests/javascript
+# Install
+npm install --save-dev @adaptive-tests/javascript
 
-# Use in your tests
-const { discover } = require('adaptive-tests');
+# Optional: diagnose discovery for a class
+npx adaptive-tests why '{"name":"Calculator","type":"class"}'
+```
 
-describe('My Tests', () => {
-  let MyClass;
+Add a minimal Jest test:
 
-  beforeAll(async () => {
-    MyClass = await discover({
-      name: 'MyClass',
-      type: 'class',
-      methods: ['methodA', 'methodB']
-    });
-  });
+```javascript
+const { getDiscoveryEngine } = require('@adaptive-tests/javascript');
 
-  test('works', () => {
-    const instance = new MyClass();
-    expect(instance.methodA()).toBeDefined();
-  });
+test('discovers Calculator class', async () => {
+  const engine = getDiscoveryEngine();
+  const Calculator = await engine.discoverTarget({ name: 'Calculator', type: 'class' });
+  expect(new Calculator().add(2, 3)).toBe(5);
 });
 ```
 
-## Features
+Stuck? Try these quick fixes:
 
-- 🔍 **Smart Discovery** - Find classes and functions by signature, not hardcoded paths
-- 🚀 **Zero Configuration** - Works out of the box with any JavaScript project
-- 🧠 **AI-Ready** - Designed for AI-assisted development workflows
-- 📦 **Self-Contained** - No dependencies on other language packages
+- Include your file types (e.g., add `.ts`/`.tsx` in `discovery.extensions`).
+- Start simple: `{ "name": "YourClass" }`, then add `type`/`methods`.
+- Run `npx adaptive-tests why '…'` to see candidates and scores.
 
-## Framework-Specific Guides
+## Configuration (optional)
 
-- [React Integration](docs/REACT_QUICKSTART.md)
-- [Vue Integration](docs/VUE_QUICKSTART.md)
-- [Express Integration](docs/EXPRESS_QUICKSTART.md)
+Create `adaptive-tests.config.js` at the repo root when you need to customize scanning:
 
-## API Reference
+```javascript
+/** @type {import('@adaptive-tests/javascript').DiscoveryOptions} */
+module.exports = {
+  discovery: {
+    extensions: ['.js', '.ts', '.tsx'],
+    maxDepth: 10,
+    skipDirectories: ['node_modules', '.git', 'dist', 'build', 'coverage'],
+    cache: { enabled: true, file: '.adaptive-tests-cache.json' }
+  }
+};
+```
 
-See the main [API Reference](../../docs/API_REFERENCE.md) for detailed documentation.
+See the full guides:
+
+- API Reference: ../../docs/API_REFERENCE.md
+- Configuration: ../../docs/CONFIGURATION.md
+- CLI Reference: ../../docs/CLI_REFERENCE.md
+
+## Works with
+
+- Jest, Vitest, Mocha (and friends)
+- Any JS/TS app structure; no framework lock‑in
 
 ## Examples
 
-Check out the `examples/` directory for working examples:
+- examples/calculator
+- examples/api-service
+- examples/todo-app
 
-- Calculator (basic class discovery)
-- API Service (REST API testing)
-- Todo App (CRUD operations)
-
-## License
-
-MIT
+MIT License
