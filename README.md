@@ -72,6 +72,7 @@ adaptive-tests init
 ```
 
 Stuck? Try these quick fixes:
+
 - Ensure your file types are included (e.g., add `.ts`/`.tsx` in discovery.extensions)
 - Try a simpler signature: `{ "name": "YourClass" }`
 - Run `npx adaptive-tests why '…'` and adjust based on the result
