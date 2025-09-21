@@ -4,6 +4,7 @@
   "version": "0.3.0",
   "description": "AI-ready testing infrastructure - language-specific packages",
   "scripts": {
+    "docs:api": "echo 'Documentation generation not yet configured'",
     "lint:markdown": "node scripts/lint-markdown.js",
     "lint:links": "node scripts/lint-links.js",
     "test": "npm run test:traditional && npm run test:adaptive && npm run test:typescript && npm run test:python && npm run test:java",
