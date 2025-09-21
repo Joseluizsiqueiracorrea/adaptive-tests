@@ -11,7 +11,6 @@ This comprehensive guide helps you resolve common issues with adaptive-tests acr
 - [Discovery Issues](#discovery-issues)
 - [Performance Problems](#performance-problems)
 - [Language-Specific Issues](#language-specific-issues)
-- [VS Code Extension Issues](#vs-code-extension-issues)
 - [CI/CD Problems](#cicd-problems)
 - [Error Messages](#error-messages)
 
@@ -305,13 +304,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 ---
 
-## VS Code Extension Issues
+<!-- VS Code Extension section removed pending redesign -->
 
 ### Extension not activating
 
 **Solutions**:
 
-1. **Check extension logs**:
    - Open Command Palette: `Cmd/Ctrl + Shift + P`
    - Run: "Developer: Show Extension Logs"
    - Select: "Adaptive Tests"
@@ -337,7 +335,6 @@ npm list adaptive-tests
    - Command Palette: "Developer: Open Webview Developer Tools"
    - Check for JavaScript errors
 
-1. **Reset extension state**:
    - Command Palette: "Adaptive Tests: Reset State"
 
 ### CodeLens not appearing
@@ -549,6 +546,5 @@ When reporting issues, include:
 1. **Document your patterns** for team members
 1. **Keep dependencies updated** regularly
 1. **Test on multiple platforms** if deploying broadly
-1. **Use the VS Code extension** for visual debugging
 
 Remember: Most issues are related to paths, exports, or configuration. When in doubt, use the Discovery Lens (`npx adaptive-tests why`) to see what the engine sees!

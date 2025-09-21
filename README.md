@@ -4,7 +4,6 @@
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://anon57396.github.io/adaptive-tests/)
 [![npm](https://img.shields.io/npm/v/adaptive-tests.svg)](https://www.npmjs.com/package/adaptive-tests)
 [![PyPI](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
-[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](vscode-adaptive-tests-extension_experimental/README.md)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Available-green?logo=github)](action.yml)
 
 **Tests that don't break when you move files.**
@@ -80,7 +79,6 @@ adaptive-tests init
 
 ## Developer Tools
 
-- **[VS Code Extension](./vscode-adaptive-tests-extension_experimental/README.md):** Visualize discovery and manage tests directly in your editor.
 - **[GitHub Action](./action.yml):** Run your adaptive tests in CI.
 
 ## Contributing

@@ -118,7 +118,6 @@ Add the dependency to your `pom.xml`:
 - **Framework Agnostic:** Integrates seamlessly with Jest, Vitest, Pytest, JUnit, and more.
 - **Invisible Mode:** Automatically fix broken imports in your existing test suite with zero code changes.
 - **Powerful CLI:** Scaffold tests, debug discovery, and migrate your entire test suite automatically.
-- **VS Code Extension:** Visualize discovery and manage tests directly in your editor.
 
 ---
 

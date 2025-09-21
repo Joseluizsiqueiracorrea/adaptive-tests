@@ -34,7 +34,7 @@ minimal configuration.
 ## TypeScript
 
 - Install `ts-node` (optional) to discover `.ts` sources directly.
-- Keep your .ts file names and export names aligned — the extension scoring favors `.ts` by default.
+- Keep your .ts file names and export names aligned — discovery favors `.ts` by default.
 
 ## Dynamic patterns
 

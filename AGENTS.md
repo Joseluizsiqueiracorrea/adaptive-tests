@@ -143,7 +143,6 @@ Supporting directories:
 - `languages/typescript/examples/` – TypeScript calculator sample and adaptive tests
 - `languages/python/` – Python companion package (standalone discovery engine, fixtures, and pytest suites)
 - `languages/java/` – Java companion package and CLI tooling (standalone discovery engine)
-- `vscode-adaptive-tests-extension_experimental/` – VS Code extension for Discovery Lens and scaffolding
 - `languages/javascript/scripts/` & `languages/typescript/scripts/` – demo automation invoked by `npm run demo:*`
 
 ## Contribution Checklist
@@ -161,7 +160,6 @@ Supporting directories:
 - Bug reports / feature requests: [GitHub Issues](https://github.com/anon57396/adaptive-tests/issues)
 - Package consumers: npm [`adaptive-tests`](https://www.npmjs.com/package/adaptive-tests) &
   PyPI [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/)
-- VS Code Extension: [Development Alpha](vscode-adaptive-tests-extension_experimental/README.md)
 
 ## Integration Notes
 

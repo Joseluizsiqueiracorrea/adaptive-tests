@@ -11,7 +11,7 @@ Use this outline when promoting Adaptive Tests 0.3.0 on social media or in newsl
 1. **Move files freely.** Adaptive discovery finds targets by AST signature, not brittle paths.
 2. **Real validation remains.** Both traditional and adaptive suites fail on real bugs—no false greens.
 3. **Multi-language story.** JavaScript/TypeScript packages are live on npm, with Python 0.2.5 on PyPI.
-4. **Tooling included.** VS Code extension (alpha), CLI scaffolding, and GitHub Action examples.
+4. **Tooling included.** CLI scaffolding and GitHub Action examples.
 5. **Proven workflow.** `npm run validate` demonstrates the healthy → refactor → bug scenarios end-to-end.
 
 ## Sample Post

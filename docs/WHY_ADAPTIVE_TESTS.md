@@ -162,7 +162,7 @@ New developers can't accidentally break the test suite by moving files.
 
 ### "What about IDE integration?"
 
-**Answer:** IDEs can still navigate to discovered code. The VS Code extension (in development) provides full IntelliSense support.
+**Answer:** IDEs can still navigate to discovered code. A lightweight CLI + editor snippets flow is recommended until the IDE extension is ready.
 
 ## The Business Case
 
