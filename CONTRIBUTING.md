@@ -140,6 +140,16 @@ This ensures:
 - Tests fail on actual bugs
 - No platform-specific Go binaries are accidentally committed
 
+## Publishing
+
+When cutting a release:
+
+```bash
+npm run publish:all
+```
+
+This sequentially publishes `@adaptive-tests/javascript`, `@adaptive-tests/typescript`, and the umbrella `adaptive-tests` CLI with public access. After publishing, tag the release (`git tag v<version> && git push origin --tags`) and create a GitHub Release that links the changelog entry.
+
 ## License
 
 By contributing, you agree that your contributions will be licensed under MIT.

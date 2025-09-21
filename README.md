@@ -2,8 +2,8 @@
 
 [![Multi-Language CI](https://github.com/anon57396/adaptive-tests/actions/workflows/multi-language-ci.yml/badge.svg)](https://github.com/anon57396/adaptive-tests/actions/workflows/multi-language-ci.yml)
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://anon57396.github.io/adaptive-tests/)
-[![npm](https://img.shields.io/badge/npm-in%20development-yellow)](packages/)
-[![PyPI](https://img.shields.io/badge/PyPI-in%20development-yellow)](languages/python/)
+[![npm](https://img.shields.io/npm/v/adaptive-tests.svg)](https://www.npmjs.com/package/adaptive-tests)
+[![PyPI](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](vscode-adaptive-tests-extension_experimental/README.md)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-In%20Development-yellow?logo=github)](#ci-cd-integration)
 
