@@ -41,16 +41,16 @@ const Calculator = await discover({ name: 'Calculator' });
 - **Refactor with confidence.** Clean up your codebase without the fear of a thousand failing tests.
 - **Works with your existing tools.** Integrates with Jest, Vitest, Pytest, JUnit, and more.
 
-**[→ Read the full story: Why Adaptive Tests?](docs/WHY_ADAPTIVE_TESTS.md)**
+**[→ Read the full story: Why Adaptive Tests?](https://anon57396.github.io/adaptive-tests/WHY_ADAPTIVE_TESTS.html)**
 
 ## Choose Your Language
 
 | Language | Status | Package | Guide |
 |---|---|---|---|
-| **JavaScript** | ✅ Stable | [`@adaptive-tests/javascript`](https://www.npmjs.com/package/@adaptive-tests/javascript) | [Guide](docs/languages/javascript.md) |
-| **TypeScript** | ✅ Stable | [`@adaptive-tests/typescript`](https://www.npmjs.com/package/@adaptive-tests/typescript) | [Guide](docs/languages/typescript.md) |
-| **Python** | ✅ Stable | [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/) | [Guide](docs/languages/python.md) |
-| **Java** | ✅ Stable | `io.adaptivetests` | [Guide](docs/languages/java.md) |
+| **JavaScript** | ✅ Stable | [`@adaptive-tests/javascript`](https://www.npmjs.com/package/@adaptive-tests/javascript) | [Guide](https://anon57396.github.io/adaptive-tests/languages/javascript.html) |
+| **TypeScript** | ✅ Stable | [`@adaptive-tests/typescript`](https://www.npmjs.com/package/@adaptive-tests/typescript) | [Guide](https://anon57396.github.io/adaptive-tests/languages/typescript.html) |
+| **Python** | ✅ Stable | [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/) | [Guide](https://anon57396.github.io/adaptive-tests/languages/python.html) |
+| **Java** | ✅ Stable | `io.adaptivetests` | [Guide](https://anon57396.github.io/adaptive-tests/languages/java.html) |
 
 > ℹ️  The TypeScript package wraps the JavaScript discovery engine. Installing `@adaptive-tests/typescript` pulls in the JavaScript core automatically.
 
@@ -79,7 +79,7 @@ Stuck? Try these quick fixes:
 
 Works with Cursor / Copilot / VS Code — no extension required.
 
-**[→ See the full Quick Start Guide](QUICKSTART.md)**
+**[→ See the full Quick Start Guide](https://anon57396.github.io/adaptive-tests/#quick-start)**
 
 ## Features
 
@@ -90,7 +90,7 @@ Works with Cursor / Copilot / VS Code — no extension required.
 
 ## Developer Tools
 
-- **[GitHub Action](./action.yml):** Run your adaptive tests in CI.
+- **[GitHub Action](https://github.com/anon57396/adaptive-tests/blob/main/action.yml):** Run your adaptive tests in CI.
 
 ## Contributing
 
