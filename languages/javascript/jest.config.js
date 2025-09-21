@@ -38,9 +38,7 @@ module.exports = {
     // Exclude non-critical or IO-heavy modules from coverage for 1.0
     "!src/experimental/**",
     "!src/scaffolding.js",
-    "!src/language-plugin-registry.js",
     "!src/async-utils.js",
-    "!src/base-language-integration.js",
     "!src/logger.js",
     "!src/config-loader.js",
     "!src/enhanced-config-schema.js",

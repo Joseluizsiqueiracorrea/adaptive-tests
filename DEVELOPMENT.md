@@ -88,21 +88,21 @@ npm run lint:links
 
 ### Adding a New Language
 
-1. Create integration file: `src/adaptive/<language>/<language>-discovery-integration.js`
-2. Implement `BaseLanguageIntegration` interface
-3. Add AST parser (preferably native)
-4. Add tests in `tests/integration/<language>/`
-5. Add example in `examples/<language>/`
-6. Update documentation
+1. Scaffold a dedicated package under `languages/<language>/` with its own `package.json` (or build file) and `src/` directory.
+2. Implement a language-specific discovery engine within that package. Follow the JavaScript or Python implementations as references, but do not import runtime code from other languages.
+3. Wire up any CLI or scaffolding entry points inside the same package so they can ship independently.
+4. Add adaptive fixtures and tests in `languages/<language>/tests/` that exercise the new discovery engine end-to-end.
+5. Provide runnable examples in `languages/<language>/examples/` demonstrating integration.
+6. Update documentation to cover installation, configuration, and limitations for the new package.
 
 ### Language Integration Checklist
 
 - [ ] AST parser implementation
-- [ ] Fallback regex parser
+- [ ] Fallback regex parser (if needed)
 - [ ] Class discovery
 - [ ] Function discovery
 - [ ] Module discovery
-- [ ] Test scaffolding
+- [ ] Package-local test scaffolding
 - [ ] Documentation
 - [ ] Examples
 - [ ] Integration tests

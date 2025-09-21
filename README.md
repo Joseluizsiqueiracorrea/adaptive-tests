@@ -93,7 +93,7 @@ pip install adaptive-tests-py
 <dependency>
     <groupId>io.adaptivetests</groupId>
     <artifactId>adaptive-tests-java</artifactId>
-    <version>0.1.0</version>
+    <version>0.3.0-SNAPSHOT</version>
 </dependency>
 ```
 

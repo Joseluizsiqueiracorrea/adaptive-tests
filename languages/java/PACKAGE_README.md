@@ -18,7 +18,7 @@ Adaptive Tests for Java brings zero-runtime discovery to JVM projects. It mirror
 cd languages/java
 ./mvnw -pl core test     # verify the engine
 ./mvnw -pl cli -am package
-java -jar cli/target/adaptive-tests-java-cli-0.1.0-SNAPSHOT-shaded.jar --help
+java -jar cli/target/adaptive-tests-java-cli-0.3.0-SNAPSHOT-shaded.jar --help
 ```
 
 ### Discover a Service
@@ -83,3 +83,4 @@ Place configuration in `adaptive-tests.config.json` or `.adaptive-tests-java.jso
 ```
 
 Support for `pom.xml` / `build.gradle` configuration blocks is planned. Track progress in `docs/INTERNAL_EXECUTION_PLAN.md`.
+

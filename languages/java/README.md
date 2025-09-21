@@ -111,7 +111,7 @@ cd languages/java
 ./mvnw -pl cli -am package
 
 # Discover a class by signature
-java -jar cli/target/adaptive-tests-java-cli-0.1.0-SNAPSHOT-shaded.jar   discover --root /path/to/project --name CustomerService --method findActiveUsers
+java -jar cli/target/adaptive-tests-java-cli-0.3.0-SNAPSHOT-shaded.jar   discover --root /path/to/project --name CustomerService --method findActiveUsers
 ```
 
 Both the Node CLI and the Java CLI share the same discovery heuristics and caching logic.

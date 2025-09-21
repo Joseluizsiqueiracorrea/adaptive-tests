@@ -60,8 +60,8 @@ async function runPerformanceDemo() {
     measureDiscovery('DiscoveryEngine'),
     measureDiscovery('ScoringEngine'),
     measureDiscovery('ConfigLoader'),
-    measureDiscovery('BaseLanguageIntegration'),
-    measureDiscovery('PythonDiscoveryIntegration')
+    measureDiscovery('ResultAssembler'),
+    measureDiscovery('CandidateEvaluator')
   ]);
   const parallelEnd = performance.now();
   const parallelTime = (parallelEnd - parallelStart).toFixed(2);
