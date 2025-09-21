@@ -23,7 +23,6 @@ use the Discovery Lens CLI to verify the reasoning in your own repo.
 | PHP         | Native PHP bridge with `php-parser` fallback (`src/adaptive/php/php-discovery-collector.js`) | `discover`, `scaffold`                        | PHPUnit cases                  | Captures namespaces, traits, and functions |
 | Ruby        | Ripper AST fallbacks with caching (`src/adaptive/ruby/ruby-discovery-integration.js`) | `discover`, `scaffold`                        | RSpec skeletons                | 2 s interpreter checks + bounded cache |
 | Rust        | Lezer-based parser (`src/adaptive/rust/rust-discovery-collector.js`)                | `discover`, `scaffold`                        | Rust test modules (`#[cfg(test)]`) | Infers crate/module names for output paths |
-| Wolfram     | Wolfram CLI bridge (`src/adaptive/wolfram/wolfram-discovery-collector.js`)          | `discover`                                   | _Not yet available_            | Scaffolding tracked on roadmap |
 
 Run Discovery Lens:
 

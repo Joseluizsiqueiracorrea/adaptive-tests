@@ -16,6 +16,7 @@ Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.g
 Traditional tests fail when you move or rename files because they use hardcoded file paths. Adaptive Tests finds your code by understanding what it looks like, not where it's located.
 
 **The problem every developer knows:**
+
 ```javascript
 // You moved Calculator.js from /utils to /math
 import { Calculator } from '../utils/Calculator';
@@ -23,6 +24,7 @@ import { Calculator } from '../utils/Calculator';
 ```
 
 **Our solution:**
+
 ```javascript
 const Calculator = await discover({ name: 'Calculator' });
 // ✅ Found it in /math - tests pass
@@ -38,20 +40,12 @@ If this project helps you, please consider supporting it via the Sponsor button 
 
 Each language implementation is self-contained with examples, documentation, and framework integrations:
 
-### **Core Languages** _(actively maintained)_
+### **Supported Languages**
 
-- **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support (v0.3.0)
-- **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching (v0.3.0)
-- **[🐍 Python](./languages/python/)** - Full pytest integration with Django/Flask examples
+- **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support
+- **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching
+- **[🐍 Python](./languages/python/)** - Full pytest integration
 - **[☕ Java](./languages/java/)** - Maven/Gradle packages with Spring Boot integration
-
-### **Experimental**
-
-- **[🐘 PHP](./languages/php/)** - PHPUnit integration, Composer packages _(in development)_
-- **[🐹 Go](./languages/go/)** - Module-aware discovery _(in development)_
-- **[🦀 Rust](./languages/rust/)** - Cargo integration _(in development)_
-- **[💎 Ruby](./languages/ruby/)** - RSpec/Rails support _(in development)_
-- **[🔬 Wolfram](./languages/wolfram/)** - Symbolic computation patterns _(experimental)_
 
 ### **Developer Tools**
 
@@ -113,8 +107,6 @@ npm install @adaptive-tests/javascript @adaptive-tests/typescript
 
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**
 
-**Other languages?** Check the [experimental implementations](#experimental) above.
-
 ---
 
 ## <a id="ci-cd-integration"></a>🚀 CI/CD Integration
@@ -171,7 +163,7 @@ Experience the power of adaptive testing with our VS Code extension currently in
 - **🎯 Smart Context Menus**: "Scaffold Test" for new files, "Open Test" for files with existing tests
 - **💡 CodeLens Integration**: See test hints directly in your code
 - **📊 Discovery Tree View**: Browse discovery results in the activity bar
-- **🌐 Language Support**: Core JS/TS today; Beta for Python/Java/PHP; others experimental (see docs for status)
+- **🌐 Language Support**: JavaScript, TypeScript, Python, and Java
 
 ### 🛠️ Development Setup
 
@@ -341,8 +333,6 @@ Each template comes with:
 - ✅ **CI/CD ready** - GitHub Actions workflows included
 
 ### Template Details
-
-#### Available Templates
 
 Current templates provide basic structure:
 

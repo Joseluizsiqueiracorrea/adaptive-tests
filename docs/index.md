@@ -213,7 +213,6 @@ mv src/PaymentService.js src/services/payment/PaymentService.js
 | Ruby | Ripper | 🧪 Experimental |
 | Go | go/parser (via tree‑sitter bindings) | 🧪 Experimental |
 | Rust | Lezer (rust) | 🧪 Experimental |
-| Wolfram | CodeParse | 🧪 Experimental |
 
 Status legend: Stable = production‑ready; Beta = broadly usable with caveats; Experimental = early support, subject to change.
 

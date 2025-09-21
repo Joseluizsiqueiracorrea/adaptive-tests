@@ -7,19 +7,21 @@
 git clone https://github.com/anon57396/adaptive-tests.git
 cd adaptive-tests
 
-# Install dependencies
-npm install
+# Install dependencies for the language you want to work on:
 
-# Run tests
-npm test
+# JavaScript/TypeScript
+cd languages/javascript && npm install
 
-# Run validation suite
-npm run validate
+# Python
+cd languages/python && pip install -e .[test]
+
+# Java
+cd languages/java && mvn install
 ```
 
 ## 📁 Project Structure
 
-```
+```text
 adaptive-tests/
 ├── languages/              # Language-specific packages
 │   ├── javascript/         # @adaptive-tests/javascript workspace
@@ -119,7 +121,7 @@ npm run lint:links
 
 Follow conventional commits:
 
-```
+```text
 feat: add Ruby AST parser
 fix: resolve Python cache issue
 docs: update React quickstart
