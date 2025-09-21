@@ -20,6 +20,7 @@ const { AsyncOperationManager } = require('./async-utils');
 const { FileSystemScanner } = require('./file-system-scanner');
 const { CandidateEvaluator } = require('./candidate-evaluator');
 const { ResultAssembler } = require('./result-assembler');
+const { getLogger } = require('./logger');
 
 /**
  * @typedef {'class' | 'function' | 'object' | 'module'} TargetType

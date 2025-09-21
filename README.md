@@ -25,7 +25,7 @@ If this project helps you, please consider supporting it via the Sponsor button 
 
 Each language implementation is self-contained with examples, documentation, and framework integrations:
 
-### **Core Languages**
+### **Core Languages** _(actively maintained)_
 
 - **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support (v0.3.0)
 - **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching (v0.3.0)
@@ -553,8 +553,8 @@ the contrast immediately.
 
 Adaptive Tests 0.3.0 is now live across package managers:
 
-- npm: `adaptive-tests`, `@adaptive-tests/javascript`, `@adaptive-tests/typescript`
-- PyPI: `adaptive-tests-py`
+- npm: `adaptive-tests`, `@adaptive-tests/javascript`, `@adaptive-tests/typescript` (0.3.0)
+- PyPI: `adaptive-tests-py` (0.3.0)
 
 When you are ready to publish the next release:
 
