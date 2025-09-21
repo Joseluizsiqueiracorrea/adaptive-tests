@@ -64,7 +64,7 @@ pip install adaptive-tests-py
 Run the interactive setup wizard:
 
 ```bash
-adaptive-tests init
+adaptive-tests-py init
 ```
 
 This will:

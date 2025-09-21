@@ -1,12 +1,12 @@
-# ai-prompts.md - Quick Copy-Paste Prompts
+# AI Prompt Reference - Quick Copy-Paste Prompts
 
 **📍 SCOPE: Ready-to-use prompt templates for common scenarios**
 
 | Document | Purpose |
 |----------|---------|
 | [AGENTS.md](../AGENTS.md) | Contributing to adaptive-tests codebase |
-| [PROMPT_GUIDE.md](../PROMPT_GUIDE.md) | Using adaptive-tests in external projects |
-| **ai-prompts.md** (this file) | Copy-paste prompts for quick reference |
+| [AI_USAGE_GUIDE.md](./AI_USAGE_GUIDE.md) | Using adaptive-tests in external projects |
+| **AI_PROMPT_REFERENCE.md** (this file) | Copy-paste prompts for quick reference |
 
 ## Core Rescue Prompt
 

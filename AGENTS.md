@@ -5,8 +5,8 @@
 | Document | Purpose |
 |----------|---------|
 | **AGENTS.md** (this file) | Contributing to adaptive-tests codebase |
-| [PROMPT_GUIDE.md](./PROMPT_GUIDE.md) | Using adaptive-tests in external projects |
-| [docs/ai-prompts.md](./docs/ai-prompts.md) | Copy-paste prompts for quick reference |
+| [AI_USAGE_GUIDE.md](./docs/AI_USAGE_GUIDE.md) | Using adaptive-tests in external projects |
+| [AI_PROMPT_REFERENCE.md](./docs/AI_PROMPT_REFERENCE.md) | Copy-paste prompts for quick reference |
 
 ## Mission-Critical Context
 
@@ -83,8 +83,8 @@ experience sane for humans and bots alike:
    undoing other agents' changes.
 5. **Document assumptions in the final summary** so other agents (and humans)
    understand what you touched and what you deliberately left alone.
-6. **Run the guard.** Execute `npm run agent:preflight` before broad edits to catch
-   untracked directories or risky deletes early.
+6. **Run the guard manually.** Before broad edits, run `git status -sb` and scan for
+   untracked paths or suspicious deletes. If anything looks risky, stop and ask.
 
 ### Safety Alert — 2025-09-20
 >

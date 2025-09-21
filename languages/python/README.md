@@ -482,47 +482,18 @@ pytest tests/
 
 ## CLI Tools
 
-### Discover Command
+The package ships with a lightweight CLI so you can run discovery diagnostics and scaffold pytest stubs without writing code:
 
 ```bash
-# Find classes by name
-adaptive-tests discover "UserService"
-
-# Find with detailed signature
-adaptive-tests discover --name "Calculator" --type "class" --methods "add,subtract"
-
-# Search in specific directory
-adaptive-tests discover "PaymentGateway" --root "./src/payments"
-
-# JSON output for tooling
-adaptive-tests-py discover "UserService" --json
+adaptive-tests-py why '{"name": "TodoService"}' --root languages/python/examples/python/src --limit 3
+adaptive-tests-py why signature.json --json
+adaptive-tests-py discover '{"name": "TodoService"}' --root .
+adaptive-tests-py scaffold src/services/user_service.py --tests-dir tests/adaptive
 ```
 
-### Generate Tests
+Use `--no-cache` for a fresh scan and `--config path/to/config.json` to supply overrides ad-hoc.
 
-```bash
-# Generate test for a specific class
-adaptive-tests generate-test src/services/user_service.py
-
-# Generate tests for entire module
-adaptive-tests generate-test src/services/ --recursive
-
-# Generate with specific test framework
-adaptive-tests generate-test src/calculator.py --framework pytest
-```
-
-### Debug Discovery
-
-```bash
-# Debug why a signature matched (or didn't)
-adaptive-tests-py why --name "Calculator" --methods "add,subtract"
-
-# Verbose debugging
-adaptive-tests why "UserService" --verbose
-
-# Show all candidates
-adaptive-tests discover "Calculator" --show-all
-```
+Configuration can also be placed in `pyproject.toml` under the `[tool.adaptive_tests]` table to match modern Python tooling conventions.
 
 ---
 

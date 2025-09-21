@@ -1,12 +1,12 @@
-# PROMPT_GUIDE.md - Using Adaptive-Tests in External Projects
+# AI Usage Guide - Using Adaptive Tests in External Projects
 
 **📍 SCOPE: For AI agents instrumenting OTHER projects with adaptive-tests**
 
 | Document | Purpose |
 |----------|---------|
-| [AGENTS.md](./AGENTS.md) | Contributing to adaptive-tests codebase |
-| **PROMPT_GUIDE.md** (this file) | Using adaptive-tests in external projects |
-| [docs/ai-prompts.md](./docs/ai-prompts.md) | Copy-paste prompts for quick reference |
+| [AGENTS.md](../AGENTS.md) | Contributing to adaptive-tests codebase |
+| **AI_USAGE_GUIDE.md** (this file) | Using adaptive-tests in external projects |
+| [AI_PROMPT_REFERENCE.md](./AI_PROMPT_REFERENCE.md) | Copy-paste prompts for quick reference |
 
 ## Mission
 
