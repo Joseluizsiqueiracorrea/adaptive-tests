@@ -3,7 +3,7 @@ layout: default
 title: JavaScript Guide
 ---
 
-# Adaptive Tests for JavaScript
+## Adaptive Tests for JavaScript
 
 AI‑ready testing that survives refactors. Finds code by its structure, not by file paths.
 
@@ -30,11 +30,13 @@ test('discovers Calculator class', async () => {
 ```
 
 Stuck? Try these quick fixes:
+
 - Include your file types (e.g., add `.ts`/`.tsx` in `discovery.extensions`).
 - Start simple: `{ "name": "YourClass" }`, then add `type`/`methods`.
 - Run `npx adaptive-tests why '…'` to see candidates and scores.
 
 ## Configuration (optional)
+
 Create `adaptive-tests.config.js` at the repo root when you need to customize scanning:
 
 ```javascript
@@ -50,6 +52,7 @@ module.exports = {
 ```
 
 See the full guides:
+
 - [API Reference](../API_REFERENCE.md)
 - [Configuration](../CONFIGURATION.md)
 - [CLI Reference](../CLI_REFERENCE.md)

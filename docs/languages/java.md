@@ -3,7 +3,7 @@ layout: default
 title: Java Guide
 ---
 
-# Adaptive Tests for Java
+## Adaptive Tests for Java
 
 AI‑ready testing for Java. Finds code by structure, not by import paths.
 
@@ -68,6 +68,7 @@ Create `.adaptive-tests-java.json` in the project root:
 ```
 
 See more:
+
 - [API Reference](../API_REFERENCE.md)
 - [Configuration](../CONFIGURATION.md)
 - [CLI Reference](../CLI_REFERENCE.md)

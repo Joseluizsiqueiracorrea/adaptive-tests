@@ -3,7 +3,7 @@ layout: default
 title: Python Guide
 ---
 
-# Adaptive Tests for Python
+## Adaptive Tests for Python
 
 AI‑ready testing for Python. Finds code by structure, not by import paths.
 
@@ -56,6 +56,7 @@ engine = DiscoveryEngine(root=".", config={
 ```
 
 See more:
+
 - [API Reference](../API_REFERENCE.md)
 - [Configuration](../CONFIGURATION.md)
 - [CLI Reference](../CLI_REFERENCE.md)
