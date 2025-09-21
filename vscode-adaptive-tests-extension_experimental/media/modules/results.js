@@ -116,22 +116,40 @@ export function displayResults(data, resultsSection, resultsContainer, resultsSu
     const summaryText = results.length === 0
         ? `No matches found out of ${totalCandidates} candidates`
         : `Found ${results.length} matches out of ${totalCandidates} candidates`;
-    resultsSummary.innerHTML = `
-        <strong>${summaryText}</strong>
-        ${signature ? ` for signature: <code>${JSON.stringify(signature, null, 2)}</code>` : ''}
-    `;
+    resultsSummary.replaceChildren();
+    const summaryStrong = document.createElement('strong');
+    summaryStrong.textContent = summaryText;
+    resultsSummary.appendChild(summaryStrong);
+    if (signature) {
+        const label = document.createElement('span');
+        label.textContent = ' for signature:';
+        const code = document.createElement('code');
+        code.textContent = JSON.stringify(signature, null, 2);
+        resultsSummary.append(label, code);
+    }
 
     // Clear previous results and selection
-    resultsContainer.innerHTML = '';
+    resultsContainer.replaceChildren();
 
     if (results.length === 0) {
-        resultsContainer.innerHTML = `
-            <div class="empty-state" role="status">
-                <div class="empty-state-icon" aria-hidden="true">🔍</div>
-                <div class="empty-state-text">No matching files found</div>
-                <p>Try adjusting your signature or check that the target code exists in your workspace.</p>
-            </div>
-        `;
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.setAttribute('role', 'status');
+
+        const icon = document.createElement('div');
+        icon.className = 'empty-state-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.textContent = '🔍';
+
+        const text = document.createElement('div');
+        text.className = 'empty-state-text';
+        text.textContent = 'No matching files found';
+
+        const help = document.createElement('p');
+        help.textContent = 'Try adjusting your signature or check that the target code exists in your workspace.';
+
+        emptyState.append(icon, text, help);
+        resultsContainer.appendChild(emptyState);
         announceToScreenReader(`No matches found out of ${totalCandidates} candidates`, 'assertive');
     } else {
         results.forEach((result, index) => {
@@ -179,6 +197,8 @@ function createResultElement(result, index, totalResults) {
     div.className = 'result-item';
     div.setAttribute('role', 'listitem');
 
+    const showScores = Boolean(result.showScores);
+
     // Determine score class and description
     let scoreClass = 'score-low';
     let scoreDescription = 'low match';
@@ -190,51 +210,86 @@ function createResultElement(result, index, totalResults) {
         scoreDescription = 'medium match';
     }
 
-    // Build breakdown HTML
-    const breakdownItems = normaliseScoreBreakdown(result.scoreBreakdown);
-    let breakdownHtml = '';
-    if (result.showScores && breakdownItems.length > 0) {
-        breakdownHtml = `
-            <div class="result-breakdown">
-                <div class="breakdown-title">Score Breakdown:</div>
-                <ul class="breakdown-list" role="list">
-                    ${breakdownItems.map(item => `<li role="listitem">${item}</li>`).join('')}
-                </ul>
-            </div>
-        `;
+    const header = document.createElement('div');
+    header.className = 'result-header';
+
+    const pathSpan = document.createElement('span');
+    pathSpan.className = 'result-path';
+    pathSpan.setAttribute('role', 'text');
+    pathSpan.textContent = result.path;
+    header.appendChild(pathSpan);
+
+    if (showScores) {
+        const scoreChip = document.createElement('span');
+        scoreChip.className = `result-score ${scoreClass}`;
+        scoreChip.setAttribute('aria-label', `Score ${result.score}, ${scoreDescription}`);
+        scoreChip.textContent = String(result.score);
+        header.appendChild(scoreChip);
     }
 
-    const scoreDisplay = result.showScores
-        ? `<span class="result-score ${scoreClass}" aria-label="Score ${result.score}, ${scoreDescription}">${result.score}</span>`
-        : '';
+    div.appendChild(header);
 
-    div.innerHTML = `
-        <div class="result-header">
-            <span class="result-path" role="text">${result.path}</span>
-            ${scoreDisplay}
-        </div>
-        ${breakdownHtml}
-        <div class="result-actions" role="group" aria-label="Actions for ${result.path}">
-            <button class="action-btn"
-                    onclick="openFile('${result.absolutePath}')"
-                    aria-describedby="open-help-${index}">
-                Open File
-            </button>
-            <button class="action-btn"
-                    onclick="scaffoldTest('${result.absolutePath}')"
-                    aria-describedby="scaffold-help-${index}">
-                Scaffold Test
-            </button>
-            <div id="open-help-${index}" class="visually-hidden">
-                Open ${result.path} in editor
-            </div>
-            <div id="scaffold-help-${index}" class="visually-hidden">
-                Generate test file for ${result.path}
-            </div>
-        </div>
-    `;
+    const breakdownItems = normaliseScoreBreakdown(result.scoreBreakdown);
+    if (showScores && breakdownItems.length > 0) {
+        const breakdown = document.createElement('div');
+        breakdown.className = 'result-breakdown';
+        const title = document.createElement('div');
+        title.className = 'breakdown-title';
+        title.textContent = 'Score Breakdown:';
+        breakdown.appendChild(title);
 
-    const ariaLabel = result.showScores
+        const list = document.createElement('ul');
+        list.className = 'breakdown-list';
+        list.setAttribute('role', 'list');
+        breakdownItems.forEach(item => {
+            const li = document.createElement('li');
+            li.setAttribute('role', 'listitem');
+            li.textContent = item;
+            list.appendChild(li);
+        });
+        breakdown.appendChild(list);
+        div.appendChild(breakdown);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'result-actions';
+    actions.setAttribute('role', 'group');
+    actions.setAttribute('aria-label', `Actions for ${result.path}`);
+
+    const openButton = document.createElement('button');
+    openButton.className = 'action-btn';
+    openButton.textContent = 'Open File';
+    openButton.setAttribute('aria-describedby', `open-help-${index}`);
+    openButton.addEventListener('click', () => {
+        if (typeof window.openFile === 'function') {
+            window.openFile(result.absolutePath);
+        }
+    });
+
+    const scaffoldButton = document.createElement('button');
+    scaffoldButton.className = 'action-btn';
+    scaffoldButton.textContent = 'Scaffold Test';
+    scaffoldButton.setAttribute('aria-describedby', `scaffold-help-${index}`);
+    scaffoldButton.addEventListener('click', () => {
+        if (typeof window.scaffoldTest === 'function') {
+            window.scaffoldTest(result.absolutePath);
+        }
+    });
+
+    const openHelp = document.createElement('div');
+    openHelp.id = `open-help-${index}`;
+    openHelp.className = 'visually-hidden';
+    openHelp.textContent = `Open ${result.path} in editor`;
+
+    const scaffoldHelp = document.createElement('div');
+    scaffoldHelp.id = `scaffold-help-${index}`;
+    scaffoldHelp.className = 'visually-hidden';
+    scaffoldHelp.textContent = `Generate test file for ${result.path}`;
+
+    actions.append(openButton, scaffoldButton, openHelp, scaffoldHelp);
+    div.appendChild(actions);
+
+    const ariaLabel = showScores
         ? `File ${result.path}, score ${result.score}, ${scoreDescription}. Position ${index + 1} of ${totalResults}`
         : `File ${result.path}. Position ${index + 1} of ${totalResults}`;
     div.setAttribute('aria-label', ariaLabel);

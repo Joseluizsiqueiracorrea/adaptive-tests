@@ -172,13 +172,14 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/vscode": "^1.104.0",
     "@types/node": "^24.5.2",
+    "@types/vscode": "^1.104.0",
     "@vscode/test-electron": "^2.5.2",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@adaptive-tests/javascript": "^0.3.0"
+    "@adaptive-tests/javascript": "^0.3.0",
+    "fast-glob": "^3.3.3"
   }
 }

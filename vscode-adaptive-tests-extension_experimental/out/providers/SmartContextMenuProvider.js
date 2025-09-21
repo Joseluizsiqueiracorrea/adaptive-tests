@@ -62,9 +62,7 @@ class SmartContextMenuProvider {
                 await vscode.commands.executeCommand('adaptive-tests.scaffoldFile', uri);
             }
         });
-        // Register the open test command
-        const openTestCommand = vscode.commands.registerCommand('adaptive-tests.openTest', (uri) => this.openTestCommand.execute(uri));
-        context.subscriptions.push(smartTestCommand, openTestCommand);
+        context.subscriptions.push(smartTestCommand);
     }
     /**
      * Determine the appropriate menu item label

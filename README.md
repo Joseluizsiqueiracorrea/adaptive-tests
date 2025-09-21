@@ -15,6 +15,19 @@ Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.g
 
 Traditional tests fail when you move or rename files because they use hardcoded file paths. Adaptive Tests finds your code by understanding what it looks like, not where it's located.
 
+**The problem every developer knows:**
+```javascript
+// You moved Calculator.js from /utils to /math
+import { Calculator } from '../utils/Calculator';
+// ❌ Error: Cannot find module '../utils/Calculator'
+```
+
+**Our solution:**
+```javascript
+const Calculator = await discover({ name: 'Calculator' });
+// ✅ Found it in /math - tests pass
+```
+
 **Move files around? Tests still pass.** No more fixing broken imports after refactoring.
 
 If this project helps you, please consider supporting it via the Sponsor button (GitHub Sponsors) or your preferred tip link. Thank you!

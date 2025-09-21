@@ -109,8 +109,9 @@ class DiscoveryLensPanel {
         this.stateChangeEmitter.dispose();
         this.resultsEmitter.dispose();
     }
-    async handleRunDiscovery(signature) {
+    async handleRunDiscovery(rawSignature) {
         try {
+            const signature = this.validateSignature(rawSignature);
             // Update state
             this.updateState({ isLoading: true, signature, lastError: null });
             // Get workspace root
@@ -133,29 +134,38 @@ class DiscoveryLensPanel {
             }
             // Sort by score
             candidates.sort((a, b) => b.score - a.score);
-            // Limit results based on configuration
             const maxResults = this.currentState.config.maxResults;
             const showScores = this.currentState.config.showScores;
-            const results = candidates.slice(0, maxResults).map((candidate) => ({
-                path: candidate.path,
-                relativePath: path.relative(workspaceRoot, candidate.path),
-                score: candidate.score,
-                scoreBreakdown: this.extractScoreBreakdown(candidate, signature),
-                metadata: candidate.metadata,
-                language: this.detectLanguage(candidate.path)
-            }));
+            const sanitizedResults = [];
+            for (const candidate of candidates) {
+                const resolved = this.resolvePathInsideRoot(workspaceRoot, candidate.path ?? candidate.absolutePath ?? '');
+                if (!resolved) {
+                    continue;
+                }
+                sanitizedResults.push({
+                    path: resolved.absolute,
+                    relativePath: resolved.relative,
+                    score: candidate.score,
+                    scoreBreakdown: this.extractScoreBreakdown(candidate, signature),
+                    metadata: candidate.metadata,
+                    language: candidate.language ?? this.detectLanguage(resolved.absolute)
+                });
+                if (sanitizedResults.length >= maxResults) {
+                    break;
+                }
+            }
             // Update state with results
             this.updateState({
                 isLoading: false,
-                results,
+                results: sanitizedResults,
                 lastRunTimestamp: Date.now()
             });
             // Emit results event
-            this.resultsEmitter.fire(results);
+            this.resultsEmitter.fire(sanitizedResults);
             // Send results to webview
             this.panel.webview.postMessage({
                 command: 'displayResults',
-                results: results.map(r => ({
+                results: sanitizedResults.map(r => ({
                     ...r,
                     absolutePath: r.path,
                     path: r.relativePath,
@@ -244,14 +254,18 @@ class DiscoveryLensPanel {
     }
     async handleOpenFile(filePath) {
         try {
-            const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-            if (!workspaceRoot) {
-                throw new Error('No workspace folder open');
+            const folders = vscode.workspace.workspaceFolders ?? [];
+            let resolved = null;
+            for (const folder of folders) {
+                resolved = this.resolvePathInsideRoot(folder.uri.fsPath, filePath);
+                if (resolved) {
+                    break;
+                }
             }
-            const absolutePath = path.isAbsolute(filePath)
-                ? filePath
-                : path.join(workspaceRoot, filePath);
-            const document = await vscode.workspace.openTextDocument(absolutePath);
+            if (!resolved) {
+                throw new Error('Requested file is outside of the current workspace.');
+            }
+            const document = await vscode.workspace.openTextDocument(resolved.absolute);
             await vscode.window.showTextDocument(document);
         }
         catch (error) {
@@ -260,8 +274,18 @@ class DiscoveryLensPanel {
     }
     async handleScaffoldTest(filePath) {
         try {
-            const uri = vscode.Uri.file(filePath);
-            await vscode.commands.executeCommand('adaptive-tests.scaffoldFile', uri);
+            const folders = vscode.workspace.workspaceFolders ?? [];
+            let resolved = null;
+            for (const folder of folders) {
+                resolved = this.resolvePathInsideRoot(folder.uri.fsPath, filePath);
+                if (resolved) {
+                    break;
+                }
+            }
+            if (!resolved) {
+                throw new Error('Requested file is outside of the current workspace.');
+            }
+            await vscode.commands.executeCommand('adaptive-tests.scaffoldFile', vscode.Uri.file(resolved.absolute));
         }
         catch (error) {
             vscode.window.showErrorMessage(`Failed to scaffold test: ${error.message}`);
@@ -348,9 +372,74 @@ class DiscoveryLensPanel {
     }
     // ==================== Helper Methods ====================
     updateState(partial) {
-        const previousState = { ...this.currentState };
         this.currentState = { ...this.currentState, ...partial };
         this.stateChangeEmitter.fire(this.currentState);
+    }
+    async collectStream(stream) {
+        if (!stream) {
+            return '';
+        }
+        const chunks = [];
+        for await (const chunk of stream) {
+            chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        }
+        return Buffer.concat(chunks).toString('utf8');
+    }
+    resolvePathInsideRoot(workspaceRoot, targetPath) {
+        if (!targetPath) {
+            return null;
+        }
+        const absolute = path.isAbsolute(targetPath)
+            ? path.resolve(targetPath)
+            : path.resolve(workspaceRoot, targetPath);
+        const relative = path.relative(workspaceRoot, absolute);
+        if (relative.startsWith('..') || path.isAbsolute(relative)) {
+            return null;
+        }
+        return { absolute, relative };
+    }
+    validateSignature(raw) {
+        if (typeof raw !== 'object' || raw === null) {
+            throw new Error('Discovery signature must be an object.');
+        }
+        const candidate = raw;
+        const name = typeof candidate.name === 'string' ? candidate.name.trim() : '';
+        if (!name) {
+            throw new Error('Signature must include a non-empty string "name".');
+        }
+        if (name.length > 256) {
+            throw new Error('Signature name is too long. Please keep it under 256 characters.');
+        }
+        const sanitizeList = (value, label) => {
+            if (value === undefined) {
+                return undefined;
+            }
+            if (!Array.isArray(value)) {
+                throw new Error(`Signature property "${label}" must be an array of strings.`);
+            }
+            const normalised = value
+                .filter(item => typeof item === 'string')
+                .map(item => item.trim())
+                .filter(Boolean)
+                .slice(0, 32);
+            return normalised.length ? normalised : undefined;
+        };
+        const extras = {};
+        for (const [key, value] of Object.entries(candidate)) {
+            if (['name', 'type', 'methods', 'properties', 'extends', 'implements'].includes(key)) {
+                continue;
+            }
+            extras[key] = value;
+        }
+        return {
+            ...extras,
+            name,
+            type: typeof candidate.type === 'string' ? candidate.type : undefined,
+            methods: sanitizeList(candidate.methods, 'methods'),
+            properties: sanitizeList(candidate.properties, 'properties'),
+            extends: typeof candidate.extends === 'string' ? candidate.extends.trim() : undefined,
+            implements: sanitizeList(candidate.implements, 'implements')
+        };
     }
     loadConfiguration() {
         const config = vscode.workspace.getConfiguration('adaptive-tests');
@@ -433,54 +522,86 @@ class DiscoveryLensPanel {
         return 'javascript';
     }
     async runLanguageSpecificDiscovery(workspaceRoot, signature, language) {
-        const { exec } = require('child_process');
-        const util = require('util');
-        const execAsync = util.promisify(exec);
+        const { spawn } = require('child_process');
+        const fg = require('fast-glob');
+        const signatureJson = JSON.stringify(signature);
+        let executable;
+        let spawnArgs;
+        switch (language) {
+            case 'java': {
+                const matches = await fg('cli/target/adaptive-tests-java-cli-*-shaded.jar', {
+                    cwd: workspaceRoot,
+                    absolute: true,
+                    unique: true,
+                    suppressErrors: true
+                });
+                const jarPath = matches[0];
+                if (!jarPath) {
+                    throw new Error('Adaptive Tests Java CLI not found under cli/target.');
+                }
+                executable = 'java';
+                spawnArgs = ['-jar', jarPath, 'discover', '--root', workspaceRoot, '--signature', signatureJson];
+                break;
+            }
+            case 'php': {
+                executable = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+                spawnArgs = ['adaptive-tests', 'why', signatureJson, '--json'];
+                break;
+            }
+            case 'python': {
+                executable = process.platform === 'win32' ? 'python.exe' : 'python3';
+                spawnArgs = ['-m', 'adaptive_tests_py', 'discover', '--root', workspaceRoot, '--signature', signatureJson];
+                break;
+            }
+            default:
+                throw new Error(`Unsupported language: ${language}`);
+        }
+        const abortController = new AbortController();
+        const timeout = setTimeout(() => abortController.abort(), 30000);
         try {
-            let command;
-            let args;
-            switch (language) {
-                case 'java':
-                    // Use Maven/Gradle CLI for Java discovery
-                    command = 'java';
-                    args = `-jar ${workspaceRoot}/cli/target/adaptive-tests-java-cli-*-shaded.jar discover --root "${workspaceRoot}" --signature '${JSON.stringify(signature)}'`;
-                    break;
-                case 'php':
-                    // Use npm CLI for PHP discovery
-                    command = 'npx';
-                    args = `adaptive-tests why '${JSON.stringify(signature)}' --json`;
-                    break;
-                case 'python':
-                    // Use Python CLI for Python discovery
-                    command = 'python3';
-                    args = `-m adaptive_tests_py discover --root "${workspaceRoot}" --signature '${JSON.stringify(signature)}'`;
-                    break;
-                default:
-                    throw new Error(`Unsupported language: ${language}`);
-            }
-            const { stdout, stderr } = await execAsync(`${command} ${args}`, {
+            const child = spawn(executable, spawnArgs, {
                 cwd: workspaceRoot,
-                timeout: 30000, // 30 second timeout
-                maxBuffer: 1024 * 1024 // 1MB max buffer
+                stdio: ['ignore', 'pipe', 'pipe'],
+                signal: abortController.signal
             });
+            const [stdout, stderr, exitCode] = await Promise.all([
+                this.collectStream(child.stdout),
+                this.collectStream(child.stderr),
+                new Promise((resolve, reject) => {
+                    child.once('error', reject);
+                    child.once('close', resolve);
+                })
+            ]);
             if (stderr) {
-                console.warn('Discovery CLI stderr:', stderr);
+                console.warn(`Discovery CLI stderr (${language}):`, stderr);
             }
-            // Parse JSON output
-            const result = JSON.parse(stdout);
-            return Array.isArray(result) ? result : result.candidates || [];
+            if (exitCode !== null && exitCode !== 0) {
+                throw new Error(`Discovery CLI exited with code ${exitCode}`);
+            }
+            const parsed = JSON.parse(stdout);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+            if (Array.isArray(parsed?.candidates)) {
+                return parsed.candidates;
+            }
+            return [];
         }
         catch (error) {
+            if (error?.name === 'AbortError') {
+                throw new Error(`Discovery CLI timed out after 30s for ${language}.`);
+            }
             console.error(`Language-specific discovery failed for ${language}:`, error);
             // Fallback to basic file system search
             return this.fallbackFileSystemSearch(workspaceRoot, signature, language);
         }
+        finally {
+            clearTimeout(timeout);
+        }
     }
     async fallbackFileSystemSearch(workspaceRoot, signature, language) {
-        const fs = require('fs');
-        const path = require('path');
-        const glob = require('glob');
-        // Define file patterns for each language
+        const fg = require('fast-glob');
+        const { promises: fs } = require('fs');
         const patterns = {
             java: ['**/*.java'],
             php: ['**/*.php'],
@@ -489,21 +610,24 @@ class DiscoveryLensPanel {
             typescript: ['**/*.ts', '**/*.tsx']
         };
         const filePatterns = patterns[language] || patterns.javascript;
+        const ignore = ['**/node_modules/**', '**/vendor/**', '**/.git/**', '**/target/**'];
         const candidates = [];
         for (const pattern of filePatterns) {
             try {
-                const files = glob.sync(pattern, {
+                const files = await fg(pattern, {
                     cwd: workspaceRoot,
-                    ignore: ['**/node_modules/**', '**/vendor/**', '**/.git/**', '**/target/**']
+                    ignore,
+                    onlyFiles: true,
+                    unique: true,
+                    absolute: true,
+                    suppressErrors: true
                 });
-                for (const file of files.slice(0, 20)) { // Limit to first 20 files
-                    const fullPath = path.join(workspaceRoot, file);
-                    const content = fs.readFileSync(fullPath, 'utf8');
-                    // Basic name matching
+                for (const file of files.slice(0, 20)) {
+                    const content = await fs.readFile(file, 'utf8');
                     if (signature.name && content.toLowerCase().includes(signature.name.toLowerCase())) {
                         candidates.push({
-                            path: fullPath,
-                            relativePath: file,
+                            path: file,
+                            relativePath: path.relative(workspaceRoot, file),
                             score: 50,
                             reason: 'Name match in content',
                             language

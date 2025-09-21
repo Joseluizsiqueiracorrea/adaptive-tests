@@ -1,99 +1,83 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import { DiscoveryLensPanel } from './webview/DiscoveryLensPanel';
-import { DiscoveryTreeProvider } from './providers/DiscoveryTreeProvider';
-import { AdaptiveTestsCodeLensProvider } from './providers/CodeLensProvider';
-import { ScaffoldCommand } from './commands/ScaffoldCommand';
-import { BatchScaffoldCommand } from './commands/BatchScaffoldCommand';
-import { OpenTestCommand } from './commands/OpenTestCommand';
-import { DiscoveryCommand } from './commands/DiscoveryCommand';
-import { SmartContextMenuProvider, TestContextProvider } from './providers/SmartContextMenuProvider';
 import { DiscoveryLensAPIFactory, getDiscoveryLensAPI } from './api/DiscoveryLensAPIFactory';
-import { IDiscoveryLensAPI } from './types/api';
 
-let discoveryLensPanel: DiscoveryLensPanel | undefined;
 const execAsync = promisify(exec);
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     console.log('Adaptive Tests extension is now active!');
 
-    // Initialize API factory for cross-extension communication
     const apiFactory = DiscoveryLensAPIFactory.getInstance();
     apiFactory.initialize(context);
 
-    // Register Discovery Lens command
-    const showDiscoveryLensCommand = vscode.commands.registerCommand(
-        'adaptive-tests.showDiscoveryLens',
-        () => {
-            // Use API factory to get consistent panel instance
-            const api = apiFactory.getDiscoveryLensAPI({ autoShow: true });
-            if (discoveryLensPanel) {
-                discoveryLensPanel.reveal();
-            } else {
-                discoveryLensPanel = new DiscoveryLensPanel(context);
-                discoveryLensPanel.onDidDispose(() => {
-                    discoveryLensPanel = undefined;
-                });
-            }
+    const showDiscoveryLensCommand = vscode.commands.registerCommand('adaptive-tests.showDiscoveryLens', () => {
+        apiFactory.getDiscoveryLensAPI({ autoShow: true });
+    });
+
+    const scaffoldFileCommand = vscode.commands.registerCommand(
+        'adaptive-tests.scaffoldFile',
+        async (uri: vscode.Uri) => {
+            const { ScaffoldCommand } = await import('./commands/ScaffoldCommand');
+            await new ScaffoldCommand().execute(uri);
         }
     );
 
-    // Register Scaffold command
-    const scaffoldCommand = new ScaffoldCommand();
-    const scaffoldFileCommand = vscode.commands.registerCommand(
-        'adaptive-tests.scaffoldFile',
-        (uri: vscode.Uri) => scaffoldCommand.execute(uri)
-    );
-
-    // Register Batch Scaffold command
-    const batchScaffoldCommand = new BatchScaffoldCommand();
     const scaffoldBatchCommand = vscode.commands.registerCommand(
         'adaptive-tests.scaffoldBatch',
-        (uri: vscode.Uri) => batchScaffoldCommand.execute(uri)
+        async (uri: vscode.Uri) => {
+            const { BatchScaffoldCommand } = await import('./commands/BatchScaffoldCommand');
+            await new BatchScaffoldCommand().execute(uri);
+        }
     );
 
-    // Register Open Test command
-    const openTestCommand = new OpenTestCommand();
-    const openTestCmd = vscode.commands.registerCommand(
+    const openTestCommand = vscode.commands.registerCommand(
         'adaptive-tests.openTest',
-        (uri: vscode.Uri) => openTestCommand.execute(uri)
+        async (uri: vscode.Uri) => {
+            const { OpenTestCommand } = await import('./commands/OpenTestCommand');
+            await new OpenTestCommand().execute(uri);
+        }
     );
 
-    // Register Smart Context Menu Provider
-    const smartMenuProvider = new SmartContextMenuProvider();
-    smartMenuProvider.registerCommands(context);
-
-    // Start Test Context Provider for dynamic menu items
-    const testContextProvider = TestContextProvider.getInstance();
-    testContextProvider.startWatching(context);
-
-    // Register Discovery command
-    const discoveryCommand = new DiscoveryCommand();
     const runDiscoveryCommand = vscode.commands.registerCommand(
         'adaptive-tests.runDiscovery',
         async (uri: vscode.Uri) => {
-            // Use API factory for discovery operations
-            const api = apiFactory.getDiscoveryLensAPI();
             try {
-                await discoveryCommand.execute(uri);
+                const { DiscoveryCommand } = await import('./commands/DiscoveryCommand');
+                await new DiscoveryCommand().execute(uri);
             } catch (error) {
                 console.error('Discovery command failed:', error);
-                vscode.window.showErrorMessage(`Discovery failed: ${error}`);
+                const message = error instanceof Error ? error.message : String(error);
+                vscode.window.showErrorMessage(`Discovery failed: ${message}`);
             }
         }
     );
 
-    // Register Tree Data Provider for Discovery View
-    const discoveryTreeProvider = new DiscoveryTreeProvider();
-    vscode.window.registerTreeDataProvider(
-        'adaptive-tests.discoveryView',
-        discoveryTreeProvider
+    const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    statusBarItem.text = '$(search) Discovery Lens';
+    statusBarItem.tooltip = 'Open Adaptive Tests Discovery Lens';
+    statusBarItem.command = 'adaptive-tests.showDiscoveryLens';
+    statusBarItem.show();
+
+    context.subscriptions.push(
+        showDiscoveryLensCommand,
+        scaffoldFileCommand,
+        scaffoldBatchCommand,
+        openTestCommand,
+        runDiscoveryCommand,
+        statusBarItem
     );
 
-    // Register CodeLens Provider
+    const [{ DiscoveryTreeProvider }, { AdaptiveTestsCodeLensProvider }] = await Promise.all([
+        import('./providers/DiscoveryTreeProvider'),
+        import('./providers/CodeLensProvider')
+    ]);
+
+    const discoveryTreeProvider = new DiscoveryTreeProvider();
+    const treeDisposable = vscode.window.registerTreeDataProvider('adaptive-tests.discoveryView', discoveryTreeProvider);
+    context.subscriptions.push(treeDisposable);
+
     const codeLensProvider = new AdaptiveTestsCodeLensProvider();
     const codeLensDisposable = vscode.languages.registerCodeLensProvider(
         [
@@ -109,66 +93,55 @@ export function activate(context: vscode.ExtensionContext) {
         ],
         codeLensProvider
     );
+    context.subscriptions.push(codeLensDisposable);
 
-    // Add status bar item
-    const statusBarItem = vscode.window.createStatusBarItem(
-        vscode.StatusBarAlignment.Right,
-        100
-    );
-    statusBarItem.text = '$(search) Discovery Lens';
-    statusBarItem.tooltip = 'Open Adaptive Tests Discovery Lens';
-    statusBarItem.command = 'adaptive-tests.showDiscoveryLens';
-    statusBarItem.show();
+    void import('./providers/SmartContextMenuProvider')
+        .then(({ SmartContextMenuProvider, TestContextProvider }) => {
+            const smartMenuProvider = new SmartContextMenuProvider();
+            smartMenuProvider.registerCommands(context);
+            TestContextProvider.getInstance().startWatching(context);
+        })
+        .catch(error => {
+            console.error('Failed to initialize smart context menu provider:', error);
+        });
 
     const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? null;
     if (workspaceRoot) {
-        setupInvisibleIntegration(workspaceRoot, context, statusBarItem).catch(error => {
-            console.error('Failed to integrate invisible mode:', error);
-        });
+        setTimeout(() => {
+            setupInvisibleIntegration(workspaceRoot, context, statusBarItem).catch(error => {
+                console.error('Failed to integrate invisible mode:', error);
+            });
+        }, 1000);
     }
 
-    // Register all disposables
-    context.subscriptions.push(
-        showDiscoveryLensCommand,
-        scaffoldFileCommand,
-        scaffoldBatchCommand,
-        openTestCmd,
-        runDiscoveryCommand,
-        codeLensDisposable,
-        statusBarItem
-    );
-
-    // Show welcome message on first activation
-    const config = vscode.workspace.getConfiguration('adaptive-tests');
     const hasShownWelcome = context.globalState.get('hasShownWelcome', false);
-
     if (!hasShownWelcome) {
-        vscode.window.showInformationMessage(
-            'Welcome to Adaptive Tests! Click the Discovery Lens button in the status bar to start exploring.',
-            'Open Discovery Lens',
-            'Later'
-        ).then(selection => {
-            if (selection === 'Open Discovery Lens') {
-                vscode.commands.executeCommand('adaptive-tests.showDiscoveryLens');
-            }
-            context.globalState.update('hasShownWelcome', true);
-        });
+        vscode.window
+            .showInformationMessage(
+                'Welcome to Adaptive Tests! Click the Discovery Lens button in the status bar to start exploring.',
+                'Open Discovery Lens',
+                'Later'
+            )
+            .then(selection => {
+                if (selection === 'Open Discovery Lens') {
+                    vscode.commands.executeCommand('adaptive-tests.showDiscoveryLens');
+                }
+                context.globalState.update('hasShownWelcome', true);
+            });
     }
 
     // Export API for cross-extension communication
     return {
         getDiscoveryLensAPI,
-
-        // Additional APIs can be exposed here for other extensions
         getDiscoveryEngine: async () => {
             try {
-                const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-                if (workspaceRoot) {
+                const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+                if (workspaceFolder) {
                     const adaptiveTests = require('adaptive-tests');
-                    return adaptiveTests.getDiscoveryEngine(workspaceRoot);
+                    return adaptiveTests.getDiscoveryEngine(workspaceFolder);
                 }
-            } catch (e) {
-                console.error('Failed to load discovery engine:', e);
+            } catch (error) {
+                console.error('Failed to load discovery engine:', error);
             }
             return null;
         }
@@ -185,10 +158,11 @@ async function setupInvisibleIntegration(
 }
 
 async function maybePromptForInvisibleEnable(workspaceRoot: string, context: vscode.ExtensionContext) {
-    const markerPath = path.join(workspaceRoot, '.adaptive-tests', 'invisible-enabled.json');
+    const workspaceUri = vscode.Uri.file(workspaceRoot);
+    const markerUri = vscode.Uri.joinPath(workspaceUri, '.adaptive-tests', 'invisible-enabled.json');
     const promptedKey = 'adaptive-tests.promptedInvisible';
 
-    if (fs.existsSync(markerPath)) {
+    if (await fileExists(markerUri)) {
         return;
     }
 
@@ -215,9 +189,13 @@ async function maybePromptForInvisibleEnable(workspaceRoot: string, context: vsc
                 }
             );
 
-            vscode.window.showInformationMessage('Adaptive Tests invisible mode enabled. Break an import and rerun your tests to see it in action.');
+            vscode.window.showInformationMessage(
+                'Adaptive Tests invisible mode enabled. Break an import and rerun your tests to see it in action.'
+            );
         } catch (error) {
-            vscode.window.showErrorMessage('Failed to enable invisible mode. Run "npx adaptive-tests enable-invisible" manually for more details.');
+            vscode.window.showErrorMessage(
+                'Failed to enable invisible mode. Run "npx adaptive-tests enable-invisible" manually for more details.'
+            );
         }
     }
 
@@ -253,15 +231,16 @@ async function refreshInvisibleHistory(
     statusBarItem: vscode.StatusBarItem,
     context: vscode.ExtensionContext
 ) {
-    const historyPath = path.join(workspaceRoot, '.adaptive-tests', 'invisible-history.json');
-    if (!fs.existsSync(historyPath)) {
+    const workspaceUri = vscode.Uri.file(workspaceRoot);
+    const historyUri = vscode.Uri.joinPath(workspaceUri, '.adaptive-tests', 'invisible-history.json');
+    if (!(await fileExists(historyUri))) {
         clearInvisibleStatus(statusBarItem);
         return;
     }
 
     try {
-        const fileContents = await fs.promises.readFile(historyPath, 'utf8');
-        const history = JSON.parse(fileContents);
+        const fileContents = await vscode.workspace.fs.readFile(historyUri);
+        const history = JSON.parse(Buffer.from(fileContents).toString('utf8'));
 
         if (!Array.isArray(history) || history.length === 0) {
             clearInvisibleStatus(statusBarItem);
@@ -291,7 +270,7 @@ async function refreshInvisibleHistory(
                     )
                     .then(selection => {
                         if (selection === 'Open Invisible History') {
-                            openInvisibleHistory(historyPath);
+                            openInvisibleHistory(historyUri);
                         }
                     });
             }
@@ -304,18 +283,24 @@ async function refreshInvisibleHistory(
     }
 }
 
-async function openInvisibleHistory(historyPath: string) {
+async function openInvisibleHistory(historyUri: vscode.Uri) {
     try {
-        const document = await vscode.workspace.openTextDocument(historyPath);
+        const document = await vscode.workspace.openTextDocument(historyUri);
         await vscode.window.showTextDocument(document, { preview: false });
     } catch (error) {
         vscode.window.showErrorMessage('Unable to open invisible history file.');
     }
 }
 
-export function deactivate() {
-    if (discoveryLensPanel) {
-        discoveryLensPanel.dispose();
+async function fileExists(uri: vscode.Uri): Promise<boolean> {
+    try {
+        await vscode.workspace.fs.stat(uri);
+        return true;
+    } catch {
+        return false;
     }
+}
+
+export function deactivate() {
     DiscoveryLensAPIFactory.getInstance().dispose();
 }

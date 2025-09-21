@@ -327,15 +327,16 @@ class SmartTestsPanel {
                     <h2>Ready to Get Started?</h2>
                     <p>One-click setup. Works with your existing tests. See results immediately.</p>
 
-                    <button class="cta-button" onclick="enableSmartMode()">
-                        🚀 Enable Smart Mode
+                    <button class="cta-button" data-action="enable-smart-mode">
+                        <span aria-hidden="true">🚀</span>
+                        <span>Enable Smart Mode</span>
                     </button>
 
                     <div style="margin-top: 20px;">
-                        <button class="cta-button secondary" onclick="showDiscovery()">
+                        <button class="cta-button secondary" data-action="show-discovery">
                             ⚙️ Advanced Features
                         </button>
-                        <button class="cta-button secondary" onclick="showSuccessStories()">
+                        <button class="cta-button secondary" data-action="show-success-stories">
                             📊 Success Stories
                         </button>
                     </div>
@@ -348,18 +349,19 @@ class SmartTestsPanel {
 
                 <script nonce="${nonce}">
                     const vscode = acquireVsCodeApi();
-
-                    function enableSmartMode() {
-                        vscode.postMessage({ command: 'enableSmartMode' });
-                    }
-
-                    function showDiscovery() {
-                        vscode.postMessage({ command: 'showDiscovery' });
-                    }
-
-                    function showSuccessStories() {
-                        vscode.postMessage({ command: 'showSuccessStories' });
-                    }
+                    const actions = {
+                        'enable-smart-mode': () => vscode.postMessage({ command: 'enableSmartMode' }),
+                        'show-discovery': () => vscode.postMessage({ command: 'showDiscovery' }),
+                        'show-success-stories': () => vscode.postMessage({ command: 'showSuccessStories' })
+                    };
+                    document.querySelectorAll('[data-action]').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const action = actions[button.dataset.action];
+                            if (action) {
+                                action();
+                            }
+                        });
+                    });
                 </script>
             </body>
             </html>
@@ -407,14 +409,16 @@ class SmartTestsPanel {
     }
     showSuccessStory() {
         const panel = vscode.window.createWebviewPanel('success-story', 'How Smart Tests Work', vscode.ViewColumn.One, { enableScripts: true });
+        const nonce = this.createNonce();
         panel.webview.html = `
             <!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${panel.webview.cspSource} 'nonce-${nonce}'; font-src ${panel.webview.cspSource} https: data:;">
                 <title>How Smart Tests Work</title>
-                <style>
+                <style nonce="${nonce}">
                     body {
                         font-family: var(--vscode-font-family);
                         padding: 20px;

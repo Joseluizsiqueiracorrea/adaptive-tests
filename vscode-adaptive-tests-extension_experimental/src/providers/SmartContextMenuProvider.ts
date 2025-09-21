@@ -34,13 +34,7 @@ export class SmartContextMenuProvider {
             }
         );
 
-        // Register the open test command
-        const openTestCommand = vscode.commands.registerCommand(
-            'adaptive-tests.openTest',
-            (uri: vscode.Uri) => this.openTestCommand.execute(uri)
-        );
-
-        context.subscriptions.push(smartTestCommand, openTestCommand);
+        context.subscriptions.push(smartTestCommand);
     }
 
     /**

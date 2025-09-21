@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { DiscoveryLensAPIFactory } from '../api/DiscoveryLensAPIFactory';
 
 export class DiscoveryCommand {
     public async execute(uri?: vscode.Uri) {
@@ -109,17 +110,12 @@ export class DiscoveryCommand {
             if (!action) return;
 
             switch (action.value) {
-                case 'lens':
-                    // Open Discovery Lens and populate with signature
-                    await vscode.commands.executeCommand('adaptive-tests.showDiscoveryLens');
-                    // The webview will be populated via message passing
-                    setTimeout(() => {
-                        vscode.commands.executeCommand('workbench.action.webview.postMessage', {
-                            command: 'setSignature',
-                            signature: JSON.stringify(signature, null, 2)
-                        });
-                    }, 500);
+                case 'lens': {
+                    const api = DiscoveryLensAPIFactory.getInstance().getDiscoveryLensAPI({ autoShow: true });
+                    api.setSignature(signature);
+                    await api.runDiscovery(signature);
                     break;
+                }
 
                 case 'output':
                     // Run discovery and show in output

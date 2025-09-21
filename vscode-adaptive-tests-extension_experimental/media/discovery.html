@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}} 'unsafe-inline'; script-src {{CSP_SOURCE}}; font-src {{CSP_SOURCE}} https: data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}}; script-src 'nonce-{{NONCE}}' {{CSP_SOURCE}}; font-src {{CSP_SOURCE}} https: data:;">
     <meta name="color-scheme" content="light dark">
     <title>Discovery Lens</title>
     <link href="{{STYLE_URI}}" rel="stylesheet">
@@ -117,6 +117,8 @@
         </main>
     </div>
 
-    <script nonce="{{NONCE}}" src="{{SCRIPT_URI}}"></script>
+    <script type="module" nonce="{{NONCE}}">
+        import "{{SCRIPT_URI}}";
+    </script>
 </body>
 </html>

@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiscoveryCommand = void 0;
 const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
+const DiscoveryLensAPIFactory_1 = require("../api/DiscoveryLensAPIFactory");
 class DiscoveryCommand {
     async execute(uri) {
         try {
@@ -132,17 +133,12 @@ class DiscoveryCommand {
             if (!action)
                 return;
             switch (action.value) {
-                case 'lens':
-                    // Open Discovery Lens and populate with signature
-                    await vscode.commands.executeCommand('adaptive-tests.showDiscoveryLens');
-                    // The webview will be populated via message passing
-                    setTimeout(() => {
-                        vscode.commands.executeCommand('workbench.action.webview.postMessage', {
-                            command: 'setSignature',
-                            signature: JSON.stringify(signature, null, 2)
-                        });
-                    }, 500);
+                case 'lens': {
+                    const api = DiscoveryLensAPIFactory_1.DiscoveryLensAPIFactory.getInstance().getDiscoveryLensAPI({ autoShow: true });
+                    api.setSignature(signature);
+                    await api.runDiscovery(signature);
                     break;
+                }
                 case 'output':
                     // Run discovery and show in output
                     const outputChannel = vscode.window.createOutputChannel('Adaptive Tests Discovery');
