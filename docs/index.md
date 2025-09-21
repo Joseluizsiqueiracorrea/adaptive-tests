@@ -4,7 +4,7 @@ title: Adaptive Tests
 description: Tests that find your code automatically, no matter where you move it
 ---
 
-# Tests That Never Break When You Move Files
+## Tests That Never Break When You Move Files
 
 **Stop fixing import errors.** Traditional tests break every time you reorganize code because they use hardcoded file paths. Adaptive Tests find your code by understanding what it looks like, not where it lives.
 
@@ -17,6 +17,7 @@ You refactor your codebase → Tests explode with import errors → You waste ho
 ## Before and After
 
 ### Traditional Tests (Break When Files Move)
+
 ```javascript
 // Hardcoded file path - breaks when you move Calculator.js
 import { Calculator } from '../utils/Calculator';
@@ -28,6 +29,7 @@ test('calculator works', () => {
 ```
 
 ### Adaptive Tests (Work Anywhere)
+
 ```javascript
 // Finds Calculator by structure, not location
 const Calculator = await discover({
@@ -47,24 +49,28 @@ test('calculator works', () => {
 ## Quick Start
 
 ### JavaScript
+
 ```bash
 npm install @adaptive-tests/javascript
 npx adaptive-tests init
 ```
 
 ### TypeScript
+
 ```bash
 npm install @adaptive-tests/typescript
 npx adaptive-tests init
 ```
 
 ### Python
+
 ```bash
 pip install adaptive-tests-py
 adaptive-tests init
 ```
 
 ### Java
+
 ```xml
 <dependency>
     <groupId>io.adaptivetests</groupId>
@@ -106,6 +112,7 @@ Works with your existing test framework:
 ## Real Example
 
 **Before** - Fragile imports that break when you reorganize:
+
 ```javascript
 import { UserService } from '../../../backend/services/users/UserService';
 import { AuthService } from '../../../backend/auth/AuthService';
@@ -113,6 +120,7 @@ import { Database } from '../../../infrastructure/db/Database';
 ```
 
 **After** - Resilient discovery that works anywhere:
+
 ```javascript
 const UserService = await discover({ name: 'UserService', type: 'class' });
 const AuthService = await discover({ name: 'AuthService', type: 'class' });
@@ -122,22 +130,26 @@ const Database = await discover({ name: 'Database', type: 'class' });
 ## Documentation
 
 **Getting Started:**
+
 - [Why Adaptive Tests?](WHY_ADAPTIVE_TESTS.md) - The complete problem and solution
 - [Migration Guide](MIGRATION_GUIDE.md) - Convert your existing tests
 - [Best Practices](BEST_PRACTICES.md) - Patterns for success
 
 **Language Guides:**
+
 - [JavaScript](../languages/javascript/README.md)
 - [TypeScript](../languages/typescript/README.md)
 - [Python](../languages/python/README.md)
 - [Java](../languages/java/README.md)
 
 **Framework Guides:**
+
 - [React](../languages/javascript/docs/REACT_QUICKSTART.md)
 - [Vue.js](../languages/javascript/docs/VUE_QUICKSTART.md)
 - [Express](../languages/javascript/docs/EXPRESS_QUICKSTART.md)
 
 **Advanced:**
+
 - [How It Works](HOW_IT_WORKS.md) - Technical deep dive
 - [API Reference](API_REFERENCE.md) - Complete API docs
 - [CI/CD Integration](CI_STRATEGY.md) - GitHub Actions and more
