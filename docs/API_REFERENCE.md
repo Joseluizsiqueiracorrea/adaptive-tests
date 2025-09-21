@@ -1,6 +1,6 @@
 # API Reference
 
-This document provides a detailed reference for the core APIs of Adaptive Tests. For language-specific setup and framework integrations, please see the guides for [JavaScript](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/javascript/README.md), [TypeScript](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/typescript/README.md), [Python](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/python/README.md), and [Java](https://raw.githubusercontent.com/anon57396/adaptive-tests/main/languages/java/README.md).
+This document provides a detailed reference for the core APIs of Adaptive Tests. For language-specific setup and framework integrations, please see the guides for [JavaScript](languages/javascript.md), [TypeScript](languages/typescript.md), [Python](languages/python.md), and [Java](languages/java.md).
 
 ---
 
