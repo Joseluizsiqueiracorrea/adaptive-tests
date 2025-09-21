@@ -139,7 +139,7 @@ class DiscoveryLensPanel {
             const showScores = this.currentState.config.showScores;
             const sanitizedResults = [];
             for (const candidate of candidates) {
-                const resolved = PathValidator_1.PathValidator.resolvePathInsideRoot(workspaceRoot, candidate.path ?? candidate.absolutePath ?? '');
+                const resolved = await PathValidator_1.PathValidator.resolvePathInsideRoot(workspaceRoot, candidate.path ?? candidate.absolutePath ?? '');
                 if (!resolved) {
                     continue;
                 }
@@ -255,7 +255,7 @@ class DiscoveryLensPanel {
     }
     async handleOpenFile(filePath) {
         try {
-            const resolved = PathValidator_1.PathValidator.resolveWorkspacePath(filePath);
+            const resolved = await PathValidator_1.PathValidator.resolveWorkspacePath(filePath);
             if (!resolved) {
                 throw new Error('File path is outside workspace boundaries');
             }
@@ -268,7 +268,7 @@ class DiscoveryLensPanel {
     }
     async handleScaffoldTest(filePath) {
         try {
-            const resolved = PathValidator_1.PathValidator.resolveWorkspacePath(filePath);
+            const resolved = await PathValidator_1.PathValidator.resolveWorkspacePath(filePath);
             if (!resolved) {
                 throw new Error('File path is outside workspace boundaries');
             }
@@ -379,9 +379,6 @@ class DiscoveryLensPanel {
             chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
         }
         return Buffer.concat(chunks).toString('utf8');
-    }
-    resolvePathInsideRoot(workspaceRoot, targetPath) {
-        return PathValidator_1.PathValidator.resolvePathInsideRoot(workspaceRoot, targetPath);
     }
     sanitizeSignatureForCLI(signature) {
         // Deep sanitization for CLI usage to prevent injection

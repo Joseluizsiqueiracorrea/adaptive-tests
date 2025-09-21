@@ -7,6 +7,10 @@ module.exports = {
   "testMatch": [
     "**/*.test.(js|ts)"
   ],
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/examples/esm-module/"
+  ],
   "transform": {
     "^.+\\.(ts|tsx)$": [
       "ts-jest",

@@ -7,7 +7,7 @@ import {
     DiscoveryState,
     ScoreBreakdown
 } from '../types/api';
-import { PathValidator, CommandSanitizer } from '../security/PathValidator';
+import { PathValidator } from '../security/PathValidator';
 
 export class DiscoveryLensPanel implements IDiscoveryLensAPI {
     private readonly panel: vscode.WebviewPanel;
@@ -145,7 +145,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
             const sanitizedResults: DiscoveryResult[] = [];
             for (const candidate of candidates) {
-                const resolved = PathValidator.resolvePathInsideRoot(
+                const resolved = await PathValidator.resolvePathInsideRoot(
                     workspaceRoot,
                     candidate.path ?? candidate.absolutePath ?? ''
                 );
@@ -278,7 +278,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
     private async handleOpenFile(filePath: string) {
         try {
-            const resolved = PathValidator.resolveWorkspacePath(filePath);
+            const resolved = await PathValidator.resolveWorkspacePath(filePath);
             if (!resolved) {
                 throw new Error('File path is outside workspace boundaries');
             }
@@ -292,7 +292,7 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
 
     private async handleScaffoldTest(filePath: string) {
         try {
-            const resolved = PathValidator.resolveWorkspacePath(filePath);
+            const resolved = await PathValidator.resolveWorkspacePath(filePath);
             if (!resolved) {
                 throw new Error('File path is outside workspace boundaries');
             }
@@ -418,13 +418,6 @@ export class DiscoveryLensPanel implements IDiscoveryLensAPI {
             chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
         }
         return Buffer.concat(chunks).toString('utf8');
-    }
-
-    private resolvePathInsideRoot(
-        workspaceRoot: string,
-        targetPath: string
-    ): { absolute: string; relative: string } | null {
-        return PathValidator.resolvePathInsideRoot(workspaceRoot, targetPath);
     }
 
     private sanitizeSignatureForCLI(signature: DiscoverySignature): DiscoverySignature {

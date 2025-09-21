@@ -37,19 +37,20 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommandSanitizer = exports.PathValidator = void 0;
+exports.PathValidator = void 0;
 const path = __importStar(require("path"));
 const vscode = __importStar(require("vscode"));
+const fs_1 = require("fs");
 class PathValidator {
     /**
      * Validate and resolve a path within workspace boundaries
      */
-    static resolveWorkspacePath(targetPath, workspaceFolder) {
+    static async resolveWorkspacePath(targetPath, workspaceFolder) {
         const folders = workspaceFolder
             ? [workspaceFolder]
             : vscode.workspace.workspaceFolders || [];
         for (const folder of folders) {
-            const resolved = this.resolvePathInsideRoot(folder.uri.fsPath, targetPath);
+            const resolved = await this.resolvePathInsideRoot(folder.uri.fsPath, targetPath);
             if (resolved) {
                 return resolved;
             }
@@ -57,35 +58,41 @@ class PathValidator {
         return null;
     }
     /**
-     * Resolve path ensuring it stays within root directory
+     * Resolve path ensuring it stays within root directory while respecting symlinks
      */
-    static resolvePathInsideRoot(rootPath, targetPath) {
+    static async resolvePathInsideRoot(rootPath, targetPath) {
         if (!targetPath) {
             return null;
         }
-        // Normalize and resolve the path
         const absolute = path.isAbsolute(targetPath)
             ? path.resolve(targetPath)
             : path.resolve(rootPath, targetPath);
-        // Ensure the path is within the root
         const relative = path.relative(rootPath, absolute);
-        // Check for path traversal attempts
         if (relative.startsWith('..') || path.isAbsolute(relative)) {
             return null;
         }
-        // Note: Symbolic link check would require async fs.realpath
-        // For now, we trust VS Code's workspace boundaries
+        try {
+            const realAbsolute = await fs_1.promises.realpath(absolute);
+            const realRelative = path.relative(rootPath, realAbsolute);
+            if (realRelative.startsWith('..') || path.isAbsolute(realRelative)) {
+                return null;
+            }
+        }
+        catch (error) {
+            // Ignore ENOENT so newly created files can still be scaffolded
+            if (error?.code && error.code !== 'ENOENT') {
+                throw error;
+            }
+        }
         return { absolute, relative };
     }
     /**
      * Validate a file path for safe operations
      */
     static isValidFilePath(filePath) {
-        // Check for null bytes
         if (filePath.includes('\0')) {
             return false;
         }
-        // Check for suspicious patterns
         const suspiciousPatterns = [
             /\.\.[\/\\]/, // Path traversal
             /^[\/\\]/, // Absolute paths on Unix
@@ -98,18 +105,15 @@ class PathValidator {
      * Sanitize a file name for safe file creation
      */
     static sanitizeFileName(fileName) {
-        // Remove path separators and null bytes
         let sanitized = fileName
             .replace(/[\/\\]/g, '_')
             .replace(/\0/g, '')
             .replace(/[<>:"|?*]/g, '_');
-        // Limit length
         if (sanitized.length > 255) {
             const ext = path.extname(sanitized);
             const base = path.basename(sanitized, ext);
             sanitized = base.substring(0, 255 - ext.length) + ext;
         }
-        // Don't allow only dots or spaces
         if (/^[\s.]+$/.test(sanitized)) {
             sanitized = 'file';
         }
@@ -121,7 +125,7 @@ class PathValidator {
     static async isInWorkspace(targetPath) {
         const folders = vscode.workspace.workspaceFolders || [];
         for (const folder of folders) {
-            const resolved = this.resolvePathInsideRoot(folder.uri.fsPath, targetPath);
+            const resolved = await this.resolvePathInsideRoot(folder.uri.fsPath, targetPath);
             if (resolved) {
                 return true;
             }
@@ -139,93 +143,8 @@ class PathValidator {
                 return relative;
             }
         }
-        // If not in workspace, return just the filename
         return path.basename(absolutePath);
     }
 }
 exports.PathValidator = PathValidator;
-/**
- * Command sanitizer for safe CLI execution
- */
-class CommandSanitizer {
-    /**
-     * Sanitize a command argument for shell execution
-     */
-    static sanitizeArg(arg) {
-        // For Windows
-        if (process.platform === 'win32') {
-            // Escape special characters for cmd.exe
-            return '"' + arg.replace(/"/g, '""') + '"';
-        }
-        // For Unix-like systems (Linux, macOS)
-        // Use single quotes and escape single quotes
-        return "'" + arg.replace(/'/g, "'\\''") + "'";
-    }
-    /**
-     * Sanitize a JSON object for CLI usage
-     */
-    static sanitizeJson(obj) {
-        // Remove any potentially dangerous keys
-        const sanitized = this.deepSanitize(obj);
-        const json = JSON.stringify(sanitized);
-        return this.sanitizeArg(json);
-    }
-    /**
-     * Deep sanitize an object removing dangerous patterns
-     */
-    static deepSanitize(obj, depth = 0) {
-        // Prevent deep recursion
-        if (depth > 10) {
-            return null;
-        }
-        if (obj === null || obj === undefined) {
-            return obj;
-        }
-        if (typeof obj === 'string') {
-            // Remove null bytes and limit length
-            return obj.replace(/\0/g, '').substring(0, 1024);
-        }
-        if (typeof obj === 'number' || typeof obj === 'boolean') {
-            return obj;
-        }
-        if (Array.isArray(obj)) {
-            return obj
-                .slice(0, 100) // Limit array size
-                .map(item => this.deepSanitize(item, depth + 1));
-        }
-        if (typeof obj === 'object') {
-            const result = {};
-            const keys = Object.keys(obj).slice(0, 50); // Limit number of keys
-            for (const key of keys) {
-                // Skip potentially dangerous keys
-                if (this.isDangerousKey(key)) {
-                    continue;
-                }
-                result[key] = this.deepSanitize(obj[key], depth + 1);
-            }
-            return result;
-        }
-        return null;
-    }
-    /**
-     * Check if a key name is potentially dangerous
-     */
-    static isDangerousKey(key) {
-        const dangerous = [
-            '__proto__',
-            'constructor',
-            'prototype',
-            'eval',
-            'Function',
-            'setTimeout',
-            'setInterval',
-            'require',
-            'import',
-            'process',
-            'child_process'
-        ];
-        return dangerous.includes(key) || key.includes('\0');
-    }
-}
-exports.CommandSanitizer = CommandSanitizer;
 //# sourceMappingURL=PathValidator.js.map
