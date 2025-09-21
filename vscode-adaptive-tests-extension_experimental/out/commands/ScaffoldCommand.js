@@ -36,18 +36,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScaffoldCommand = void 0;
 const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
-const child_process = __importStar(require("child_process"));
-function execCommand(command, options) {
-    return new Promise((resolve, reject) => {
-        child_process.exec(command, options, (error, stdout = '', stderr = '') => {
-            if (error) {
-                reject(error);
-                return;
-            }
-            resolve({ stdout: String(stdout ?? ''), stderr: String(stderr ?? '') });
-        });
-    });
-}
 class ScaffoldCommand {
     async execute(uri) {
         try {
@@ -73,8 +61,8 @@ class ScaffoldCommand {
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: 'Scaffolding Adaptive Test',
-                cancellable: false
-            }, async (progress) => {
+                cancellable: true
+            }, async (progress, cancellationToken) => {
                 progress.report({ increment: 0, message: 'Loading adaptive-tests API...' });
                 const adaptiveModule = await Promise.resolve().then(() => __importStar(require('@adaptive-tests/javascript')));
                 const { DiscoveryEngine, processSingleFile } = adaptiveModule;
@@ -88,7 +76,15 @@ class ScaffoldCommand {
                     applyAssertions: true // Or get from config
                 };
                 progress.report({ increment: 25, message: 'Analyzing file...' });
+                // Check for cancellation
+                if (cancellationToken.isCancellationRequested) {
+                    throw new Error('Operation cancelled by user');
+                }
                 try {
+                    // Check cancellation before heavy operation
+                    if (cancellationToken.isCancellationRequested) {
+                        throw new Error('Operation cancelled by user');
+                    }
                     await processSingleFile(engine, filePath, options, results);
                     progress.report({ increment: 75, message: 'Finalizing test file...' });
                     if (results.created.length > 0) {
@@ -124,17 +120,20 @@ class ScaffoldCommand {
                     }
                 }
                 catch (error) {
-                    throw new Error(`Scaffolding failed: ${error.message}`);
+                    const message = error instanceof Error ? error.message : String(error);
+                    throw new Error(`Scaffolding failed: ${message}`);
                 }
             });
         }
         catch (error) {
-            const action = await vscode.window.showErrorMessage(`Failed to scaffold test: ${error.message}`, 'Show Details', 'Open Logs');
+            const message = error instanceof Error ? error.message : String(error);
+            const action = await vscode.window.showErrorMessage(`Failed to scaffold test: ${message}`, 'Show Details', 'Open Logs');
             if (action === 'Show Details') {
                 const outputChannel = vscode.window.createOutputChannel('Adaptive Tests');
                 outputChannel.appendLine('Scaffold Error Details:');
-                outputChannel.appendLine(`Error: ${error.message}`);
-                outputChannel.appendLine(`Stack: ${error.stack}`);
+                const err = error instanceof Error ? error : new Error(String(error));
+                outputChannel.appendLine(`Error: ${err.message}`);
+                outputChannel.appendLine(`Stack: ${err.stack}`);
                 outputChannel.show();
             }
             else if (action === 'Open Logs') {

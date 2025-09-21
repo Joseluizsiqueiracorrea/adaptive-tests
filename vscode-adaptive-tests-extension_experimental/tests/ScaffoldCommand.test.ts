@@ -21,7 +21,11 @@ const vscodeWindow = {
   showWarningMessage: vi.fn(),
   showTextDocument: vi.fn(),
   withProgress: vi.fn(async (_options: any, task: any) => {
-    await task({ report: vi.fn() });
+    const cancellationToken = {
+      isCancellationRequested: false,
+      onCancellationRequested: vi.fn()
+    };
+    await task({ report: vi.fn() }, cancellationToken);
   }),
   activeTextEditor: {
     document: {

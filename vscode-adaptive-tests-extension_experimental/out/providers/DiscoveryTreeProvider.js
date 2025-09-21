@@ -42,7 +42,8 @@ class DiscoveryTreeProvider {
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this.onDidChangeTreeData = this._onDidChangeTreeData.event;
         this.results = [];
-        this.lastSignature = null;
+        this.disposables = [];
+        this._lastSignature = null;
         // Subscribe to API factory state changes
         this.subscribeToAPIChanges();
     }
@@ -55,7 +56,7 @@ class DiscoveryTreeProvider {
     refresh(results, signature) {
         if (results) {
             this.results = results.map((result, index) => new DiscoveryItem(result.path, result.score, result.absolutePath || result.path, index));
-            this.lastSignature = signature;
+            this._lastSignature = signature || null;
         }
         this._onDidChangeTreeData.fire();
     }
@@ -74,7 +75,7 @@ class DiscoveryTreeProvider {
         }
         return Promise.resolve([]);
     }
-    getParent(element) {
+    getParent(_element) {
         return undefined;
     }
     async runDiscoveryForCurrentFile() {
@@ -87,8 +88,14 @@ class DiscoveryTreeProvider {
     }
     clearResults() {
         this.results = [];
-        this.lastSignature = null;
+        this._lastSignature = null;
         this.refresh();
+    }
+    dispose() {
+        this._onDidChangeTreeData.dispose();
+        this.disposables.forEach(d => d.dispose());
+        this.results = [];
+        this._lastSignature = null;
     }
 }
 exports.DiscoveryTreeProvider = DiscoveryTreeProvider;

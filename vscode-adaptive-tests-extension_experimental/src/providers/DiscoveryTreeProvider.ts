@@ -1,16 +1,17 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { DiscoveryLensAPIFactory } from '../api/DiscoveryLensAPIFactory';
+import type { DiscoveryCandidate, DiscoverySignature } from '../types';
 
-export class DiscoveryTreeProvider implements vscode.TreeDataProvider<DiscoveryItem> {
+export class DiscoveryTreeProvider implements vscode.TreeDataProvider<DiscoveryItem>, vscode.Disposable {
     private _onDidChangeTreeData: vscode.EventEmitter<DiscoveryItem | undefined | null | void> =
         new vscode.EventEmitter<DiscoveryItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<DiscoveryItem | undefined | null | void> =
         this._onDidChangeTreeData.event;
 
     private results: DiscoveryItem[] = [];
-
-    private lastSignature: any = null;
+    private disposables: vscode.Disposable[] = [];
+    private _lastSignature: DiscoverySignature | null = null;
 
     constructor() {
         // Subscribe to API factory state changes
@@ -25,9 +26,9 @@ export class DiscoveryTreeProvider implements vscode.TreeDataProvider<DiscoveryI
         // For now, we'll implement manual updates through commands
     }
 
-    refresh(results?: any[], signature?: any): void {
+    refresh(results?: DiscoveryCandidate[], signature?: DiscoverySignature): void {
         if (results) {
-            this.results = results.map((result, index) =>
+            this.results = results.map((result: DiscoveryCandidate, index: number) =>
                 new DiscoveryItem(
                     result.path,
                     result.score,
@@ -35,7 +36,7 @@ export class DiscoveryTreeProvider implements vscode.TreeDataProvider<DiscoveryI
                     index
                 )
             );
-            this.lastSignature = signature;
+            this._lastSignature = signature || null;
         }
         this._onDidChangeTreeData.fire();
     }
@@ -64,7 +65,7 @@ export class DiscoveryTreeProvider implements vscode.TreeDataProvider<DiscoveryI
         return Promise.resolve([]);
     }
 
-    getParent(element: DiscoveryItem): DiscoveryItem | undefined {
+    getParent(_element: DiscoveryItem): DiscoveryItem | undefined {
         return undefined;
     }
 
@@ -80,8 +81,15 @@ export class DiscoveryTreeProvider implements vscode.TreeDataProvider<DiscoveryI
 
     clearResults() {
         this.results = [];
-        this.lastSignature = null;
+        this._lastSignature = null;
         this.refresh();
+    }
+
+    dispose() {
+        this._onDidChangeTreeData.dispose();
+        this.disposables.forEach(d => d.dispose());
+        this.results = [];
+        this._lastSignature = null;
     }
 }
 

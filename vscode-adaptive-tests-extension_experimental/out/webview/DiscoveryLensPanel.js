@@ -120,7 +120,7 @@ class DiscoveryLensPanel {
                 throw new Error('No workspace folder open');
             }
             // Detect language and use appropriate discovery method
-            const language = this.detectLanguageFromWorkspace(workspaceRoot);
+            const language = await this.detectLanguageFromWorkspace(workspaceRoot);
             let candidates;
             if (language === 'javascript' || language === 'typescript') {
                 // Use JavaScript/TypeScript engine
@@ -296,15 +296,19 @@ class DiscoveryLensPanel {
             // Try to load from workspace node_modules first
             const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
             if (workspaceRoot) {
-                const localPath = path.join(workspaceRoot, 'node_modules', 'adaptive-tests');
-                return require(localPath);
+                const localPath = path.join(workspaceRoot, 'node_modules', '@adaptive-tests', 'javascript');
+                const fs = require('fs');
+                // Validate the module exists before requiring
+                if (fs.existsSync(localPath)) {
+                    return require(localPath);
+                }
             }
         }
         catch (e) {
-            // Fall back to bundled version
+            console.warn('Failed to load local adaptive-tests:', e);
         }
-        // Load bundled version
-        return require('@adaptive-tests/javascript');
+        // Load bundled version (already in dependencies)
+        return Promise.resolve().then(() => __importStar(require('@adaptive-tests/javascript')));
     }
     // ==================== API Implementation ====================
     /**
@@ -398,6 +402,18 @@ class DiscoveryLensPanel {
         }
         return { absolute, relative };
     }
+    sanitizeSignatureForCLI(signature) {
+        // Deep sanitization for CLI usage to prevent injection
+        const sanitized = {
+            name: signature.name.replace(/[^a-zA-Z0-9_.-]/g, ''),
+            type: signature.type,
+            methods: signature.methods?.map(m => m.replace(/[^a-zA-Z0-9_]/g, '')),
+            properties: signature.properties?.map(p => p.replace(/[^a-zA-Z0-9_]/g, '')),
+            extends: signature.extends?.replace(/[^a-zA-Z0-9_.-]/g, ''),
+            implements: signature.implements?.map(i => i.replace(/[^a-zA-Z0-9_.-]/g, ''))
+        };
+        return sanitized;
+    }
     validateSignature(raw) {
         if (typeof raw !== 'object' || raw === null) {
             throw new Error('Discovery signature must be an object.');
@@ -476,7 +492,7 @@ class DiscoveryLensPanel {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}} 'unsafe-inline'; script-src 'nonce-{{NONCE}}'; font-src {{CSP_SOURCE}} https: data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}}; script-src 'nonce-{{NONCE}}' {{CSP_SOURCE}}; font-src {{CSP_SOURCE}} https: data:;">
     <meta name="color-scheme" content="light dark">
     <title>Discovery Lens</title>
     <link href="{{STYLE_URI}}" rel="stylesheet">
@@ -486,7 +502,9 @@ class DiscoveryLensPanel {
         <h1>🔍 Discovery Lens</h1>
         <p>HTML template not found. Please check media/discovery.html</p>
     </div>
-    <script nonce="{{NONCE}}" src="{{SCRIPT_URI}}"></script>
+    <script type="module" nonce="{{NONCE}}">
+        import "{{SCRIPT_URI}}";
+    </script>
 </body>
 </html>`;
         }
@@ -496,35 +514,55 @@ class DiscoveryLensPanel {
     }
     createNonce() {
         const crypto = require('crypto');
-        return crypto.randomBytes(16).toString('base64');
+        return crypto.randomBytes(32).toString('hex');
     }
-    detectLanguageFromWorkspace(workspaceRoot) {
-        const fs = require('fs');
+    async detectLanguageFromWorkspace(workspaceRoot) {
+        const fs = require('fs').promises;
         const path = require('path');
         // Check for language-specific files and config
-        if (fs.existsSync(path.join(workspaceRoot, 'package.json'))) {
-            const packageJson = JSON.parse(fs.readFileSync(path.join(workspaceRoot, 'package.json'), 'utf8'));
+        try {
+            const packageJsonPath = path.join(workspaceRoot, 'package.json');
+            await fs.access(packageJsonPath);
+            const content = await fs.readFile(packageJsonPath, 'utf8');
+            const packageJson = JSON.parse(content);
             if (packageJson.devDependencies?.typescript || packageJson.dependencies?.typescript) {
                 return 'typescript';
             }
             return 'javascript';
         }
-        if (fs.existsSync(path.join(workspaceRoot, 'pom.xml')) || fs.existsSync(path.join(workspaceRoot, 'build.gradle'))) {
+        catch (e) {
+            // package.json doesn't exist or can't be read
+        }
+        try {
+            await Promise.race([
+                fs.access(path.join(workspaceRoot, 'pom.xml')),
+                fs.access(path.join(workspaceRoot, 'build.gradle'))
+            ]);
             return 'java';
         }
-        if (fs.existsSync(path.join(workspaceRoot, 'composer.json'))) {
+        catch { /* Not Java */ }
+        try {
+            await fs.access(path.join(workspaceRoot, 'composer.json'));
             return 'php';
         }
-        if (fs.existsSync(path.join(workspaceRoot, 'requirements.txt')) || fs.existsSync(path.join(workspaceRoot, 'pyproject.toml'))) {
+        catch { /* Not PHP */ }
+        try {
+            await Promise.race([
+                fs.access(path.join(workspaceRoot, 'requirements.txt')),
+                fs.access(path.join(workspaceRoot, 'pyproject.toml'))
+            ]);
             return 'python';
         }
+        catch { /* Not Python */ }
         // Default to JavaScript for mixed or unknown projects
         return 'javascript';
     }
     async runLanguageSpecificDiscovery(workspaceRoot, signature, language) {
         const { spawn } = require('child_process');
         const fg = require('fast-glob');
-        const signatureJson = JSON.stringify(signature);
+        // Sanitize signature to prevent injection
+        const sanitizedSignature = this.sanitizeSignatureForCLI(signature);
+        const signatureJson = JSON.stringify(sanitizedSignature);
         let executable;
         let spawnArgs;
         switch (language) {

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import { DiscoveryLensAPIFactory, getDiscoveryLensAPI } from './api/DiscoveryLensAPIFactory';

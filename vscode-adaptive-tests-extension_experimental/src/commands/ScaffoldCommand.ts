@@ -1,18 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as child_process from 'child_process';
+import type { AdaptiveTestsAPI, DiscoveryOptions, ScaffoldResults } from '../types';
 
-function execCommand(command: string, options: child_process.ExecOptions) {
-    return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-        child_process.exec(command, options, (error, stdout = '', stderr = '') => {
-            if (error) {
-                reject(error);
-                return;
-            }
-            resolve({ stdout: String(stdout ?? ''), stderr: String(stderr ?? '') });
-        });
-    });
-}
 
 export class ScaffoldCommand {
     public async execute(uri?: vscode.Uri) {
@@ -43,15 +32,15 @@ export class ScaffoldCommand {
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: 'Scaffolding Adaptive Test',
-                cancellable: false
-            }, async (progress) => {
+                cancellable: true
+            }, async (progress, cancellationToken) => {
                 progress.report({ increment: 0, message: 'Loading adaptive-tests API...' });
 
-                const adaptiveModule = await import('@adaptive-tests/javascript');
-                const { DiscoveryEngine, processSingleFile } = adaptiveModule as any;
+                const adaptiveModule = await import('@adaptive-tests/javascript') as unknown as AdaptiveTestsAPI;
+                const { DiscoveryEngine, processSingleFile } = adaptiveModule;
                 const engine = new DiscoveryEngine(workspaceFolder.uri.fsPath);
-                const results = { created: [], skippedExisting: [], skippedNoExport: [], errors: [] };
-                const options = {
+                const results: ScaffoldResults = { created: [], skippedExisting: [], skippedNoExport: [], errors: [] };
+                const options: DiscoveryOptions = {
                     root: workspaceFolder.uri.fsPath,
                     outputDir: outputDir,
                     force: false,
@@ -61,7 +50,17 @@ export class ScaffoldCommand {
 
                 progress.report({ increment: 25, message: 'Analyzing file...' });
 
+                // Check for cancellation
+                if (cancellationToken.isCancellationRequested) {
+                    throw new Error('Operation cancelled by user');
+                }
+
                 try {
+                    // Check cancellation before heavy operation
+                    if (cancellationToken.isCancellationRequested) {
+                        throw new Error('Operation cancelled by user');
+                    }
+
                     await processSingleFile(engine, filePath, options, results);
 
                     progress.report({ increment: 75, message: 'Finalizing test file...' });
@@ -105,13 +104,15 @@ export class ScaffoldCommand {
                     } else {
                         throw new Error('Scaffolding did not produce a file and reported no specific errors.');
                     }
-                } catch (error: any) {
-                    throw new Error(`Scaffolding failed: ${error.message}`);
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    throw new Error(`Scaffolding failed: ${message}`);
                 }
             });
-        } catch (error: any) {
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
             const action = await vscode.window.showErrorMessage(
-                `Failed to scaffold test: ${error.message}`,
+                `Failed to scaffold test: ${message}`,
                 'Show Details',
                 'Open Logs'
             );
@@ -119,8 +120,9 @@ export class ScaffoldCommand {
             if (action === 'Show Details') {
                 const outputChannel = vscode.window.createOutputChannel('Adaptive Tests');
                 outputChannel.appendLine('Scaffold Error Details:');
-                outputChannel.appendLine(`Error: ${error.message}`);
-                outputChannel.appendLine(`Stack: ${error.stack}`);
+                const err = error instanceof Error ? error : new Error(String(error));
+                outputChannel.appendLine(`Error: ${err.message}`);
+                outputChannel.appendLine(`Stack: ${err.stack}`);
                 outputChannel.show();
             } else if (action === 'Open Logs') {
                 vscode.commands.executeCommand('workbench.action.showLogs');
