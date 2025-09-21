@@ -83,14 +83,14 @@ Team of 10: $187,500 per year
 
 ## Who Benefits Most?
 
-### Perfect Fit For:
+### Perfect Fit For
 - **Rapidly evolving codebases** - Startups pivoting quickly
 - **Large teams** - Reduce coordination overhead
 - **Microservices migrations** - Move code between services freely
 - **AI-assisted development** - AIs can reorganize without breaking tests
 - **Continuous refactoring culture** - Keep code clean without test tax
 
-### Consider Traditional Tests If:
+### Consider Traditional Tests If
 - Codebase structure is frozen (rare)
 - Performance is ultra-critical (microseconds matter)
 - Team is very small (<3 developers)
@@ -143,17 +143,17 @@ New developers can't accidentally break the test suite by moving files.
 
 ## The Business Case
 
-### For Engineering Managers:
+### For Engineering Managers
 - **Velocity:** Ship features 20% faster by eliminating test maintenance overhead
 - **Quality:** Developers focus on real bugs, not import errors
 - **Morale:** Reduce frustrating busywork, increase satisfaction
 
-### For CTOs:
+### For CTOs
 - **Scalability:** Refactor fearlessly as you grow
 - **Agility:** Respond to market changes without technical debt
 - **Talent:** Attract developers who value modern tooling
 
-### For Product Owners:
+### For Product Owners
 - **Predictability:** Refactoring doesn't delay feature delivery
 - **Flexibility:** Pivot technical architecture without timeline impacts
 - **Innovation:** Engineers spend time on features, not maintenance
@@ -185,18 +185,18 @@ Ask yourself:
 
 ## Start Your Journey
 
-### Immediate (Today):
+### Immediate (Today)
 ```bash
 npm install @adaptive-tests/javascript
 npx adaptive-tests scaffold src/your-most-moved-file.js
 ```
 
-### Short-term (This Sprint):
+### Short-term (This Sprint)
 - Migrate your most frequently broken tests
 - Train team on discovery patterns
 - Set up CI with adaptive tests
 
-### Long-term (This Quarter):
+### Long-term (This Quarter)
 - Gradually migrate test suite
 - Measure time savings
 - Share success metrics

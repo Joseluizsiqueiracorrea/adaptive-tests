@@ -5,11 +5,11 @@
 [![npm](https://img.shields.io/npm/v/adaptive-tests.svg)](https://www.npmjs.com/package/adaptive-tests)
 [![PyPI](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Development%20Alpha-yellow)](vscode-adaptive-tests-extension_experimental/README.md)
-[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-In%20Development-yellow?logo=github)](#ci-cd-integration)
+[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Available-green?logo=github)](action.yml)
 
 Documentation: [https://anon57396.github.io/adaptive-tests/](https://anon57396.github.io/adaptive-tests/)
 
-> _Language-specific coverage reports live in each package (JavaScript, TypeScript, Python, Java). A consolidated badge will ship once multi-runtime reporting is wired up._
+> _Language-specific coverage reports live in each package (JavaScript, TypeScript, Python, Java)._
 >
 > **Tests that don't break when you move files**
 
@@ -25,10 +25,10 @@ If this project helps you, please consider supporting it via the Sponsor button 
 
 Each language implementation is self-contained with examples, documentation, and framework integrations:
 
-### **Core Languages** _(in development)_
+### **Core Languages**
 
-- **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support
-- **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching
+- **[📦 JavaScript/Node.js](./languages/javascript/)** - Core implementation with Jest, Mocha, Vitest support (v0.3.0)
+- **[📘 TypeScript](./languages/typescript/)** - Type-aware discovery with interface matching (v0.3.0)
 - **[🐍 Python](./languages/python/)** - Full pytest integration with Django/Flask examples
 - **[☕ Java](./languages/java/)** - Maven/Gradle packages with Spring Boot integration
 
@@ -111,10 +111,13 @@ Run adaptive tests in CI using the official GitHub Action, or use a simple Node.
 ### Option A: Official Action
 
 ```yaml
-# Note: Official GitHub Action is currently in development
-# For now, use Option B (Manual Setup) below
-# - uses: adaptive-tests-action/adaptive-tests@v1
+- uses: anon57396/adaptive-tests@main
+  with:
+    command: test
+    coverage: true
 ```
+
+See [action.yml](action.yml) for all available options.
 
 The action typically:
 
@@ -140,7 +143,7 @@ steps:
   - run: npm run test:adaptive
 ```
 
-[See CI examples and guidance →](docs/GITHUB_ACTION.md)
+[See action.yml for configuration →](action.yml)
 
 ---
 
@@ -215,13 +218,9 @@ npm test  # ✅ Tests pass again
 
 ---
 
-### Option 1: Zero-Config with jest-adaptive (New!)
+### Option 1: Zero-Config with jest-adaptive
 
-```bash
-# Note: This is a local package in development
-# For development use:
-npm install --save-dev ./packages/jest-adaptive @adaptive-tests/javascript
-```
+**Note:** jest-adaptive is currently under development and not yet published to npm. For now, use the standard discovery approach shown in Option 2.
 
 Add to your `jest.config.js`:
 
@@ -299,7 +298,7 @@ const UserService = await discover('UserService');
 
 Jumpstart your adaptive testing with pre-configured templates for popular frameworks:
 
-### Available Templates _(in development)_
+### Available Templates
 
 | Template | Framework | Features | Status |
 |----------|-----------|----------|---------|
@@ -310,8 +309,7 @@ Jumpstart your adaptive testing with pre-configured templates for popular framew
 ### Quick Setup
 
 ```bash
-# Templates are currently in development
-# Manual template usage (development only):
+# Clone and use a template:
 git clone https://github.com/anon57396/adaptive-tests.git
 cp -r adaptive-tests/languages/javascript/templates/nextjs my-project
 cd my-project
@@ -333,15 +331,15 @@ Each template comes with:
 
 #### Available Templates
 
-Templates are currently in early development. Basic structure exists for:
+Current templates provide basic structure:
 
 ```bash
 languages/javascript/templates/
-├── nextjs/               # Next.js basic template (in development)
-└── vite/                 # Vite basic template (in development)
+├── nextjs/               # Next.js basic template
+└── vite/                 # Vite basic template
 ```
 
-Full template features are planned for future releases.
+Additional features and templates coming in future releases.
 
 ### Customizing Templates
 
@@ -556,7 +554,7 @@ the contrast immediately.
 Adaptive Tests 0.3.0 is now live across package managers:
 
 - npm: `adaptive-tests`, `@adaptive-tests/javascript`, `@adaptive-tests/typescript`
-- PyPI: `adaptive-tests-py` (0.2.5)
+- PyPI: `adaptive-tests-py`
 
 When you are ready to publish the next release:
 
