@@ -7,12 +7,12 @@
 [![Rating](https://img.shields.io/vscode-marketplace/r/adaptive-tests.adaptive-tests.svg)](https://marketplace.visualstudio.com/items?itemName=adaptive-tests.adaptive-tests)
 [![License](https://img.shields.io/github/license/anon57396/adaptive-tests.svg)](LICENSE)
 
-**🚀 AI-Powered Test Generation • 🔍 Smart Discovery • ⚡ Lightning Fast**
+### 🚀 AI-Powered Test Generation • 🔍 Smart Discovery • ⚡ Lightning Fast
 
 Transform your testing workflow with AI-powered intelligence, visual discovery, and adaptive scaffolding.
 **Now with GitHub Copilot integration and MCP server support!**
 
-[**Installation**](#-installation) • [**Features**](#-features) • [**Quick Start**](#-quick-start) • [**Documentation**](https://adaptive-tests.dev)
+[**Installation**](#installation) • [**Features**](#features) • [**Quick Start**](#quick-start) • [**Documentation**](https://adaptive-tests.dev)
 
 </div>
 
@@ -124,6 +124,7 @@ Or search for "Adaptive Tests" in the Extensions view (`Ctrl+Shift+X`).
 All commands are available through the Command Palette (`Ctrl/Cmd+Shift+P`):
 
 ### Core Commands
+
 - `Adaptive Tests: Show Discovery Lens` - Open the Discovery Lens panel
 - `Adaptive Tests: Scaffold Adaptive Test` - Generate a test for the current file
 - `Adaptive Tests: Run Discovery on Current File` - Analyze discovery for current file
@@ -131,6 +132,7 @@ All commands are available through the Command Palette (`Ctrl/Cmd+Shift+P`):
 - `Adaptive Tests: Start Onboarding` - Launch interactive onboarding tour
 
 ### AI Commands
+
 - `Adaptive Tests: Configure AI Provider` - Set up AI test generation
 - `Adaptive Tests: Test with Copilot` - Use GitHub Copilot for test generation
 - `Adaptive Tests: Test with OpenAI` - Use GPT-4 for test generation
@@ -141,6 +143,7 @@ All commands are available through the Command Palette (`Ctrl/Cmd+Shift+P`):
 Configure the extension through VS Code settings:
 
 ### Discovery Settings
+
 ```json
 {
   "adaptive-tests.discovery.showScores": true,              // Show discovery scores
@@ -152,6 +155,7 @@ Configure the extension through VS Code settings:
 ```
 
 ### Scaffolding Settings
+
 ```json
 {
   "adaptive-tests.scaffold.outputDirectory": "tests/adaptive",
@@ -163,6 +167,7 @@ Configure the extension through VS Code settings:
 ```
 
 ### UI Settings
+
 ```json
 {
   "adaptive-tests.ui.theme": "auto",                        // auto | light | dark | high-contrast
@@ -174,6 +179,7 @@ Configure the extension through VS Code settings:
 ```
 
 ### Telemetry Settings (Privacy-First)
+
 ```json
 {
   "adaptive-tests.telemetry.enabled": false,                // Opt-in only
@@ -183,6 +189,7 @@ Configure the extension through VS Code settings:
 ```
 
 ### Experimental Features
+
 ```json
 {
   "adaptive-tests.experimental.mcpServers": true,           // MCP server integration
@@ -296,6 +303,7 @@ This extension complements the CLI tools:
 ### Setting Up AI Providers
 
 #### GitHub Copilot (Recommended)
+
 ```json
 {
   "adaptive-tests.ai.provider": "copilot"
@@ -304,6 +312,7 @@ This extension complements the CLI tools:
 ```
 
 #### OpenAI
+
 ```json
 {
   "adaptive-tests.ai.provider": "openai",
@@ -313,6 +322,7 @@ This extension complements the CLI tools:
 ```
 
 #### Local Models with Ollama
+
 ```bash
 # Install Ollama
 brew install ollama
@@ -351,17 +361,20 @@ ollama pull codellama
 ## 🌍 Supported Languages
 
 ### Primary Support
+
 - **JavaScript** (ES6+, JSX)
 - **TypeScript** (5.0+, TSX)
 - **Python** (3.8+)
 
 ### Beta Support
+
 - **Java** (8+)
 - **PHP** (7.4+)
 - **Go** (1.18+)
 - **Rust** (2021 edition)
 
 ### Coming Soon
+
 - C# (.NET 6+)
 - Ruby (3.0+)
 - Swift (5.0+)
@@ -404,6 +417,7 @@ ollama pull codellama
 ## 🔒 Privacy & Security
 
 ### Privacy-First Design
+
 - **No Tracking by Default**: All telemetry is opt-in
 - **Anonymous IDs**: No personal information collected
 - **Local Processing**: Discovery runs entirely locally
@@ -411,6 +425,7 @@ ollama pull codellama
 - **Data Sovereignty**: Your code never leaves your machine (unless using cloud AI)
 
 ### Security Features
+
 - **Command Injection Protection**: All CLI inputs sanitized
 - **Content Security Policy**: Strict CSP for webviews
 - **Secure Storage**: Credentials encrypted with VS Code API
@@ -466,12 +481,14 @@ A: Yes! Create custom templates in `.adaptive-tests/templates/`.
 ## 🆘 Support
 
 ### Get Help
+
 - 📖 [Documentation](https://adaptive-tests.dev)
 - 💬 [Discord Community](https://discord.gg/adaptive-tests)
 - 🐛 [Report Issues](https://github.com/anon57396/adaptive-tests/issues)
 - 📧 [Email Support](mailto:support@adaptive-tests.dev)
 
 ### Stay Updated
+
 - 🐦 [Twitter](https://twitter.com/adaptivetests)
 - 📰 [Blog](https://blog.adaptive-tests.dev)
 - 🎥 [YouTube Tutorials](https://youtube.com/@adaptive-tests)
@@ -503,6 +520,7 @@ MIT - See [LICENSE](LICENSE) file for details
 ## 🙏 Acknowledgments
 
 Built with ❤️ by the Adaptive Tests team. Special thanks to:
+
 - The VS Code team for an amazing extensibility platform
 - Our open-source contributors
 - Early adopters who provided invaluable feedback

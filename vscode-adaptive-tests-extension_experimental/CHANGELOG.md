@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.1] - 2025-09-21
 
 ### Added
+
 - 🤖 **AI-Powered Test Generation**
   - GitHub Copilot native integration
   - OpenAI GPT-4 and GPT-3.5 support
@@ -57,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Type-safe configuration access
 
 ### Changed
+
 - ⚡ **Performance Optimizations**
   - Reduced activation time to < 200ms
   - Memory usage optimized to < 50MB
@@ -79,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Exhaustive error handling
 
 ### Fixed
+
 - Fixed memory leaks in WebView disposal
 - Fixed synchronous file operations blocking UI
 - Fixed dynamic require() security vulnerability
@@ -89,12 +92,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.1] - 2024-12-15
 
 ### Fixed
+
 - Fixed context menu items not appearing for certain file types
 - Fixed Discovery Lens panel not refreshing after file changes
 - Fixed batch scaffolding progress indicator
 - Fixed CodeLens disappearing after file save
 
 ### Changed
+
 - Improved discovery performance for large workspaces
 - Enhanced error messages for better debugging
 - Updated dependencies to latest versions
@@ -102,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2024-12-01
 
 ### Added
+
 - ✨ **Discovery Lens WebView Panel**
   - Visual discovery interface
   - Score-based ranking
@@ -136,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - PHP (beta)
 
 ### Configuration
+
 - `adaptive-tests.discovery.showScores`
 - `adaptive-tests.discovery.maxResults`
 - `adaptive-tests.scaffold.outputDirectory`
@@ -144,6 +151,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2024-11-15
 
 ### Added
+
 - Initial extension scaffolding
 - Basic command palette integration
 - Prototype Discovery Lens panel
@@ -153,18 +161,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Upcoming Features (Roadmap)
 
 ### [0.3.0] - Q1 2025
+
 - 🎮 Live Share collaborative testing
 - 🐳 Dev Containers support
 - 🌐 Remote development integration
 - 📱 VS Code for Web support
 
 ### [0.4.0] - Q2 2025
+
 - 🎯 Mutation testing integration
 - 📈 Advanced coverage visualization
 - 🔄 Continuous test generation
 - 🤝 Team collaboration features
 
 ### [1.0.0] - Q3 2025
+
 - 🏆 Production-ready release
 - 📚 Comprehensive documentation
 - 🌍 15+ language support
