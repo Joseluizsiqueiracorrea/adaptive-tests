@@ -40,6 +40,10 @@ class ErrorHandler {
   logError(error, context = {}) {
     if (!this.isDebugMode) return;
 
+    // Use consistent logger instead of console.error
+    const { getLogger } = require('./logger');
+    const logger = getLogger(this.component);
+    
     // eslint-disable-next-line no-unused-vars
     const timestamp = new Date().toISOString();
     const prefix = `[${this.component}]`;
@@ -47,12 +51,12 @@ class ErrorHandler {
       ` ${JSON.stringify(context)}` : '';
 
     if (error instanceof AdaptiveError) {
-      console.error(`${prefix} ${error.code}: ${error.message}${contextStr}`);
+      logger.error(`${prefix} ${error.code}: ${error.message}${contextStr}`);
       if (this.isDebugMode) {
-        console.error(`${prefix} Error details:`, error.toJSON());
+        logger.error(`${prefix} Error details:`, error.toJSON());
       }
     } else if (error instanceof Error) {
-      console.error(`${prefix} Error: ${error.message}${contextStr}`);
+      logger.error(`${prefix} Error: ${error.message}${contextStr}`);
       if (this.isDebugMode) {
         console.error(`${prefix} Stack trace:`, error.stack);
       }

@@ -39,6 +39,10 @@ const { getLogger } = require('./logger');
 // Cache for module requirements with size limit
 class LRUCache {
   constructor(maxSize) {
+    // Validate maxSize parameter
+    if (!Number.isInteger(maxSize) || maxSize <= 0) {
+      throw new Error('LRUCache maxSize must be a positive integer');
+    }
     this.maxSize = maxSize;
     this.cache = new Map();
   }

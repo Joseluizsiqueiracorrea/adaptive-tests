@@ -71,6 +71,12 @@ class FileSystemScanner {
     const fileOps = [];
 
     for (const entry of entries) {
+      // Prevent directory traversal attacks
+      if (entry.name.includes('..') || entry.name.startsWith('/')) {
+        this.logDebug('Skipping potentially malicious path', { name: entry.name });
+        continue;
+      }
+
       const fullPath = path.join(dir, entry.name);
 
       if (entry.isSymbolicLink()) {

@@ -7,7 +7,8 @@ try {
   const experimental = require('./experimental/pattern-learner');
   EdgeCaseNormalizer = experimental.EdgeCaseNormalizer;
 } catch (error) {
-  // Experimental features not available
+  // Experimental features not available - this is expected in most deployments
+  EdgeCaseNormalizer = null;
 }
 
 // AST cache to avoid re-parsing the same content
