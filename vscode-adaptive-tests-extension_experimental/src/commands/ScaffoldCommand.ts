@@ -47,7 +47,8 @@ export class ScaffoldCommand {
             }, async (progress) => {
                 progress.report({ increment: 0, message: 'Loading adaptive-tests API...' });
 
-                const { DiscoveryEngine, processSingleFile } = require('@adaptive-tests/javascript');
+                const adaptiveModule = await import('@adaptive-tests/javascript');
+                const { DiscoveryEngine, processSingleFile } = adaptiveModule as any;
                 const engine = new DiscoveryEngine(workspaceFolder.uri.fsPath);
                 const results = { created: [], skippedExisting: [], skippedNoExport: [], errors: [] };
                 const options = {

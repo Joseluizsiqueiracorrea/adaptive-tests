@@ -76,7 +76,8 @@ class ScaffoldCommand {
                 cancellable: false
             }, async (progress) => {
                 progress.report({ increment: 0, message: 'Loading adaptive-tests API...' });
-                const { DiscoveryEngine, processSingleFile } = require('@adaptive-tests/javascript');
+                const adaptiveModule = await Promise.resolve().then(() => __importStar(require('@adaptive-tests/javascript')));
+                const { DiscoveryEngine, processSingleFile } = adaptiveModule;
                 const engine = new DiscoveryEngine(workspaceFolder.uri.fsPath);
                 const results = { created: [], skippedExisting: [], skippedNoExport: [], errors: [] };
                 const options = {
