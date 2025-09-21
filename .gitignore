@@ -8,6 +8,7 @@ coverage-main/
 .idea/
 *.backup
 .coverage
+adaptive-tests.code-workspace
 
 # Python
 .venv/
