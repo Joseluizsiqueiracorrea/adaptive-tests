@@ -180,6 +180,7 @@
   },
   "dependencies": {
     "@adaptive-tests/javascript": "^0.3.0",
-    "fast-glob": "^3.3.3"
+    "fast-glob": "^3.3.3",
+    "reflect-metadata": "^0.2.0"
   }
 }
