@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Dates are omitted when historical records are unclear.
 
+## [0.3.0] - 2025-09-21
+
+- **npm Release**: Published `@adaptive-tests/javascript`, `@adaptive-tests/typescript`, and the umbrella `adaptive-tests` CLI at 0.3.0
+- **Docs**: Updated Quick Start instructions to reference the live packages and clarified publishing guidance
+- **Tooling**: Added `npm run publish:all` to publish all npm packages in the correct order with a single command
+
 ## [0.2.5] - 2025-09-19
 
 - **PyPI Update**: Published adaptive-tests-py 0.2.5 to match npm package version

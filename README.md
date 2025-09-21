@@ -65,9 +65,7 @@ Each language implementation is self-contained with examples, documentation, and
 ### 📦 JavaScript/Node.js
 
 ```bash
-# Note: Main adaptive-tests package is currently in development
-# Use the JavaScript implementation:
-npm install @adaptive-tests/javascript
+npm install adaptive-tests
 ```
 
 → **[Complete JavaScript Guide](./languages/javascript/README.md)**
@@ -95,9 +93,7 @@ pip install adaptive-tests-py
 ### 📘 TypeScript
 
 ```bash
-# Note: Packages are currently in development and not published to npm
-# For local development:
-npm install @adaptive-tests/javascript @adaptive-tests/typescript
+npm install adaptive-tests @adaptive-tests/typescript
 ```
 
 → **[Complete TypeScript Guide](./languages/typescript/README.md)**
@@ -549,12 +545,12 @@ the contrast immediately.
 
 ## Publishing
 
-Adaptive Tests is currently in development:
+Adaptive Tests 0.3.0 is now live across package managers:
 
-- npm: Packages not yet published (development versions available locally)
-- PyPI: `adaptive-tests-py` package status to be verified
+- npm: `adaptive-tests`, `@adaptive-tests/javascript`, `@adaptive-tests/typescript`
+- PyPI: `adaptive-tests-py` (0.2.5)
 
-When you are ready to publish a new release:
+When you are ready to publish the next release:
 
 1. Ensure `npm test` and `npm run validate` are green.
 2. Run `npm run build:plugins` so the Vite/Webpack packages ship with fresh `dist/` artifacts.
