@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const glob = require('glob');
 const debug = require('debug')('adaptive-tests:invisible');
 
 const PROJECT_ROOT = process.cwd();
@@ -17,9 +18,20 @@ const TELEMETRY_FILE = path.join(ADAPTIVE_DIR, 'invisible-telemetry.log');
 const TELEMETRY_ENABLED = Boolean(process.env.ADAPTIVE_TESTS_TELEMETRY);
 const RECOVERED_SIGNATURES = new Set();
 
+const DEFAULT_SEARCH_DIRS = ['src', 'lib', 'app'];
+const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.cjs', '.mjs'];
+const IGNORE_GLOBS = ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**', '**/tests/**', '**/__tests__/**'];
+
 // Feature flag - must be explicitly enabled
 let INVISIBLE_MODE_ENABLED = false;
 let ESCAPE_HATCH_PATTERNS = [];
+let INVISIBLE_OPTIONS = {
+  searchDirs: DEFAULT_SEARCH_DIRS,
+  extensions: DEFAULT_EXTENSIONS
+};
+const RESOLVED_CACHE = new Map();
+const FAILED_CACHE = new Set();
+let TS_NODE_REGISTERED = false;
 
 function ensureAdaptiveDir() {
   try {
@@ -68,8 +80,8 @@ function updateHistory(entry) {
   }
 }
 
-function logInvisibleSuccess(originalPath, suggestion, mode) {
-  const key = `${mode}:${suggestion}`;
+function logInvisibleSuccess(originalPath, suggestion) {
+  const key = suggestion;
   if (!RECOVERED_SIGNATURES.has(key)) {
     RECOVERED_SIGNATURES.add(key);
     console.info(
@@ -80,42 +92,10 @@ function logInvisibleSuccess(originalPath, suggestion, mode) {
   updateHistory({
     modulePath: originalPath,
     suggestion,
-    mode,
+    mode: 'fallback',
     timestamp: new Date().toISOString()
   });
-  recordTelemetry('fallback_success', { modulePath: originalPath, suggestion, mode });
-}
-
-function writeFallbackScaffold(modulePath, suggestion) {
-  try {
-    ensureAdaptiveDir();
-    const scaffoldDir = path.join(ADAPTIVE_DIR, 'scaffolds');
-    if (!fs.existsSync(scaffoldDir)) {
-      fs.mkdirSync(scaffoldDir, { recursive: true });
-    }
-
-    const scaffoldPath = path.join(scaffoldDir, `${suggestion}.js`);
-    if (!fs.existsSync(scaffoldPath)) {
-      const contents = `// Adaptive Tests fallback scaffold
-// Invisible mode could not resolve "${modulePath}" automatically.
-// Replace your import with the require statement below or run:
-//    npx adaptive-tests convert ${modulePath}
-
-const { discoverSync } = require('adaptive-tests/invisible');
-
-module.exports = () => discoverSync({
-  name: '${suggestion}',
-  type: '${inferType(modulePath)}'
-});
-`;
-      fs.writeFileSync(scaffoldPath, contents, 'utf8');
-    }
-
-    return scaffoldPath;
-  } catch (error) {
-    debug('⚠️ Failed to write fallback scaffold: %s', error.message);
-    return null;
-  }
+  recordTelemetry('fallback_success', { modulePath: originalPath, suggestion, mode: 'fallback' });
 }
 
 function handleDiscoveryFailure(originalPath, suggestion, error) {
@@ -125,20 +105,111 @@ function handleDiscoveryFailure(originalPath, suggestion, error) {
     message: error.message
   });
 
-  const scaffoldPath = writeFallbackScaffold(originalPath, suggestion);
-  if (scaffoldPath) {
-    const relative = path.relative(PROJECT_ROOT, scaffoldPath);
-    const normalized = relative.split(path.sep).join('/');
-    console.warn(
-      `⚠️ Adaptive Tests invisible mode could not resolve "${originalPath}". A helper scaffold was created at ${normalized}. ` +
-        `You can import it with "require('./${normalized}')()" or run "npx adaptive-tests convert" for a full migration. See ../../docs/getting-started-invisible.md.`
-    );
-  } else {
-    console.warn(
-      `⚠️ Adaptive Tests invisible mode could not resolve "${originalPath}" using inferred signature "${suggestion}". ` +
-        'Run "npx adaptive-tests convert" or see ../../docs/getting-started-invisible.md for guidance.'
+  if (FAILED_CACHE.has(`${originalPath}:${suggestion}`)) {
+    return;
+  }
+  FAILED_CACHE.add(`${originalPath}:${suggestion}`);
+
+  console.warn(
+    `⚠️ Adaptive Tests invisible mode could not resolve "${originalPath}" (searched for "${suggestion}"). ` +
+      'Run "npx adaptive-tests migrate" or update the import manually.'
+  );
+}
+
+function normaliseSearchDir(dir) {
+  if (!dir) {
+    return '';
+  }
+  return dir.replace(/\\/g, '/').replace(/^\.\//, '').replace(/\/$/, '');
+}
+
+function getSearchDirs(overrides = []) {
+  const dirs = overrides.length > 0 ? overrides : INVISIBLE_OPTIONS.searchDirs;
+  const resolved = dirs
+    .map(normaliseSearchDir)
+    .map((dir) => (dir ? path.join(PROJECT_ROOT, dir) : PROJECT_ROOT))
+    .filter((dirPath, index, arr) => arr.indexOf(dirPath) === index && fs.existsSync(dirPath));
+
+  if (resolved.length === 0) {
+    return [PROJECT_ROOT];
+  }
+  return resolved;
+}
+
+function ensureTypeScriptSupportForPath(filePath) {
+  if (TS_NODE_REGISTERED) {
+    return;
+  }
+  const ext = path.extname(filePath);
+  if (ext !== '.ts' && ext !== '.tsx') {
+    return;
+  }
+  try {
+    require('ts-node').register({
+      transpileOnly: true,
+      compilerOptions: {
+        module: 'commonjs',
+        target: 'es2020'
+      }
+    });
+    TS_NODE_REGISTERED = true;
+  } catch (error) {
+    throw new Error(
+      'TypeScript support requires ts-node.\n' +
+        'Install it with: npm install --save-dev ts-node'
     );
   }
+}
+
+function resolveFallbackModule(suggestion, modulePath, options = {}) {
+  const cacheKey = `${modulePath}:${suggestion}`;
+  if (RESOLVED_CACHE.has(cacheKey)) {
+    return RESOLVED_CACHE.get(cacheKey);
+  }
+  if (FAILED_CACHE.has(cacheKey)) {
+    return null;
+  }
+
+  const extensions = options.extensions || INVISIBLE_OPTIONS.extensions;
+  const searchDirs = getSearchDirs(options.searchDirs || []);
+  const matches = new Set();
+
+  const patterns = extensions.map((ext) => `${suggestion}${ext}`);
+  searchDirs.forEach((dir) => {
+    const relativeDir = normaliseSearchDir(path.relative(PROJECT_ROOT, dir));
+    patterns.forEach((pattern) => {
+      const globPattern = relativeDir ? `${relativeDir}/**/${pattern}` : `**/${pattern}`;
+      glob.sync(globPattern, {
+        cwd: PROJECT_ROOT,
+        ignore: IGNORE_GLOBS,
+        absolute: true,
+        nocase: true,
+        nodir: true
+      }).forEach((absPath) => matches.add(path.resolve(absPath)));
+    });
+  });
+
+  if (matches.size === 0) {
+    // Fallback to project-wide search if scoped search failed.
+    extensions.forEach((ext) => {
+      glob.sync(`**/${suggestion}${ext}`, {
+        cwd: PROJECT_ROOT,
+        ignore: IGNORE_GLOBS,
+        absolute: true,
+        nocase: true,
+        nodir: true
+      }).forEach((absPath) => matches.add(path.resolve(absPath)));
+    });
+  }
+
+  const [resolved] = Array.from(matches);
+  if (!resolved) {
+    return null;
+  }
+
+  ensureTypeScriptSupportForPath(resolved);
+  RESOLVED_CACHE.set(cacheKey, resolved);
+  return resolved;
 }
 
 /**
@@ -150,41 +221,34 @@ async function adaptiveRequire(modulePath, options = {}) {
     return require(modulePath);
   }
 
-  // Escape hatch: Skip adaptive for certain patterns
   if (ESCAPE_HATCH_PATTERNS.some(pattern => modulePath.includes(pattern))) {
     debug(`🚪 Escape hatch: ${modulePath}`);
     return require(modulePath);
   }
 
   try {
-    // First, try normal require
     return require(modulePath);
   } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND' && isRelativeImport(modulePath)) {
-      const suggestion = extractModuleName(modulePath);
-
-      debug(`📍 Module moved: ${modulePath} → trying ${suggestion}`);
-
-      console.warn(
-        `⚡ Adaptive Tests invisible mode: ${modulePath} not found, attempting discovery for "${suggestion}"`
-      );
-
-      const { discover } = require('./index');
-      try {
-        const result = await discover({
-          name: suggestion,
-          type: options.type || inferType(modulePath),
-          ...options
-        });
-
-        logInvisibleSuccess(modulePath, suggestion, 'async');
-        return result;
-      } catch (discoveryError) {
-        handleDiscoveryFailure(modulePath, suggestion, discoveryError);
-        throw error;
-      }
+    if (error.code !== 'MODULE_NOT_FOUND' || !isRelativeImport(modulePath)) {
+      throw error;
     }
-    throw error;
+
+    const suggestion = extractModuleName(modulePath);
+    debug(`📍 Module moved: ${modulePath} → searching for ${suggestion}`);
+    console.warn(`⚡ Adaptive Tests invisible mode: ${modulePath} not found, searching project for "${suggestion}"`);
+
+    try {
+      const resolvedPath = resolveFallbackModule(suggestion, modulePath, options);
+      if (!resolvedPath) {
+        throw Object.assign(new Error(`Unable to locate ${suggestion}`), { code: 'MODULE_NOT_FOUND' });
+      }
+      const exportValue = require(resolvedPath);
+      logInvisibleSuccess(modulePath, suggestion);
+      return exportValue;
+    } catch (fallbackError) {
+      handleDiscoveryFailure(modulePath, suggestion, fallbackError);
+      throw error;
+    }
   }
 }
 
@@ -216,26 +280,27 @@ function extractModuleName(modulePath) {
 /**
  * Type inference from file path
  */
-function inferType(modulePath) {
-  const filename = path.basename(modulePath).toLowerCase();
-
-  // Simple heuristics
-  if (filename.includes('service')) return 'class';
-  if (filename.includes('component')) return 'class';
-  if (filename.includes('controller')) return 'class';
-  if (filename.includes('util')) return 'function';
-
-  return 'auto'; // Let discovery engine decide
-}
-
 /**
  * Feature flags and configuration
  */
 function enableInvisibleMode(options = {}) {
   INVISIBLE_MODE_ENABLED = true;
   ESCAPE_HATCH_PATTERNS = options.escapePatterns || ['node_modules', '.mock', 'test-utils'];
+  if (Array.isArray(options.searchDirs) && options.searchDirs.length > 0) {
+    INVISIBLE_OPTIONS.searchDirs = options.searchDirs;
+  }
+  if (Array.isArray(options.extensions) && options.extensions.length > 0) {
+    INVISIBLE_OPTIONS.extensions = options.extensions.map((ext) => (ext.startsWith('.') ? ext : `.${ext}`));
+  }
 
-  debug('🎭 Invisible mode enabled', { escapePatterns: ESCAPE_HATCH_PATTERNS });
+  RESOLVED_CACHE.clear();
+  FAILED_CACHE.clear();
+
+  debug('🎭 Invisible mode enabled', {
+    escapePatterns: ESCAPE_HATCH_PATTERNS,
+    searchDirs: INVISIBLE_OPTIONS.searchDirs,
+    extensions: INVISIBLE_OPTIONS.extensions
+  });
 }
 
 function disableInvisibleMode() {
@@ -283,19 +348,17 @@ function patchRequireWithIsolation() {
 
         debug(`🔄 Intercepted broken import: ${id} → ${suggestion}`);
 
-        // Use sync wrapper for require compatibility
         try {
-          const { discoverSync } = require('./sync-wrapper');
-          const result = discoverSync({
-            name: suggestion,
-            type: inferType(id)
-          });
-
-          logInvisibleSuccess(id, suggestion, 'sync');
-          return result;
-        } catch (discoveryError) {
-          debug(`❌ Discovery failed for ${suggestion}:`, discoveryError.message);
-          handleDiscoveryFailure(id, suggestion, discoveryError);
+          const resolvedPath = resolveFallbackModule(suggestion, id);
+          if (!resolvedPath) {
+            throw Object.assign(new Error(`Unable to locate ${suggestion}`), { code: 'MODULE_NOT_FOUND' });
+          }
+          const exportValue = originalRequire.call(this, resolvedPath);
+          logInvisibleSuccess(id, suggestion);
+          return exportValue;
+        } catch (fallbackError) {
+          debug(`❌ Fallback failed for ${suggestion}:`, fallbackError.message);
+          handleDiscoveryFailure(id, suggestion, fallbackError);
           throw error; // Re-throw original error
         }
       }

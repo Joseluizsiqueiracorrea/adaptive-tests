@@ -150,7 +150,7 @@ Both Adaptive Tests and Vitest represent modern approaches to testing, but with 
 ```javascript
 // vitest.config.js
 import { defineConfig } from 'vitest/config';
-import adaptive from 'vite-plugin-adaptive';
+import adaptive from 'vite-plugin-adaptive'; // preview helper
 
 export default defineConfig({
   plugins: [adaptive()],
@@ -301,7 +301,7 @@ class UserServiceAdaptiveTest {
 | Your Stack | Recommended Approach | Integration Effort |
 |------------|---------------------|-------------------|
 | **React + Jest** | Add `@adaptive-tests/javascript`, use alongside Jest | 2 hours |
-| **Vue + Vitest** | Add `vite-plugin-adaptive`, gradual migration | 3 hours |
+| **Vue + Vitest** | Add `vite-plugin-adaptive` (preview), gradual migration | 3 hours |
 | **Angular + Karma** | Add adaptive tests in parallel, keep Karma | 4 hours |
 | **Express + Mocha** | Use adaptive discovery with Mocha runner | 2 hours |
 | **Django + Pytest** | Add `adaptive-tests-py`, use as fixtures | 3 hours |
@@ -375,7 +375,7 @@ Score yourself (1 point each):
 4. Gradually convert test by test
 
 ### From Vitest
-1. Install: `npm install vite-plugin-adaptive`
+1. Install: `npm install vite-plugin-adaptive` *(preview)*
 2. Add plugin to `vitest.config.js`
 3. Use discovery in new test files
 4. Leverage HMR for instant feedback

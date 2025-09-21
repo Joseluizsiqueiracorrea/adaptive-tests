@@ -79,12 +79,12 @@ module.exports = {
 
 ## Vite Plugin Integration
 
-The template includes `vite-plugin-adaptive` for build-time optimization:
+The template includes `vite-plugin-adaptive` (preview) for build-time hooks:
 
 ```typescript
 // vite.config.ts
 import { defineConfig } from 'vite'
-import adaptive from 'vite-plugin-adaptive'
+import adaptive from 'vite-plugin-adaptive' // preview helper
 
 export default defineConfig({
   plugins: [

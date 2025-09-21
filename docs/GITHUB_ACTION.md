@@ -1,10 +1,8 @@
 # GitHub Action for Adaptive Tests
 
-> ⚠️ **Note:** The official GitHub Action is currently in development. Please use the manual setup instructions below for now.
+> ℹ️ **Status:** The GitHub Action ships as a lightweight composite action. It installs the npm package and runs the same commands you use locally. Use the manual setup if you need tighter control over the workflow.
 
 [![Action Status](https://github.com/anon57396/adaptive-tests/workflows/CI/badge.svg)](https://github.com/anon57396/adaptive-tests/actions)
-
-While we develop the official GitHub Action, you can easily run adaptive tests in CI using the manual Node.js setup shown below.
 
 ## Quick Start
 

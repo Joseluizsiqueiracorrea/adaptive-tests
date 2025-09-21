@@ -51,7 +51,7 @@ npx adaptive-tests enable-invisible --undo
 
 ## What Just Happened?
 
-Invisible mode patches your test runner to automatically discover moved/renamed modules when `require()` fails.
+Invisible mode patches your test runner to scan your project for matching filenames when `require()` fails.
 
 **Before:**
 
@@ -65,7 +65,7 @@ const UserService = require('./services/UserService'); // ❌ Breaks when you mo
 const UserService = require('./services/UserService'); // ✅ Auto-discovers if moved
 ```
 
-No code changes. No learning curve. Just resilient tests.
+No code changes. No learning curve. Just resilient tests – with a best-effort heuristic search under the hood.
 
 ## Framework Support
 

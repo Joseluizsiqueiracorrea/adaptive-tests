@@ -33,14 +33,14 @@ All notable changes to this project are documented here. Dates are omitted when 
   - Batch discovery with `discoverAll()` for multiple modules
   - Full TypeScript support with type definitions
 
-- **NEW: Vite Plugin** - Created `vite-plugin-adaptive` for build-time optimization
+- **NEW: Vite Plugin (preview)** - Created `vite-plugin-adaptive` for build-time hooks
   - HMR integration for instant test updates
   - Build-time discovery extraction and caching
   - Bundle size analysis for discovered modules
   - Development server API endpoint for discovery
   - Discovery manifest generation for CI/CD
 
-- **NEW: Webpack Plugin** - Created `webpack-plugin-adaptive` for Webpack integration
+- **NEW: Webpack Plugin (preview)** - Created `webpack-plugin-adaptive` for Webpack integration
   - Automatic loader configuration for adaptive test files
   - Build-time discovery optimization
   - Smart caching with watch mode support

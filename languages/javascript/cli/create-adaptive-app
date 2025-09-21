@@ -2,7 +2,11 @@
 
 /**
  * Create Adaptive App
- * Scaffolds a new project with adaptive testing pre-configured
+ *
+ * Scaffolds a new project with adaptive testing pre-configured. Templates are
+ * small starter projects that demonstrate adaptive discovery side-by-side with
+ * traditional tests. If a requested template is missing from the repository we
+ * fall back to a simple JavaScript harness so the command still succeeds.
  */
 
 const fs = require('fs');
@@ -10,20 +14,15 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const readline = require('readline');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
 const templates = {
-  'express-js': 'Express.js API with JavaScript',
-  'nextjs': 'Next.js with React',
-  'cra': 'Create React App',
+  'express-js': 'Express.js API (JavaScript)',
+  nextjs: 'Next.js + React',
+  cra: 'Create React App',
   'vite-react': 'Vite + React',
-  'vite-react-ts': 'Vite + React + TypeScript',
-  'flask-python': 'Flask API with Python',
-  'spring-boot-java': 'Spring Boot with Java',
-  'node-ts': 'Node.js with TypeScript'
+  'vite-react-ts': 'Vite + React (TypeScript)',
+  'flask-python': 'Flask API (Python)',
+  'spring-boot-java': 'Spring Boot (Java)',
+  'node-ts': 'Node.js (TypeScript)'
 };
 
 const colors = {
@@ -35,44 +34,116 @@ const colors = {
   red: '\x1b[31m'
 };
 
+const ALLOWED_COMMANDS = new Set(['npm']);
+const TEMPLATE_ROOT = path.join(__dirname, '..', 'templates');
+
 function log(message, color = 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
-function copyRecursiveSync(src, dest) {
-  const exists = fs.existsSync(src);
-  const stats = exists && fs.statSync(src);
-  const isDirectory = exists && stats.isDirectory();
+function createPrompter() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
-  if (isDirectory) {
-    if (!fs.existsSync(dest)) {
-      fs.mkdirSync(dest, { recursive: true });
+  return {
+    ask(question, defaultValue = '') {
+      const hint = defaultValue ? ` [${defaultValue}]` : '';
+      return new Promise((resolve) => {
+        rl.question(`${colors.cyan}?${colors.reset} ${question}${hint}: `, (answer) => {
+          const response = (answer || '').trim();
+          resolve(response || defaultValue);
+        });
+      });
+    },
+    close() {
+      rl.close();
     }
-    fs.readdirSync(src).forEach(childItemName => {
-      copyRecursiveSync(
-        path.join(src, childItemName),
-        path.join(dest, childItemName)
-      );
+  };
+}
+
+function ensureDirectory(targetPath) {
+  fs.mkdirSync(targetPath, { recursive: true });
+}
+
+function copyRecursive(source, destination) {
+  const stats = fs.existsSync(source) ? fs.statSync(source) : null;
+  if (!stats) {
+    return;
+  }
+
+  if (stats.isDirectory()) {
+    ensureDirectory(destination);
+    fs.readdirSync(source).forEach((entry) => {
+      copyRecursive(path.join(source, entry), path.join(destination, entry));
     });
-  } else {
-    fs.copyFileSync(src, dest);
+    return;
+  }
+
+  ensureDirectory(path.dirname(destination));
+  fs.copyFileSync(source, destination);
+}
+
+function createBasicTemplate(destination, projectName) {
+  ensureDirectory(destination);
+
+  const pkgJson = {
+    name: projectName,
+    private: true,
+    version: '0.1.0',
+    scripts: {
+      test: 'npm run test:traditional && npm run test:adaptive',
+      'test:traditional': 'jest tests/traditional',
+      'test:adaptive': 'jest tests/adaptive'
+    },
+    devDependencies: {
+      jest: '^29.7.0'
+    }
+  };
+
+  const service = `class ExampleService {
+  add(a, b) {
+    return a + b;
   }
 }
 
-function question(prompt) {
-  return new Promise(resolve => {
-    rl.question(prompt, resolve);
+module.exports = ExampleService;
+`;
+
+  const adaptiveTest = `const { discover } = require('adaptive-tests');
+
+describe('ExampleService (adaptive)', () => {
+  it('adds numbers without brittle imports', async () => {
+    const ExampleService = await discover({ name: 'ExampleService', type: 'class', methods: ['add'] });
+    const service = new ExampleService();
+    expect(service.add(2, 3)).toBe(5);
   });
+});
+`;
+
+  const traditionalTest = `const ExampleService = require('../../src/ExampleService');
+
+describe('ExampleService (traditional)', () => {
+  it('adds numbers', () => {
+    const service = new ExampleService();
+    expect(service.add(2, 3)).toBe(5);
+  });
+});
+`;
+
+  fs.writeFileSync(path.join(destination, 'package.json'), `${JSON.stringify(pkgJson, null, 2)}\n`);
+  ensureDirectory(path.join(destination, 'src'));
+  fs.writeFileSync(path.join(destination, 'src', 'ExampleService.js'), service);
+  ensureDirectory(path.join(destination, 'tests', 'adaptive'));
+  ensureDirectory(path.join(destination, 'tests', 'traditional'));
+  fs.writeFileSync(path.join(destination, 'tests', 'adaptive', 'ExampleService.test.js'), adaptiveTest);
+  fs.writeFileSync(path.join(destination, 'tests', 'traditional', 'ExampleService.test.js'), traditionalTest);
 }
 
-const ALLOWED_COMMANDS = new Set(['npm']);
-
-function runCommand(command, args = [], options = {}) {
+function runCommand(command, args, options = {}) {
   if (!ALLOWED_COMMANDS.has(command)) {
     throw new Error(`Command ${command} is not permitted.`);
   }
 
-  const result = spawnSync(command, args, { shell: false, stdio: 'inherit', ...options });
+  const result = spawnSync(command, args, { stdio: 'inherit', shell: false, ...options });
   if (result.error) {
     throw result.error;
   }
@@ -81,75 +152,112 @@ function runCommand(command, args = [], options = {}) {
   }
 }
 
-async function main() {
-  log('🚀 Create Adaptive App', 'bright');
-  log('Set up a new project with adaptive testing\n', 'cyan');
+function resolveTemplatePath(templateKey) {
+  return path.join(TEMPLATE_ROOT, templateKey);
+}
 
-  // Get project name
-  const projectName = process.argv[2] || await question('Project name: ');
-
-  if (!projectName) {
-    log('❌ Project name is required', 'red');
-    process.exit(1);
+function copyTemplateOrFallback(templateKey, projectPath, projectName) {
+  const templatePath = resolveTemplatePath(templateKey);
+  if (fs.existsSync(templatePath)) {
+    copyRecursive(templatePath, projectPath);
+    return 'template';
   }
 
-  // Check if directory exists
-  const projectPath = path.join(process.cwd(), projectName);
-  if (fs.existsSync(projectPath)) {
-    log(`❌ Directory ${projectName} already exists`, 'red');
-    process.exit(1);
+  createBasicTemplate(projectPath, projectName);
+  return 'fallback';
+}
+
+function updatePackageName(projectPath, projectName) {
+  const packageJsonPath = path.join(projectPath, 'package.json');
+  if (!fs.existsSync(packageJsonPath)) {
+    return;
   }
 
-  // Select template
+  const data = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  data.name = projectName;
+  fs.writeFileSync(packageJsonPath, `${JSON.stringify(data, null, 2)}\n`);
+}
+
+async function promptForTemplate(prompter) {
   log('\nAvailable templates:', 'cyan');
-  Object.entries(templates).forEach(([key, desc], index) => {
-    log(`  ${index + 1}. ${key} - ${desc}`);
+  Object.entries(templates).forEach(([key, description], index) => {
+    log(`  ${index + 1}. ${key} - ${description}`);
   });
 
-  const templateChoice = await question('\nSelect template (number or name): ');
-
-  let selectedTemplate;
-  const templateKeys = Object.keys(templates);
-
-  if (/^\d+$/.test(templateChoice)) {
-    const index = parseInt(templateChoice) - 1;
-    selectedTemplate = templateKeys[index];
-  } else {
-    selectedTemplate = templateChoice;
+  const answer = await prompter.ask('\nSelect template (number or name)', '1');
+  const keys = Object.keys(templates);
+  if (/^\d+$/.test(answer)) {
+    const idx = parseInt(answer, 10) - 1;
+    if (idx >= 0 && idx < keys.length) {
+      return keys[idx];
+    }
+    return null;
   }
 
-  if (!templates[selectedTemplate]) {
-    log('❌ Invalid template selection', 'red');
-    process.exit(1);
-  }
+  return templates[answer] ? answer : null;
+}
 
-  log(`\n📦 Creating ${projectName} with ${templates[selectedTemplate]}...`, 'green');
-
-  // Create project directory
-  fs.mkdirSync(projectPath, { recursive: true });
-
-  // Copy template files
-  const templatePath = path.join(__dirname, '..', 'languages', 'javascript', 'templates', selectedTemplate);
-
-  if (!fs.existsSync(templatePath)) {
-    // Create basic template structure if doesn't exist
-    createBasicTemplate(projectPath, selectedTemplate);
-  } else {
-    copyRecursiveSync(templatePath, projectPath);
-  }
-
-  // Update package.json with project name
-  const packageJsonPath = path.join(projectPath, 'package.json');
-  if (fs.existsSync(packageJsonPath)) {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    packageJson.name = projectName;
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-  }
-
-  log('\n📦 Installing dependencies...', 'cyan');
+async function main(argv = process.argv) {
+  const [, , rawProjectName] = argv;
+  const prompter = createPrompter();
 
   try {
-    runCommand('npm', ['install'], { cwd: projectPath });
-  } catch (error) {
-    log(`⚠️  Failed to install dependencies automatically (${error.message})`, 'yellow');
-    log('   Please run 
+    let projectName = rawProjectName;
+    if (!projectName) {
+      projectName = await prompter.ask('Project name');
+    }
+
+    if (!projectName) {
+      throw new Error('Project name is required.');
+    }
+
+    const projectPath = path.resolve(process.cwd(), projectName);
+    if (fs.existsSync(projectPath)) {
+      throw new Error(`Directory ${projectName} already exists.`);
+    }
+
+    let templateKey = await promptForTemplate(prompter);
+    if (!templateKey) {
+      throw new Error('Invalid template selection.');
+    }
+
+    prompter.close();
+
+    log(`\n📦 Creating ${projectName} with ${templates[templateKey]}...`, 'green');
+    ensureDirectory(projectPath);
+    const strategy = copyTemplateOrFallback(templateKey, projectPath, projectName);
+    updatePackageName(projectPath, projectName);
+
+    if (strategy === 'fallback') {
+      log('⚠️ Template not found – generated a minimal JavaScript example instead.', 'yellow');
+    }
+
+    log('\n📦 Installing dependencies...', 'cyan');
+    try {
+      runCommand('npm', ['install'], { cwd: projectPath });
+    } catch (error) {
+      log(`⚠️  Failed to install dependencies automatically (${error.message}).`, 'yellow');
+      log('   Please run "npm install" inside the project directory.', 'yellow');
+    }
+
+    log('\n✅ Adaptive app ready!');
+    log(`   cd ${projectName}`, 'dim');
+    log('   npm run test', 'dim');
+  } finally {
+    // Ensure prompt interface is closed on any early exit.
+    try {
+      prompter.close();
+    } catch (_) {
+      /* noop */
+    }
+  }
+}
+
+if (require.main === module) {
+  main(process.argv).catch((error) => {
+    log(`❌ ${error.message}`, 'red');
+    process.exit(1);
+  });
+}
+
+module.exports = { main };

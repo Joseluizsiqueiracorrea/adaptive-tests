@@ -2,5 +2,5 @@
   "name": "vite-plugin-adaptive",
   "version": "0.3.0",
   "main": "index.js",
-  "description": "Temporary shim - see languages/javascript/plugins/vite-plugin-adaptive"
+  "description": "Preview Vite plugin that wires adaptive-tests discovery into Vite projects"
 }

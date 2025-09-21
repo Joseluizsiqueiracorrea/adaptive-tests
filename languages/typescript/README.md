@@ -24,13 +24,11 @@ describe('UserService', () => {
   let UserService: any;
 
   beforeAll(async () => {
-    // TypeScript-aware discovery
     const engine = getTypeScriptDiscoveryEngine('./src');
     UserService = await engine.discoverTarget({
       name: 'UserService',
       type: 'class',
-      methods: ['findById', 'create'],
-      interfaces: ['IUserService']  // TypeScript-specific
+      methods: ['findById', 'create']
     });
   });
 
@@ -42,61 +40,16 @@ describe('UserService', () => {
 });
 ```
 
-### Interface Discovery (planned)
-Type-aware interface discovery helpers are planned. For now, use getTypeScriptDiscoveryEngine with a signature that matches your interface’s concrete implementations.
-
-### Generic Type Discovery (planned)
-Generic matching helpers are planned. Today, rely on names/methods properties in the signature and TypeScript path alias resolution.
-
 ---
 
 ## TypeScript-Specific Features
 
-### Type-Aware Discovery
+- Understands `.ts` and `.tsx` files without pre-compiling them.
+- Respects your `tsconfig.json` path aliases via `tsconfig-paths`.
+- Shares all of the JavaScript discovery features (name/type/method matching, path scoring, caching).
+- Works side-by-side with `ts-node` when you want to run TypeScript sources directly.
 
-The TypeScript engine understands:
-
-- **Interfaces**: `interface IUserService { ... }`
-- **Abstract classes**: `abstract class BaseService { ... }`
-- **Generic types**: `class Repository<T> { ... }`
-- **Decorators**: `@Injectable() class UserService { ... }`
-- **Enums**: `enum UserRole { Admin, User }`
-- **Type aliases**: `type UserId = string;`
-
-### Advanced Signatures
-
-```typescript
-// Interface discovery
-await discover({
-  name: 'IUserService',
-  type: 'interface',
-  methods: ['findById', 'create'],
-  properties: ['cache']
-});
-
-// Abstract class discovery
-await discover({
-  name: 'BaseController',
-  type: 'abstract',
-  methods: ['authorize', 'validate']
-});
-
-// Decorator-based discovery
-await discover({
-  name: 'UserController',
-  type: 'class',
-  decorators: ['@Controller', '@Injectable'],
-  methods: ['getUser', 'createUser']
-});
-
-// Generic class discovery
-await discover({
-  name: 'Repository',
-  type: 'class',
-  generics: ['T'],
-  methods: ['find', 'save', 'delete']
-});
-```
+> ℹ️ Interface decorators, generic matching, and deeper type-checking are on the roadmap. Today the engine relies on structural hints (name/methods/properties) just like the JavaScript implementation.
 
 ### TypeScript Configuration
 

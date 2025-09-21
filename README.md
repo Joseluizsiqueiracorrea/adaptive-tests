@@ -108,7 +108,7 @@ npm install @adaptive-tests/javascript @adaptive-tests/typescript
 
 Run adaptive tests in CI using the official GitHub Action, or use a simple Node.js job if your org restricts Marketplace actions.
 
-### Option A: Official Action
+### Option A: Official Action (preview)
 
 ```yaml
 - uses: anon57396/adaptive-tests@main
@@ -117,7 +117,7 @@ Run adaptive tests in CI using the official GitHub Action, or use a simple Node.
     coverage: true
 ```
 
-See [action.yml](action.yml) for all available options.
+The composite action installs the npm package and runs the same commands documented below. See [action.yml](action.yml) for all available options.
 
 The action typically:
 
@@ -199,7 +199,7 @@ The extension is currently in development and not yet available on the VS Code M
 npx adaptive-tests enable-invisible
 ```
 
-This patches your test runner to automatically find moved files instead of breaking. Works with Jest, Vitest, and Mocha.
+This patches your test runner to search for matching filenames when an import fails so the tests keep running. Works with Jest, Vitest, and Mocha.
 
 **Before:**
 
@@ -218,9 +218,9 @@ npm test  # ✅ Tests pass again
 
 ---
 
-### Option 1: Zero-Config with jest-adaptive
+### Option 1: Zero-Config with jest-adaptive (preview)
 
-**Note:** jest-adaptive is currently under development and not yet published to npm. For now, use the standard discovery approach shown in Option 2.
+The `jest-adaptive` package ships a thin preset that wires up invisible mode for you. For fuller control use Option 2.
 
 Add to your `jest.config.js`:
 
@@ -230,7 +230,7 @@ module.exports = {
 };
 ```
 
-Now `discover()` and `adaptiveTest()` are available as globals in all tests!
+Now `discover()` and `adaptiveTest()` are available as globals in all tests! (The preset currently injects the invisible-mode setup and will grow alongside the CLI.)
 
 Once installed, discover code directly from a test:
 
