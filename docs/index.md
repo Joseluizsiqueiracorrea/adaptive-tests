@@ -1,225 +1,193 @@
 ---
 layout: default
-title: Adaptive Tests Documentation
+title: Adaptive Tests - Tests That Never Break
 ---
 
-> Stop fixing import errors. Start shipping features. Tests that find your code automatically, no matter where you move it.
+<div align="center">
 
-## 🚀 See It Work in 30 Seconds
+# Your Tests Break When You Move Files.
+## **Ours Don't.**
 
-```bash
-# 1. Install adaptive-tests
-npm install --save-dev adaptive-tests
+<br>
 
-# 2. Try our interactive demo
-npx adaptive-tests demo
+### 🎯 Move `UserService.js` anywhere. Tests still pass.
+### 🚀 Refactor your entire codebase. Tests still pass.
+### ✨ Let AI reorganize everything. Tests still pass.
 
-# 3. Or jump straight into your code
-```
+<br>
 
 ```javascript
-// Before: Breaks when you move UserService.js
+// This breaks when you move files ❌
 import { UserService } from '../../../services/UserService';
 
-// After: Works regardless of file location
-const { discover } = require('adaptive-tests');
-const UserService = await discover({
-  name: 'UserService',
-  type: 'class'
-});
-
-// Your tests stay exactly the same
-test('creates users', async () => {
-  const service = new UserService();
-  const user = await service.create({ name: 'Ada' });
-  expect(user.id).toBeDefined();
-});
+// This works no matter where files live ✅
+const UserService = await discover('UserService');
 ```
 
-## 📖 Documentation
+<br>
 
-### Getting Started
+**[Get Started in 2 Minutes →](#quick-start)** | **[See Live Demo](https://github.com/anon57396/adaptive-tests#demo)** | **[Why It Works](#how-it-works)**
 
-- **[Why Adaptive Tests?](WHY_ADAPTIVE_TESTS.md)** - The business case with ROI
-- **[Framework Comparison](COMPARISON.md)** - vs Jest, Mocha, Pytest, JUnit
-- [How It Works](HOW_IT_WORKS.md) - Technical deep dive
-- [Migration Guide](MIGRATION_GUIDE.md) - Migrate existing tests
-- [Best Practices](BEST_PRACTICES.md) - Patterns and tips
+</div>
 
-### Framework Guides
+---
 
-- [React Quick Start](../languages/javascript/docs/REACT_QUICKSTART.md)
-- [Vue.js Quick Start](../languages/javascript/docs/VUE_QUICKSTART.md)
-- [Express Quick Start](../languages/javascript/docs/EXPRESS_QUICKSTART.md)
-- [Java Quick Start](../languages/java/README.md)
-- [PHP Quick Start](../languages/php/README.md)
+## The Problem We Solve
 
-### Reference
+Every developer knows this pain:
 
-- [API Reference](API_REFERENCE.md) - Complete API docs
-- **[Error Messages Guide](ERROR_MESSAGES.md)** - Detailed error explanations
-- [CI/CD Strategy](CI_STRATEGY.md) - Integration strategies
-- [Troubleshooting](TROUBLESHOOTING.md) - Problem solving
-- [Common Issues](COMMON_ISSUES.md) - Known issues
+1. **You refactor** → Move files to better locations
+2. **Tests explode** → `Cannot find module '../old/path'`
+3. **You waste hours** → Fixing imports instead of shipping features
 
-### GitHub Integration
+**We eliminated this problem entirely.**
 
-- [GitHub Action](GITHUB_ACTION.md)
-- [Automated Publishing](AUTOMATED_PUBLISHING.md)
+---
 
-## 🎯 Why Adaptive Tests?
+## Quick Start
 
-**Stop wasting hours fixing broken imports after every refactor.** When you reorganize code, traditional tests fail with import errors - even though your code still works. We eliminate this entirely.
+Pick your language and start in literally 2 minutes:
 
-### The Problem: Tests Break When You Move Files
+### JavaScript / TypeScript
+```bash
+npm install @adaptive-tests/javascript
+npx adaptive-tests init
+```
 
-Traditional test suites bind themselves to _where_ code lives: `import { Calculator } from '../src/utils/Calculator'`. That relative path is the fragile link. As soon as the file relocates, the test runner cannot resolve the import, the suite aborts, and you get a wall of red before any assertions execute.
+### Python
+```bash
+pip install adaptive-tests-py
+adaptive-tests init
+```
 
-We wanted this landing page to make that failure mode painfully obvious, so here’s the full sequence.
+### Java
+```xml
+<dependency>
+    <groupId>io.adaptivetests</groupId>
+    <artifactId>adaptive-tests-java</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
 
-#### Before a refactor – everything is green
+---
 
+## How It Works
+
+Traditional tests use **file paths** to find code:
 ```javascript
-// File location: src/utils/Calculator.js
-export class Calculator {
-  add(a, b) { return a + b; }
-  subtract(a, b) { return a - b; }
-}
-
-// tests/Calculator.test.js
-import { Calculator } from '../src/utils/Calculator';
-
-test('adds numbers correctly', () => {
-  const calc = new Calculator();
-  expect(calc.add(2, 3)).toBe(5);  // ✅ Passes
-});
+import { Calculator } from '../utils/Calculator'; // Breaks when moved
 ```
 
-#### After moving the file – the code still works, but the test import does not
-
+Adaptive tests use **code structure** to find code:
 ```javascript
-// Moved to: src/math/calc/Calculator.js (same code, new location)
-export class Calculator {
-  add(a, b) { return a + b; }
-  subtract(a, b) { return a - b; }
-}
-
-// Test is still hard-coded to the old path
-import { Calculator } from '../src/utils/Calculator';
-```
-
-Running the suite now fails _before_ your assertions execute:
-
-```text
-$ npm test
- FAIL  tests/Calculator.test.js
-  ● Test suite failed to run
-
-    Cannot find module '../src/utils/Calculator' from 'tests/Calculator.test.js'
-
-    Require stack:
-      tests/Calculator.test.js
-```
-
-That one refactor just bought you an hour of tedious search-and-replace across dozens of test files. The code is fine; the imports are not.
-
-### The Solution: Tests That Find Your Code
-
-Adaptive tests discover your code by what it IS, not WHERE it is:
-
-```javascript
-// This ALWAYS works, no matter where Calculator.js moves
 const Calculator = await discover({
   name: 'Calculator',
   type: 'class',
   methods: ['add', 'subtract']
-});
+}); // Works anywhere
+```
 
-test('adds numbers correctly', () => {
-  const calc = new Calculator();
-  expect(calc.add(2, 3)).toBe(5);  // ✅ Still passes after moving file
+We analyze your code's AST (Abstract Syntax Tree) to find what you're looking for based on its structure, not its location.
+
+---
+
+## Real Examples
+
+### Before (Fragile)
+```javascript
+// Break every time you reorganize
+import { UserService } from '../../../backend/services/users/UserService';
+import { AuthService } from '../../../backend/auth/AuthService';
+import { Database } from '../../../infrastructure/db/Database';
+
+describe('User management', () => {
+  // If any file moves, tests fail before even running
 });
 ```
 
-Move `Calculator.js` anywhere - `/src/math/`, `/lib/utilities/`, `/shared/helpers/` - your tests keep passing. No manual updates needed.
+### After (Bulletproof)
+```javascript
+const { discover } = require('@adaptive-tests/javascript');
 
-### Real Example: A Simple Refactor Gone Wrong
+// Find by what they ARE, not where they live
+const UserService = await discover({ name: 'UserService', type: 'class' });
+const AuthService = await discover({ name: 'AuthService', type: 'class' });
+const Database = await discover({ name: 'Database', type: 'class' });
 
-Imagine you're cleaning up your project structure. You have 20 test files testing various services. You decide to organize better:
+describe('User management', () => {
+  // Move files anywhere. Tests keep working.
+});
+```
+
+---
+
+## Who Uses This?
+
+Perfect for teams that:
+
+- 🤖 **Use AI agents** - Let Copilot/Cursor reorganize without breaking tests
+- 🏗️ **Refactor frequently** - Clean up tech debt without test maintenance
+- 📦 **Have large codebases** - Find code in massive projects instantly
+- 🚀 **Ship fast** - Stop wasting time on broken imports
+
+---
+
+## Framework Support
+
+Works with your existing test framework:
+
+| Framework | Support | Package |
+|-----------|---------|---------|
+| **Jest** | ✅ Full | `@adaptive-tests/javascript` |
+| **Mocha** | ✅ Full | `@adaptive-tests/javascript` |
+| **Vitest** | ✅ Full | `@adaptive-tests/javascript` |
+| **Pytest** | ✅ Full | `adaptive-tests-py` |
+| **JUnit** | ✅ Full | `adaptive-tests-java` |
+| **TypeScript** | ✅ Full | `@adaptive-tests/typescript` |
+
+---
+
+## Documentation
+
+### Essentials
+- [Why Adaptive Tests?](WHY_ADAPTIVE_TESTS.md) - Deep dive into the problem & solution
+- [Migration Guide](MIGRATION_GUIDE.md) - Convert existing tests
+- [Best Practices](BEST_PRACTICES.md) - Patterns for success
+
+### Language Guides
+- [JavaScript Guide](../languages/javascript/README.md)
+- [TypeScript Guide](../languages/typescript/README.md)
+- [Python Guide](../languages/python/README.md)
+- [Java Guide](../languages/java/README.md)
+
+### Framework Quickstarts
+- [React](../languages/javascript/docs/REACT_QUICKSTART.md)
+- [Vue.js](../languages/javascript/docs/VUE_QUICKSTART.md)
+- [Express](../languages/javascript/docs/EXPRESS_QUICKSTART.md)
+
+### Advanced
+- [How It Works](HOW_IT_WORKS.md) - Technical architecture
+- [API Reference](API_REFERENCE.md) - Complete API docs
+- [CI/CD Integration](CI_STRATEGY.md) - GitHub Actions & more
+
+---
+
+## Get Started Now
 
 ```bash
-# Moving files to a cleaner structure
-mv src/UserService.js src/services/user/UserService.js
-mv src/AuthService.js src/services/auth/AuthService.js
-mv src/PaymentService.js src/services/payment/PaymentService.js
-# ... and 17 more files
+# Try it in under 2 minutes
+npm install @adaptive-tests/javascript
+npx adaptive-tests init
 ```
 
-**Traditional Tests**: Now you have 60+ import statements to fix across 20 test files. Your IDE might catch some, but not all. You'll spend the next hour:
+**[GitHub Repository](https://github.com/anon57396/adaptive-tests)** | **[NPM Package](https://www.npmjs.com/package/@adaptive-tests/javascript)** | **[Report Issues](https://github.com/anon57396/adaptive-tests/issues)**
 
-1. Running tests to see what broke
-2. Fixing import paths one by one
-3. Re-running to find the ones you missed
-4. Dealing with merge conflicts when your team moved files too
+---
 
-**Adaptive Tests**: Everything still works. Zero changes needed. You just saved an hour.
+<div align="center">
 
-### For Skeptics: Common Questions
+### Stop fixing imports. Start shipping features.
 
-**"My IDE updates imports automatically"**
+**Built with ❤️ for developers who refactor fearlessly**
 
-- IDEs often miss test files, especially with complex relative paths
-- When CI/CD runs, there's no IDE to help
-- AI agents refactoring at scale don't have IDE support
-
-**"This seems like over-engineering"**
-
-- It's actually simplification: your tests become simpler and more maintainable
-- The discovery happens once at test startup, then uses cache
-- Performance impact: <10ms after initial scan
-
-**"What about multiple files with the same name?"**
-
-- Add specificity: `discover({ name: 'Calculator', methods: ['add'] })`
-- Or use path hints: `discover({ name: 'Calculator', pathIncludes: 'billing' })`
-- The engine scores and ranks matches - you get the best one
-
-**[→ Read the full engineering case with ROI calculations](WHY_ADAPTIVE_TESTS.md)****
-
-## ✨ Features
-
-- **🔍 Smart Discovery** - Finds classes, functions, and modules by structure
-- **🚀 Zero Configuration** - Works out of the box with Jest
-- **🌍 Multi-language** - Core JS/TS; others beta/experimental
-- **⚡ Fast** - AST-based parsing with intelligent caching
-- **🛠️ VS Code Extension** - Visual discovery tools and scaffolding
-- **🔄 CI/CD Ready** - GitHub Actions integration
-
-## 💬 Community
-
-- [GitHub Discussions](https://github.com/anon57396/adaptive-tests/discussions) - Ask questions, share ideas
-- [Issue Tracker](https://github.com/anon57396/adaptive-tests/issues) - Report bugs, request features
-- [Examples](https://github.com/anon57396/adaptive-tests/tree/main/languages/javascript/examples) - See it in action
-
-## 📊 Language Support
-
-| Language | AST Parser | Status |
-|----------|------------|--------|
-| JavaScript | Babel | ✅ Stable |
-| TypeScript | TypeScript Compiler | ✅ Stable |
-| Python | Native ast module | 🟡 Beta |
-| Java | JavaParser | 🟡 Beta |
-| PHP | token_get_all / nikic/php-parser | 🟡 Beta |
-| Ruby | Ripper | 🧪 Experimental |
-| Go | go/parser (via tree‑sitter bindings) | 🧪 Experimental |
-| Rust | Lezer (rust) | 🧪 Experimental |
-
-Status legend: Stable = production‑ready; Beta = broadly usable with caveats; Experimental = early support, subject to change.
-
-## 🤝 Contributing
-
-We welcome contributions! See our [Contributing Guide](https://github.com/anon57396/adaptive-tests/blob/main/CONTRIBUTING.md).
-
-## 📄 License
-
-MIT - See [LICENSE](https://github.com/anon57396/adaptive-tests/blob/main/LICENSE) for details.
+</div>
