@@ -72,32 +72,129 @@ If asked to "ensure 100% test coverage", you should:
 - **Python/Java are standalone**: each lives under `languages/python` and `languages/java` with its own discovery implementation.
 - **Docs must reflect the above**: when updating language guides, double-check links on `anon57396.github.io` and run `npm run lint:links`.
 
-## Multi-Agent Collaboration Contract
+## 🤖 AI Agent Collaboration Contract & Guide
 
-We often have several AI agents working **simultaneously on `main`**. To keep the
-experience sane for humans and bots alike:
+This section is a binding contract for all AI agents working on this repository. Violations can cause real loss of work. Read this entire section before touching any file.
 
-1. **Never delete, revert, or rewrite someone else's work-in-progress.** If a file
-   already has uncommitted edits, assume they are intentional. Do not stage reverts
-   or remove paths from the working tree unless explicitly instructed.
-2. **Do not touch untracked paths without approval.** If `git status` shows
-   untracked files or directories (e.g. local prototypes), leave them alone and
-   escalate to a human maintainer.
-3. **Stay scoped.** Limit edits to the files relevant to your assigned task. Avoid
-   opportunistic "drive-by" cleanups that could interfere with parallel efforts.
-4. **Surface conflicts, don't resolve silently.** When you detect contradictory
-   modifications, stop and ask for guidance instead of force-merging, deleting, or
-   undoing other agents' changes.
-5. **Document assumptions in the final summary** so other agents (and humans)
-   understand what you touched and what you deliberately left alone.
-6. **Run the guard manually.** Before broad edits, run `git status -sb` and scan for
-   untracked paths or suspicious deletes. If anything looks risky, stop and ask.
+### 🚨 Emergency Rules (Read First)
+
+1. NEVER delete uncommitted work – if you didn’t create it in this session, don’t delete it.
+2. ALWAYS announce your work – record your intent in `.agent_work_log` before editing.
+3. CHECK before you wreck – run `git status -sb` before any file operation.
+4. ONE agent, ONE module – don’t work on files another agent is actively editing.
+5. FAIL loud, fix together – if you break something, document it immediately and stop.
+
+Signs another agent is working:
+
+```bash
+# Always check these first:
+git status -sb                 # Uncommitted changes? Someone is working.
+git diff                       # See the nature of their changes.
+ls -la /tmp/adaptive-tests_*   # Work markers (if present).
+tail -50 .agent_work_log       # Recent activity log.
+```
+
+If you see uncommitted changes:
+
+- Do NOT delete or revert them
+- Assume they are intentional
+- Add to them carefully only if necessary
+- Document exactly what you added and why
+
+### 📋 Agent Work Log Protocol
+
+Use a lightweight coordination log at the root of the repo. Treat it as append-only. Do not rewrite history.
+
+Starting work (announce):
+
+```bash
+echo "[$(date)] Agent $(whoami) starting: $TASK" >> .agent_work_log
+echo "Files I plan to modify: $FILES" >> .agent_work_log
+touch /tmp/adaptive-tests_$(date +%s)_$MODULE
+```
+
+Finishing work (handoff):
+
+```bash
+echo "[$(date)] Agent $(whoami) completed: $TASK" >> .agent_work_log
+echo "Files modified: $FILES" >> .agent_work_log
+echo "Next agent should: $NEXT_STEPS" >> .agent_work_log
+rm -f /tmp/adaptive-tests_*_$MODULE
+```
+
+Notes:
+
+- Do not commit `.agent_work_log` if it contains sensitive info. It is primarily for live sessions. If committed, ensure entries are appropriate for a public repo.
+- Prefer log + /tmp marker files over adding temporary “AGENT_WORKING” comments in code. Never commit ephemeral agent markers into published source files.
+
+### 🧭 Coordination & Conflict Resolution
+
+- Stay scoped: limit edits to the files relevant to your assigned task.
+- Surface conflicts, don’t resolve silently: when you detect contradictory modifications, stop and ask for guidance.
+- If two agents touched the same file at once:
+  1. STOP immediately.
+  2. Check `.agent_work_log` to identify who started first.
+  3. The second agent should save their changes to a separate file (e.g. `file.js.agent2_conflict`) or a new branch, record the conflict in the log, and wait for resolution.
+
+Example conflict protocol:
+
+```bash
+cp path/to/file.js path/to/file.js.$(whoami)_conflict
+echo "CONFLICT: Multiple agents edited path/to/file.js" >> .agent_work_log
+```
+
+### 🛡️ Safety Guard
+
+Before broad edits, run:
+
+```bash
+git status -sb
+```
+
+Scan for untracked paths or suspicious deletes. If anything looks risky, stop and ask.
 
 ### Safety Alert — 2025-09-20
 >
-> Codex AI accidentally deleted the untracked directory `src/adaptive/enhanced/`,
-> causing a loss of work for another contributor. Do not remove or rename
-> untracked files. When in doubt, stop and ask.
+> Codex AI accidentally deleted the untracked directory `src/adaptive/enhanced/`, causing a loss of work for another contributor. Do not remove or rename untracked files. When in doubt, stop and ask.
+
+---
+
+## 🔒 File Modification Rules
+
+These rules protect core functionality and developer ergonomics. When in doubt, ask before changing filesystem shape.
+
+### Never Touch (generated or external)
+
+```text
+.git/**
+**/node_modules/**
+**/dist/**
+**/build/**
+**/coverage/**
+**/.cache/**
+**/__pycache__/**
+**/*.pyc
+.agent_work_log (except appending via the protocol above)
+/tmp/adaptive-tests_* (other agents’ markers; don’t remove)
+```
+
+### Critical Paths (no delete/rename; modify with care and tests)
+
+- `languages/javascript/src/discovery-engine.js`
+- `languages/javascript/src/scoring-engine.js`
+- `languages/javascript/src/test-base.js`
+- `languages/javascript/src/index.js`
+- `languages/typescript/src/discovery.js`
+
+Edits to the discovery logic must include fixtures and adaptive tests proving the intended behavior.
+
+### Safe to Modify (with care)
+
+- `docs/**` and top-level Markdown (keep public docs tight and accurate)
+- Example projects and fixtures under `languages/*/examples/**` and `languages/*/tests/**`
+- Scripts under `languages/javascript/scripts/**` and `languages/typescript/scripts/**`
+
+Never create test directories at the repository root. All tests belong under the language-specific trees per the “CRITICAL” section above.
 
 ## Useful Commands
 
@@ -120,12 +217,135 @@ experience sane for humans and bots alike:
 - Run `git status -sb` before editing to confirm your workspace is clean and spot untracked paths.
 - After editing docs, run `npm run lint:links` to catch broken URLs before you push.
 
+## 🧪 Testing Requirements
+
+Fundamental rule: never write tests for code that doesn’t exist or cannot be imported. Tests must target real modules and real behavior.
+
+Before any commit or PR:
+
+- `npm test` – all suites pass
+- `npm run validate` – demo flows remain healthy
+- `npm run lint:links` – public docs contain no broken links
+
+When working in language-specific packages, also run their native test runners (e.g., `jest <path>` for JS/TS; Python/Java packages use their own runners within `languages/python` or `languages/java` when you are explicitly working there).
+
+Prohibited testing practices:
+
+- Creating tests at the repository root
+- Testing utility scripts for this repo (e.g., `scripts/validate.js`)
+- Mocking entire feature areas that don’t exist to inflate coverage
+
 ### Simulator Scripts
 
 - `npm run refactor` / `npm run restore` – move the JS calculator around
 - `npm run refactor:ts` / `npm run restore:ts` – TypeScript calculator moves
 - `npm run demo:broken` / `npm run restore:broken` – introduce/fix JS bugs
 - `npm run demo:broken:ts` / `npm run restore:broken:ts` – TypeScript bug flow
+
+## 💀 Destructive Operations — Forbidden
+
+Never perform destructive or sweeping operations that can wipe or hide others’ work.
+
+Forbidden:
+
+- `git reset --hard`, `git clean -fd` (without explicit human approval)
+- Bulk deletes like `rm -rf *`, or programmatic mass edits/deletes
+- Overwriting files without reading and preserving context
+
+Safe alternatives:
+
+- Backup → Verify → Remove (create `*.backup` or use `git stash`)
+- Read → Modify → Save (apply minimal, surgical edits)
+- Work incrementally and test between steps
+
+## 🚀 Startup Checklist for New Agents
+
+```bash
+# 1) Announce yourself
+echo "[$(date)] NEW AGENT: $(whoami) starting session" >> .agent_work_log
+
+# 2) Check current state
+git status -sb
+git diff --stat
+tail -50 .agent_work_log || true
+ls -la /tmp/adaptive-tests_* || true
+
+# 3) Validate health
+npm test -s || true        # skim for obvious failures
+npm run validate -s || true
+
+# 4) Claim your module (optional marker)
+touch /tmp/adaptive-tests_$(date +%s)_$MODULE
+```
+
+## 💬 Inter-Agent Communication
+
+- Use clear commit messages and include context when helpful.
+- In code, prefer TODO/FIXME/HACK comments sparingly and remove them before release when possible.
+- Leave actionable next steps in `.agent_work_log` during handoff.
+
+Examples:
+
+```text
+TODO(AgentA→Engine): Consider factoring visitor into utility
+FIXME(AgentB): Scoring breaks when identifiers shadow imports
+HACK(AgentC): Temporary heuristic until parser upgrade lands
+```
+
+## 📊 Status Tracking (Optional Template)
+
+Keep this updated only if you intend to maintain it. Otherwise omit.
+
+```yaml
+Engine:
+  discovery-engine: WORKING | DEGRADED | BROKEN
+  scoring-engine: WORKING | DEGRADED | BROKEN
+  zero-runtime: PRESERVED | VIOLATED
+
+Suites:
+  js_tests: PASS | FAIL
+  ts_tests: PASS | FAIL
+  validate_demo: PASS | FAIL
+
+Docs:
+  links: PASS | FAIL
+```
+
+## 📈 Success Criteria for This Repo
+
+- All `npm test` suites pass.
+- `npm run validate` completes and demonstrates resilience.
+- Discovery remains zero-runtime (no `require()` during discovery).
+- No new tests at the repository root; adaptive tests live under language trees only.
+- Public docs are accurate and link-checked.
+
+## 🆘 Emergency Recovery
+
+If something breaks during your session:
+
+1. Stop immediately.
+2. Document in `.agent_work_log` what broke and where.
+3. Create a safe point: `git stash -u -m "emergency-snapshot"`.
+4. Restore to last good state: `git reset --hard HEAD` (only if approved and safe), or ask for guidance.
+5. Leave clear next steps in the work log.
+
+## 📝 Final Agent Covenant
+
+I will:
+
+- Check before I wreck
+- Announce my work and hand off cleanly
+- Respect other agents’ changes
+- Test what I change
+- Document assumptions and outcomes
+- Prefer surgical edits over sweeping changes
+- Keep users’ trust and this project’s quality bar
+
+I will not:
+
+- Delete uncommitted work
+- Assume intent without checking the log
+- Work silently on shared files
 
 ## Architecture Snapshot
 

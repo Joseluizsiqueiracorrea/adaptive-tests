@@ -108,3 +108,6 @@ adaptive-tests.code-workspace
 languages/javascript/index.d.ts
 languages/javascript/src/performance-monitor.js
 docs/onboarding-pr-checklist.md
+
+# Agent coordination log (do not commit)
+.agent_work_log
